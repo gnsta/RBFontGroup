@@ -3,6 +3,14 @@ from fwig.tools import unicodetools as ut
 from fwig.tools import attributetools as at
 
 def get_maxX_value(con):
+    """Get maximum x value about contours
+    
+    Args:
+        con : Rcontour
+
+    Return:
+        maximum x value
+    """
     max = -100000
     for p in con.points:
         if(max < p.x):
@@ -10,6 +18,14 @@ def get_maxX_value(con):
     return max
 
 def get_minX_value(con):
+    """Get minimum x value about contours
+    
+    Args:
+        con : Rcontour
+
+    Return:
+        minimum x value
+    """
     min = 100000
     for p in con.points:
         if(min > p.x):
@@ -17,6 +33,14 @@ def get_minX_value(con):
     return min
 
 def get_maxY_value(con):
+    """Get maximum y value about contours
+    
+    Args:
+        con : Rcontour
+
+    Return:
+        maximum y value
+    """
     max = -100000
     for p in con.points:
         if(max < p.y):
@@ -24,6 +48,14 @@ def get_maxY_value(con):
     return max
 
 def get_minY_value(con):
+    """Get minimum y value about contours
+    
+    Args:
+        con : Rcontour
+
+    Return:
+        minimum y value
+    """
     min = 100000
     for p in con.points:
         if(min >  p.y):
@@ -66,23 +98,21 @@ def get_pointPart(con,p,kx,ky):
     
     num = 0
     
-    #print(p.x,p.y)
+
     
     while compart_x[num] + term_x < maxx:
         compart_x.append(compart_x[num] + term_x)
         num = num+1
     compart_x.append(maxx)
     
-    #print(maxx,minx)
-    #print(compart_x)
+
     num = 0
     
     while compart_y[num] + term_y < maxy:
         compart_y.append(compart_y[num] + term_y)
         num = num +1    
     compart_y.append(maxy)
-    #print(maxy,miny)
-    #print(compart_y)
+
     
     position_x = -1
     position_y = -1
@@ -103,13 +133,3 @@ def get_pointPart(con,p,kx,ky):
     
     return rl   
     
-'''if __name__ == '__main__':
-    g = CurrentGlyph()
-    c = g.contours[0]
-    maxx = get_maxX_value(c)
-    minx = get_minX_value(c)
-    maxy = get_maxY_value(c)
-    miny = get_minY_value(c)
-    
-    for p in c.points:
-        print(get_pointPart(c,p,2,2))'''
