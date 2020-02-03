@@ -1,8 +1,4 @@
-import os
-from fwig.tools import unicodetools as ut
-from fwig.tools import attributetools as at
-
-def get_maxX_value(con):
+def getMaxXValue(con):
     """Get maximum x value about contours
     
     Args:
@@ -17,7 +13,7 @@ def get_maxX_value(con):
             max = p.x    
     return max
 
-def get_minX_value(con):
+def getMinXValue(con):
     """Get minimum x value about contours
     
     Args:
@@ -32,7 +28,7 @@ def get_minX_value(con):
             min = p.x
     return min
 
-def get_maxY_value(con):
+def getMaxYValue(con):
     """Get maximum y value about contours
     
     Args:
@@ -47,7 +43,7 @@ def get_maxY_value(con):
             max = p.y
     return max
 
-def get_minY_value(con):
+def getMinYValue(con):
     """Get minimum y value about contours
     
     Args:
@@ -62,7 +58,7 @@ def get_minY_value(con):
             min = p.y
     return min
 
-def get_pointPart(con,p,kx,ky):
+def getPointPart(con,p,kx,ky):
     """Get point's position if point's x is divided by kx and point's y is divided by ky.
     
     Args:
@@ -78,10 +74,10 @@ def get_pointPart(con,p,kx,ky):
         point position
     """
     
-    maxx = get_maxX_value(con) + 10
-    minx = get_minX_value(con) - 10
-    maxy = get_maxY_value(con) + 10
-    miny = get_minY_value(con) - 10
+    maxx = getMaxXValue(c) + 10
+    minx = getMinXValue(c) - 10
+    maxy = getMaxYValue(c) + 10
+    miny = getMinYValue(c) - 10
     
     dis_x = maxx - minx
     dis_y = maxy - miny
@@ -98,13 +94,10 @@ def get_pointPart(con,p,kx,ky):
     
     num = 0
     
-
-    
     while compart_x[num] + term_x < maxx:
         compart_x.append(compart_x[num] + term_x)
         num = num+1
     compart_x.append(maxx)
-    
 
     num = 0
     
@@ -131,5 +124,40 @@ def get_pointPart(con,p,kx,ky):
         
     rl = [position_x, position_y]
     
-    return rl   
+    return rl
+
+def getDivideStatus(con,kx,ky):
+    """Get the number of point each case that points are arranged vertical or horizonal
     
+    Args:
+        con : RContour
+        
+        kx : dividing value of x
+        
+        ky : dividing value of y
+        
+    Return :
+        list : [vertical arrange, horizonal arrange]     
+    """
+    
+    point_stat = []
+    
+    rl = [[],[]]
+    
+    for i in range(0,kx):
+        rl[0].append(0)
+        
+    for i in range(0,ky):
+        rl[1].append(0)    
+    
+    for p in con.points:
+        point_stat.append(getPointPart(con,p,kx,ky))
+    
+    for st in point_stat:
+        cx = st[0]
+        cy = st[1]
+        
+        rl[0][cx] = rl[0][cx] + 1
+        rl[1][cy] = rl[1][cy] + 1
+        
+    return rl      
