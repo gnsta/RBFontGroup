@@ -82,8 +82,8 @@ def getPointPart(con,p,kx,ky):
     dis_x = maxx - minx
     dis_y = maxy - miny
     
-    term_x = (dis_x / kx) + (dis_x % kx)
-    term_y = (dis_y / ky) + (dis_y % ky)       
+    term_x = float(dis_x / kx)
+    term_y = float(dis_y / ky)     
         
     
     compart_x = []
