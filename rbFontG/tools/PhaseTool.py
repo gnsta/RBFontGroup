@@ -61,7 +61,19 @@ class Matrix:
         """
         Divide Matrix by x & y. Calculate how many number of points are in the specific area of matrix.
         """
-        self.matrix = [[0]*kx for i in range(ky)]
+        
+        self.matrix= []
+        
+        
+        for i in range(0,kx):
+            self.matrix.append([])
+            
+        for i in range(0,len((self.matrix))):
+            for j in range(0,ky):
+                self.matrix[i].append(0)    
+            
+        
+        #self.matrix = [[0]*ky for i in range(kx)]
 
         pl= []
 
