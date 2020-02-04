@@ -65,19 +65,19 @@ class Matrix:
 
         pl= []
 
-        for p in con.points:
-            pl.append(self.getPointPart(con,p,kx,ky))
+        self.con = con
+
+        for p in self.con.points:
+            pl.append(self.getPointPart(p,kx,ky))
 
         for li in pl:
-            self.matrix[pl[0]][pl[1]] += 1     
+            self.matrix[li[0]][li[1]] = self.matrix[li[0]][li[1]] + 1     
         
 
-    def getPointPart(self,con,p,kx,ky):
+    def getPointPart(self,p,kx,ky):
         """Get point's position if point's x is divided by kx and point's y is divided by ky.
     
         Args:
-            con : Rcontour
-        
             p : Rpoint
         
             kx : dividing value of x
@@ -88,10 +88,10 @@ class Matrix:
             point position
         """
     
-        maxx = getMaxXValue(c) + 10
-        minx = getMinXValue(c) - 10
-        maxy = getMaxYValue(c) + 10
-        miny = getMinYValue(c) - 10
+        maxx = getMaxXValue(self.con) + 10
+        minx = getMinXValue(self.con) - 10
+        maxy = getMaxYValue(self.con) + 10
+        miny = getMinYValue(self.con) - 10
     
         dis_x = maxx - minx
         dis_y = maxy - miny
@@ -150,12 +150,10 @@ class Matrix:
         return res
         
     
-    def getDivideStatus(self,con,kx,ky):
+    def getDivideStatus(self,kx,ky):
         """Get the number of point each case that points are arranged vertical or horizonal
     
-        Args:
-            con : RContour
-        
+        Args:       
             kx : dividing value of x
         
             ky : dividing value of y
@@ -174,8 +172,8 @@ class Matrix:
         for i in range(0,ky):
             rl[1].append(0)    
     
-        for p in con.points:
-            point_stat.append(getPointPart(con,p,kx,ky))
+        for p in self.con.points:
+            point_stat.append(self.getPointPart(p,kx,ky))
     
         for st in point_stat:
             cx = st[0]
@@ -184,4 +182,4 @@ class Matrix:
             rl[0][cx] = rl[0][cx] + 1
             rl[1][cy] = rl[1][cy] + 1
         
-        return rl   
+        return rl
