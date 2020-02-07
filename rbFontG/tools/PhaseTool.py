@@ -71,22 +71,50 @@ class Matrix:
         for i in range(0,len((self.matrix))):
             for j in range(0,ky):
                 self.matrix[i].append(0)    
-            
-        
-        #self.matrix = [[0]*ky for i in range(kx)]
 
         pl= []
 
         self.con = con
+        self.kx = kx
+        self.ky = ky
+
+        self.maxx = 0
+        self.minx = 0
+        self.maxy = 0
+        self.miny = 0
 
         for p in self.con.points:
             pl.append(self.getPointPart(p,kx,ky))
 
         for li in pl:
-            self.matrix[li[0]][li[1]] = self.matrix[li[0]][li[1]] + 1     
-        
+            self.matrix[li[0]][li[1]] = self.matrix[li[0]][li[1]] + 1
 
-    def getPointPart(self,p,kx,ky):
+        
+    def getKx(self):
+        return self.kx
+
+    def getKy(self):
+        return self.ky
+
+    def getCon(self):
+        return self.con
+
+    def getMinx(self):
+        return self.minx
+    def getMiny(self):
+        return self.miny    
+
+    def setKx(self, kx):
+        self.kx = kx
+
+    def setKy(self,ky):
+        self.ky = ky
+
+    def setCon(self,con):
+        self.con = con              
+        
+            
+    def getPointPart(self,p):
         """Get point's position if point's x is divided by kx and point's y is divided by ky.
     
         Args:
@@ -100,16 +128,16 @@ class Matrix:
             point position
         """
     
-        maxx = getMaxXValue(self.con) + 10
-        minx = getMinXValue(self.con) - 10
-        maxy = getMaxYValue(self.con) + 10
-        miny = getMinYValue(self.con) - 10
+        self.maxx = getMaxXValue(self.con) + 10
+        self.minx = getMinXValue(self.con) - 10
+        self.maxy = getMaxYValue(self.con) + 10
+        self.miny = getMinYValue(self.con) - 10
     
         dis_x = maxx - minx
         dis_y = maxy - miny
     
-        term_x = float(dis_x / kx)
-        term_y = float(dis_y / ky)      
+        term_x = float(dis_x / self.kx)
+        term_y = float(dis_y / self.ky)      
         
     
         compart_x = []
@@ -148,7 +176,7 @@ class Matrix:
             else:
                 break    
         
-        rl = [position_x, position_y]
+        rl = [position_x, position_y,p]
     
         return rl     
     
@@ -162,7 +190,7 @@ class Matrix:
         return res
         
     
-    def getDivideStatus(self,kx,ky):
+    def getDivideStatus(self):
         """Get the number of point each case that points are arranged vertical or horizonal
     
         Args:       
@@ -178,14 +206,14 @@ class Matrix:
     
         rl = [[],[]]
     
-        for i in range(0,kx):
+        for i in range(0,self.kx):
             rl[0].append(0)
         
-        for i in range(0,ky):
+        for i in range(0,self.ky):
             rl[1].append(0)    
     
         for p in self.con.points:
-            point_stat.append(self.getPointPart(p,kx,ky))
+            point_stat.append(self.getPointPart(p))
     
         for st in point_stat:
             cx = st[0]
