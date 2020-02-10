@@ -10,12 +10,22 @@ if __name__ == '__main__':
     testFile = OpenFont(testPath,showInterface = False)
     
     c = g.contours[0]
+
+    c.selected = True
     
     standardMatrix = rbFontG.tools.PhaseTool.Matrix(c,3,3)
     
     compareController = rbFontG.tools.groupTestController.groupTestController(standardMatrix,0)
+
+    groupList = []
     
     for comGlyph in testFile:
-            print(compareController.glyphCheckGroup(comGlyph))
+            resul = compareController.glyphCheckGroup(comGlyph)
+
+            if(resul != None):
+            	groupList.append(resul)
+            	for i in range(0,len(resul)):
+            		resul[i][1] = True
+
     
-    print(g)
+    print(groupList)
