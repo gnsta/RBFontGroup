@@ -71,49 +71,29 @@ class Matrix:
         for i in range(0,len((self.matrix))):
             for j in range(0,ky):
                 self.matrix[i].append(0)    
+            
+        
+        #self.matrix = [[0]*ky for i in range(kx)]
 
         pl= []
 
         self.con = con
         self.kx = kx
         self.ky = ky
-
-        self.maxx = 0
-        self.minx = 0
-        self.maxy = 0
-        self.miny = 0
+        
 
         for p in self.con.points:
-            pl.append(self.getPointPart(p,kx,ky))
+            pl.append(self.getPointPart(p))
 
         for li in pl:
             self.matrix[li[0]][li[1]] = self.matrix[li[0]][li[1]] + 1
-
-        
-    def getKx(self):
-        return self.kx
-
-    def getKy(self):
-        return self.ky
-
-    def getCon(self):
-        return self.con
-
-    def getMinx(self):
-        return self.minx
-    def getMiny(self):
-        return self.miny    
-
-    def setKx(self, kx):
-        self.kx = kx
-
-    def setKy(self,ky):
-        self.ky = ky
-
-    def setCon(self,con):
-        self.con = con              
-        
             
+                 
+    def getKx(self):
+        return self.kx 
+    def getKy(self):
+        return self.ky        
+
     def getPointPart(self,p):
         """Get point's position if point's x is divided by kx and point's y is divided by ky.
     
@@ -128,10 +108,10 @@ class Matrix:
             point position
         """
     
-        self.maxx = getMaxXValue(self.con) + 10
-        self.minx = getMinXValue(self.con) - 10
-        self.maxy = getMaxYValue(self.con) + 10
-        self.miny = getMinYValue(self.con) - 10
+        maxx = getMaxXValue(self.con) + 10
+        minx = getMinXValue(self.con) - 10
+        maxy = getMaxYValue(self.con) + 10
+        miny = getMinYValue(self.con) - 10
     
         dis_x = maxx - minx
         dis_y = maxy - miny
@@ -176,7 +156,7 @@ class Matrix:
             else:
                 break    
         
-        rl = [position_x, position_y,p]
+        rl = [position_x, position_y]
     
         return rl     
     
