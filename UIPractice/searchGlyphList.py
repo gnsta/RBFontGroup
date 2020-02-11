@@ -115,7 +115,9 @@ class EditGroupMenu:
 		        
 		self.w2.lineView.set(self.glyphs)
 		self.w2.lineView.update()
-		
+
+"""
+#Test Code
 if __name__ == '__main__':
     g = CurrentGlyph()
   
@@ -136,3 +138,4 @@ if __name__ == '__main__':
             groupList.append(resul)
             
     menuWindow = EditGroupMenu(CurrentFont(), groupList)
+"""
