@@ -81,16 +81,17 @@ class EditGroupMenu:
 		    
 		    if self.group is None:
 		        print(Message("찾고자 하는 그룹이 존재하지 않습니다."))
-
-		    for groupElement in self.group:
-		        for idx, element in enumerate(groupElement):
-		             self.glyphs.append(element[0])
+		        self.glyphs = RGlyph()
+		        self.glyphs.clear()
+		        #self.w2.lineView.set(self.glyphs)
+		        #self.w2.lineView.update()
+		    else:
+        		    for groupElement in self.group:
+        		        for idx, element in enumerate(groupElement):
+        		             self.glyphs.append(element[0])
 		             
 		    self.w2.lineView.set(self.glyphs)
 		    self.w2.lineView.update()
-		
-		else:
-			pass
 
 	def searchGlyphListByUniCallback(self, sender):
 
@@ -108,20 +109,24 @@ class EditGroupMenu:
 		    
 		if self.group is None:
 			print(Message("찾고자 하는 그룹이 존재하지 않습니다."))
-
-		for groupElement in self.group:
-		    for idx, element in enumerate(groupElement):
-		        self.glyphs.append(element[0])
+			self.glyphs = RGlyph()
+			self.glyphs.clear()
+		else:	
+        		for groupElement in self.group:
+        		    for idx, element in enumerate(groupElement):
+        		        self.glyphs.append(element[0])
 		        
 		self.w2.lineView.set(self.glyphs)
 		self.w2.lineView.update()
 
+
 """
 #Test Code
 if __name__ == '__main__':
+
     g = CurrentGlyph()
   
-    testPath = "/Users/lewis/Downloads/아카이브/groupTest.ufo"
+    testPath = "/Users/sslab/Desktop/myungjo/groupTest.ufo"
     testFile = OpenFont(testPath,showInterface = False)
     
     c = g.contours[0]
