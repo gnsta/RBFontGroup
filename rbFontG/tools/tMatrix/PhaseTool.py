@@ -8,8 +8,9 @@ def getMaxXValue(con):
     """
     max = -100000
     for p in con.points:
-        if(max < p.x):
-            max = p.x    
+        if(p.type != "offcurve"):
+            if(max < p.x):
+                max = p.x    
     return max
 
 def getMinXValue(con):
@@ -22,8 +23,9 @@ def getMinXValue(con):
     """
     min = 100000
     for p in con.points:
-        if(min > p.x):
-            min = p.x
+        if(p.type != "offcurve"):
+            if(min > p.x):
+                min = p.x
     return min
 
 def getMaxYValue(con):
@@ -36,8 +38,9 @@ def getMaxYValue(con):
     """
     max = -100000
     for p in con.points:
-        if(max < p.y):
-            max = p.y
+        if(p.type != "offcurve"):
+            if(max < p.y):
+                max = p.y
     return max
 
 def getMinYValue(con):
@@ -50,8 +53,9 @@ def getMinYValue(con):
     """
     min = 100000
     for p in con.points:
-        if(min >  p.y):
-            min = p.y
+        if(p.type != "offcurve"):
+            if(min >  p.y):
+                min = p.y
     return min
 
 
@@ -83,7 +87,8 @@ class Matrix:
         
 
         for p in self.con.points:
-            pl.append(self.getPointPart(p))
+            if(p.type != "offcurve"):
+                pl.append(self.getPointPart(p))
 
         for li in pl:
             self.matrix[li[0]][li[1]] = self.matrix[li[0]][li[1]] + 1
@@ -193,7 +198,8 @@ class Matrix:
             rl[1].append(0)    
     
         for p in self.con.points:
-            point_stat.append(self.getPointPart(p))
+            if(p.type != "offcurve"):
+                point_stat.append(self.getPointPart(p))
     
         for st in point_stat:
             cx = st[0]
