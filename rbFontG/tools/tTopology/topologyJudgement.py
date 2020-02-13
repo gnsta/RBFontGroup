@@ -1,14 +1,15 @@
 from rbFontG.tools.tTopology.topologyAssignment import *
 
 class topologyJudgementController:
-    def __init__(self,sCon,cCon):
+    def __init__(self,sCon):
         self.sCon = sCon
         self.cCon = cCon
         
         self.sCheckCon = checkCon(sCon,100000000)
-        self.cCheckCon = checkCon(cCon,100000000)
+        self.cCheckCon = None
         
-    def topologyJudgement(self):
+    def topologyJudgement(self,cCon):
+        self.cCheckCon = checkCon(cCon,100000000)
         l1 = self.sCheckCon.tpPointList
         l2 = self.cCheckCon.tpPointList
         
