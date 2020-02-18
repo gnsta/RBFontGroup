@@ -54,7 +54,7 @@ class topologyJudgementController:
 
         for i in range(0,len(self.l1)):
             if(self.l1[i].point.selected == True):
-                temp = get_attr(self.l1[i].point,'PenPair')
+                temp = get_attr(self.l1[i].point,'penPair')
                 set_attr(self.l2[i].point,'penPair',temp)
 
 
@@ -80,13 +80,13 @@ class topologyJudgementController:
                 temp = get_attr(self.l1[i].point,'dependY')
                 set_attr(self.l2[i].point,'dependY',temp)
 
-    def giveInnerFill(self):
+    def giveInnerType(self):
         """
-        Assign giveInnerFill attribute to same point in same group
+        Assign innerType attribute to same point in same group
         """
         if self.cCheckCon == None:
             raise Exception('Please executed topologyJudgement method')
         for i in range(0,len(self.l1)):
             if(self.l1[i].point.selected == True):
-                temp = get_attr(self.l1[i].point,'innerfill')
-                set_attr(self.l2[i].point,'innerfill',temp)        
+                temp = get_attr(self.l1[i].point,'innerType')
+                set_attr(self.l2[i].point,'innerType',temp)        
