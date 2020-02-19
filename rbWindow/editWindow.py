@@ -1,53 +1,75 @@
 from defconAppKit.windows.baseWindow import BaseWindowController
-from vanilla import EditText, FloatingWindow, CheckBox, Button, HelpButton
+from vanilla import EditText, FloatingWindow, CheckBox, Button, HelpButton, RadioGroup, HorizontalLine
 from mojo.UI import MultiLineView, SelectGlyph, Message
 from mojo.events import addObserver,removeObserver
 from mojo.drawingTools import fill, oval
+from mojo.extensions import getExtensionDefault, setExtensionDefault
 from rbWindow.contourPen import BroadNibPen
+from rbWindow.sliderGroup import SliderGroup
+from rbWindow.addGroupWindow import AddGroupWindow
+from rbWindow.toolMenu import toolsWindow
 
 def getMatchGroup(inputText, groupList):
 
 	for group in groupList:
-		for elementPair in group:
-			if str(ord(inputText)) == str(elementPair[0].unicode):
-				return group
+		#print("group : ", group)
+		for elementList in group:
+			for idx, element in enumerate(elementList):
+				if idx == 0:
+					#print("element : "+str(element))
+					if str(ord(inputText)) == str(element.unicode):
+						return groupList
 
 	return None
 
 def getMatchGroupByGlyph(inputGlyph, groupList):
 
 	for group in groupList:
-		for elementPair in group:
-			if str(inputGlyph.unicode) == str(elementPair[0].unicode):
-				return group
+		for elementList in group:
+			for idx, element in enumerate(elementList):
+				if idx == 0:
+					#print("element : "+str(element))
+					if str(inputGlyph.unicode) == str(element.unicode):
+						return groupList
 
 	return None
 
 
 class EditGroupMenu(BaseWindowController):
 
-	def __init__(self, font, groupList):
+	def __init__(self, font, groupList, file):
 		self.font = font
 		self.groupList = groupList
+		self.defaultKey = "com.asaumierdemers.BroadNibBackground"
 		self.createUI()
 		self.selectedGlyphs = []
 		self.markColor = 0.3, 0.4, 0.7, 0.7
 		self.rewindColor = None
 		self.state = False
 		self.group = None
-		#####
+		self.file = file
+
 		self.layerName = self.font.layerOrder[0]
 		self.currentPen = None
-		####
-
+		
+		
 	def createUI(self):
 		x = 10; y = 10; w = 280; h = 22; space = 5; size = (800, 600)
 
 		self.w = FloatingWindow((size[0], size[1]), "EditGroupMenu")
 		
+		self.w.methodRadioGroup = RadioGroup((32,20,w,50), ["Matrix", "Topology"], sizeStyle="small")
+		y += 100 + space
+
+		self.w.popSearchWindowButton = Button((x,y,w,h), "Go to Search Window", callback=self.popSearchWindow)
+		y += h + space
+
+		self.w.divider1 = HorizontalLine((x,y,w,h))
+		y += h + space
+
 		self.w.editText = EditText((x,y,w,h), text="Input Glyph...", callback=self.editTextCallback)
 		y += h + space
-		
+			
 		self.w.searchGlyphListButton = Button((x,y,w,h), "Search", callback=self.searchGlyphListCallback)
 		y += h + space
 		
@@ -78,72 +100,17 @@ class EditGroupMenu(BaseWindowController):
 		self.w.lineView.setFont(self.font)
 		
 		self.w.open()
-		
+
+	def popSearchWindow(self, sender):
+
+		self.w3 = toolsWindow(self)
+		self.w3.createUI(sender)
+	
 	def addGroupListCallback(self, sender):
 
-		x = 10; y = 10; w = 150; h = 22; space = 5; size = (500, 400); pos = (800, 0)
+		self.w2 = AddGroupWindow(self)
+		self.w2.createUI()
 
-		self.addGlyph = None
-		self.addContour = None
-		self.w2 = FloatingWindow((pos[0], pos[1], size[0], size[1]), "AddGroupMenu")
-		self.w2.helpButton = HelpButton((x,y,20,20), callback=self.helpButtonCallback)
-		y += h + space
-
-		self.w2.selectContourIndex = EditText((x,y,w,h), text="Input Contour Index...", callback=self.editContourIndex)
-		y += h + space
-
-		self.w2.addGroupButton = Button((x,y,w,h), "Add Group by Preview", callback=self.addGroupByUniCallback)
-		y += h + space
-
-		x = w + 30
-		self.w2.lineView = MultiLineView((x,0,-0,-0), selectionCallback=self.lineViewSelection, pointSize = 20)
-		self.w2.lineView.setFont(self.font)
-
-		self.w2.glyphs = []
-		for glyph in self.font:
-			self.w2.glyphs.append(glyph)
-
-		self.w2.lineView.set(self.w2.glyphs)
-		self.w2.open()
-	    
-	def lineViewSelection(self, sender):
-
-	    self.addGlyph = sender.getSelectedGlyph()
-	    
-	def editContourIndex(self, sender):
-	    pass
-	    
-	def addGroupByUniCallback(self,sender):
-	    
-	    if self.w2.selectContourIndex.get().isdigit():
-	        idx = int(self.w2.selectContourIndex.get())
-	    
-	    if self.addGlyph.contours[idx] is not None:
-	        listIdx = len(self.groupList)
-	        self.groupList.append([[]])
-	        self.groupList[listIdx][0].insert(0, self.addGlyph)
-	        self.groupList[listIdx][0].insert(1, self.addGlyph.contours[idx])
-	        self.w2.lineView.set(self)
-	          
-	    self.glyphs = []
-	    
-	    if self.groupList is None:
-	        print(Message("찾고자 하는 그룹이 존재하지 않습니다."))
-	        self.glyphs = RGlyph()
-	        self.glyphs.clear()
-	    else:	
-	        for groupElement in self.groupList:
-	            for idx, element in enumerate(groupElement):
-	                self.glyphs.append(element[0])
-
-	    self.w2.lineView.set(self.glyphs)
-	    self.w2.lineView.update()
-
-	        # 그룹 리스트에 추가하기    
-	def helpButtonCallback(self, sender):
-	    
-	    print(Message("1. Select Glyph from Preview\n2. Input Valid Contour Index Number\n3. Hit \"Add Group by Preview Button\""))
-	    
 	def editTextCallback(self, sender):
 
 		inputText = self.w.editText.get()
@@ -157,13 +124,8 @@ class EditGroupMenu(BaseWindowController):
 		self.group = None
 
 		if len(inputText) == 1:
-		    for _groupList in self.groupList:
-		        for group in _groupList:
-		            for n, element in enumerate(group):
-		                if n == 0:
-		                    if str(ord(inputText)) == str(element.unicode):
-		                        self.group = self.groupList
-		        
+		    self.group = getMatchGroup(inputText, self.groupList)
+		    #print(self.group)    
 		    self.glyphs = []
 		    
 		    if self.group is None:
@@ -183,17 +145,12 @@ class EditGroupMenu(BaseWindowController):
 		inputGlyph = SelectGlyph(self.font)
 		self.group = None
 		
-		for _groupList in self.groupList:
-		    for group in _groupList:
-		        for n, element in enumerate(group):
-		            if n == 0:
-		                if str((inputGlyph.unicode)) == str(element.unicode):
-		                    self.group = groupList
-		
+		self.group = getMatchGroupByGlyph(inputGlyph, self.groupList)
+		#print(self.group)
 		for i in range(len(self.groupList)):
 			if(str(inputGlyph.unicode) == str(self.groupList[i][0][0])):
 				self.group = groupList
-				print("asldjfklsdkajflsakdjflaskjdf")        
+			
 		self.glyphs = []
 		    
 		if self.group is None:
