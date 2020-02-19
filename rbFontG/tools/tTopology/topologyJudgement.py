@@ -1,4 +1,5 @@
 from rbFontG.tools.tTopology.topologyAssignment import *
+from fwig.tools import attributetools as at
 
 class topologyJudgementController:
     def __init__(self,sCheckCon):
@@ -44,6 +45,17 @@ class topologyJudgementController:
                 
         return True
 
+    def giveSelected(self):
+        """
+        Assign PenPair attribute to same point in same group
+        """
+        if self.cCheckCon == None:
+            raise Exception('Please executed topologyJudgement method')
+
+        for i in range(0,len(self.l1)):
+            if(self.l1[i].point.selected == True):
+                 self.l2[i].point.selected = True
+
 
     def giveAttrPenPair(self):
         """
@@ -54,8 +66,9 @@ class topologyJudgementController:
 
         for i in range(0,len(self.l1)):
             if(self.l1[i].point.selected == True):
-                temp = get_attr(self.l1[i].point,'penPair')
-                set_attr(self.l2[i].point,'penPair',temp)
+                temp = at.get_attr(self.l1[i].point,'penPair')
+                print(temp)
+                at.add_attr(self.l2[i].point,'penPair',temp)
 
 
     def giveDependX(self):
@@ -66,8 +79,8 @@ class topologyJudgementController:
             raise Exception('Please executed topologyJudgement method')
         for i in range(0,len(self.l1)):
             if(self.l1[i].point.selected == True):
-                temp = get_attr(self.l1[i].point,'dependX')
-                set_attr(self.l2[i].point,'dependX',temp)       
+                temp = at.get_attr(self.l1[i].point,'dependX')
+                at.add_attr(self.l2[i].point,'dependX',temp)       
 
     def giveDependY(self):
         """
@@ -77,8 +90,8 @@ class topologyJudgementController:
             raise Exception('Please executed topologyJudgement method')
         for i in range(0,len(self.l1)):
             if(self.l1[i].point.selected == True):
-                temp = get_attr(self.l1[i].point,'dependY')
-                set_attr(self.l2[i].point,'dependY',temp)
+                temp = at.get_attr(self.l1[i].point,'dependY')
+                at.add_attr(self.l2[i].point,'dependY',temp)
 
     def giveInnerType(self):
         """
@@ -88,5 +101,5 @@ class topologyJudgementController:
             raise Exception('Please executed topologyJudgement method')
         for i in range(0,len(self.l1)):
             if(self.l1[i].point.selected == True):
-                temp = get_attr(self.l1[i].point,'innerType')
-                set_attr(self.l2[i].point,'innerType',temp)        
+                temp = at.get_attr(self.l1[i].point,'innerType')
+                at.add_attr(self.l2[i].point,'innerType',temp)        
