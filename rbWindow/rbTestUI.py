@@ -1,30 +1,50 @@
 import os
 import math
-import rbFontG.tools.PhaseTool
-import rbFontG.tools.groupTestController
+import rbFontG.tools.tMatrix.PhaseTool
+import rbFontG.tools.tMatrix.groupTestController
 import rbWindow.editWindow as ew
+import pickle
 #Test Code
 if __name__ == '__main__':
     
     BroadNibBackgroundDefaultKey = "com.asaumierdemers.BroadNibBackground"
     
-    g = CurrentGlyph()
+    #g = CurrentGlyph()
     
-    testPath = "/Users/sslab/Desktop/myungjo/groupTest.ufo"
+    testPath = "/Users/sslab/Downloads/groupTest.ufo"
     testFile = OpenFont(testPath,showInterface = False)
     
-    c = g.contours[0]
     
-    standardMatrix = rbFontG.tools.PhaseTool.Matrix(c,3,3)
     
-    compareController = rbFontG.tools.groupTestController.groupTestController(standardMatrix,0)
+    # c = g.contours[0]
     
-    groupList = []
+    # standardMatrix = rbFontG.tools.tMatrix.PhaseTool.Matrix(c,3,3)
     
-    for idx, comGlyph in enumerate(testFile):
+    # compareController = rbFontG.tools.tMatrix.groupTestController.groupTestController(standardMatrix,0)
+    
+    # groupList = []
+    
+    # for idx, comGlyph in enumerate(testFile):
 
-        resul = compareController.glyphCheckGroup(comGlyph)
-        if(resul != None):
-            groupList.append(resul)    
-            
-    menuWindow = ew.EditGroupMenu(CurrentFont(), groupList)
+    #    resul = compareController.glyphCheckGroup(comGlyph)
+    #    if(resul != None):
+    #        groupList.append(resul)    
+    
+   
+   
+   
+   
+    #for i in groupList:
+    #    print(i)
+    
+    # destFile = "/Users/sslab/Desktop/list.txt"
+    # with open(destFile, 'w') as f:
+    #     f.write(groupList[0])
+    # f.close()
+    # res = None
+    
+    # with open(destFile, 'r') as f:
+    #     print(str(f.read()))
+    # with open()
+    groupList = None
+    menuWindow = ew.EditGroupMenu(CurrentFont(), groupList, testFile)
