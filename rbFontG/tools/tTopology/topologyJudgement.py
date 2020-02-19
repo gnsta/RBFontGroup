@@ -2,60 +2,43 @@ from rbFontG.tools.tTopology.topologyAssignment import *
 from fwig.tools import attributetools as at
 
 class topologyJudgementController:
-    def __init__(self,sCheckCon):
-        """
-        Make topologicalJudmentController that standaerd is sCheckCon's Rcontour
-
-        Args:
-        sCheckCon : checkCon object created by standard Rcontour
-        """
-        self.cCon = None
-        self.k = sCheckCon.k
-        
-        self.sCheckCon = sCheckCon
-        self.cCheckCon = None
-
-        self.l1 = None
-        self.l2 = None
-        
-    def topologyJudgement(self,cCon):
-        """
-        Judgement the Rcontour is same group with standartd contour
-
-        Args:
-        cCon : Rcontour that wnated to compare
-
-        Return :
-        if same group return True else false
-        """
+    def __init__(self,sCon,cCon):
+        self.sCon = sCon
         self.cCon = cCon
-        self.cCheckCon = checkCon(cCon,self.k)
-        self.l1 = self.sCheckCon.tpPointList
-        self.l2 = self.cCheckCon.tpPointList
         
-        if(len(self.l1) != len(self.l2)):
+        self.sCheckCon = checkCon(sCon,100000000)
+        self.cCheckCon = checkCon(cCon,100000000)
+        
+    def topologyJudgement(self):
+        l1 = self.sCheckCon.tpPointList
+        l2 = self.cCheckCon.tpPointList
+        
+        if(len(l1) != len(l2)):
             return False
             
             
-        for i in range(0,len(self.l1)):
-            if(self.l1[i].getX() != self.l2[i].getX()):
+        for i in range(0,len(l1)):
+            if(l1[i].getX() != l2[i].getX()):
                 return False
-            if(self.l1[i].getY() != self.l2[i].getY()):
+            if(l1[i].getY() != l2[i].getY()):
                 return False
                 
         return True
 
     def giveSelected(self):
         """
-        Assign PenPair attribute to same point in same group
+        select to same point in same group
         """
+        l1 = self.sCheckCon.tpPointList
+        l2 = self.cCheckCon.tpPointList
+        
         if self.cCheckCon == None:
             raise Exception('Please executed topologyJudgement method')
 
-        for i in range(0,len(self.l1)):
-            if(self.l1[i].point.selected == True):
-                 self.l2[i].point.selected = True
-
+        for i in range(0,len(l1)):
+            if(l1[i].point.selected == True):
+                 l2[i].point.selected = True    
+        
 
     def giveAttrPenPair(self):
         """
@@ -64,42 +47,71 @@ class topologyJudgementController:
         if self.cCheckCon == None:
             raise Exception('Please executed topologyJudgement method')
 
-        for i in range(0,len(self.l1)):
-            if(self.l1[i].point.selected == True):
-                temp = at.get_attr(self.l1[i].point,'penPair')
-                print(temp)
-                at.add_attr(self.l2[i].point,'penPair',temp)
+        l1 = self.sCheckCon.tpPointList
+        l2 = self.cCheckCon.tpPointList    
 
-
+        for i in range(0,len(l1)):
+            if(l1[i].point.selected == True):
+                temp = at.get_attr(l1[i].point,'penPair')
+                at.add_attr(l2[i].point,'penPair',temp)
+                
+                                
     def giveDependX(self):
         """
-        Assign DependX attribute to same point in same group
+        Assign dependX attribute to same point in same group
         """
         if self.cCheckCon == None:
             raise Exception('Please executed topologyJudgement method')
-        for i in range(0,len(self.l1)):
-            if(self.l1[i].point.selected == True):
-                temp = at.get_attr(self.l1[i].point,'dependX')
-                at.add_attr(self.l2[i].point,'dependX',temp)       
+
+        l1 = self.sCheckCon.tpPointList
+        l2 = self.cCheckCon.tpPointList    
+
+        for i in range(0,len(l1)):
+            if(l1[i].point.selected == True):
+                temp = at.get_attr(l1[i].point,'dependX')
+                at.add_attr(l2[i].point,'dependX',temp)
 
     def giveDependY(self):
         """
-        Assign DependY attribute to same point in same group
+        Assign dependY attribute to same point in same group
         """
         if self.cCheckCon == None:
             raise Exception('Please executed topologyJudgement method')
-        for i in range(0,len(self.l1)):
-            if(self.l1[i].point.selected == True):
-                temp = at.get_attr(self.l1[i].point,'dependY')
-                at.add_attr(self.l2[i].point,'dependY',temp)
 
-    def giveInnerType(self):
+        l1 = self.sCheckCon.tpPointList
+        l2 = self.cCheckCon.tpPointList    
+
+        for i in range(0,len(l1)):
+            if(l1[i].point.selected == True):
+                temp = at.get_attr(l1[i].point,'dependY')
+                at.add_attr(l2[i].point,'dependY',temp)
+
+    def giveInnerFill(self):
         """
-        Assign innerType attribute to same point in same group
+        Assign innerfill attribute to same point in same group
         """
         if self.cCheckCon == None:
             raise Exception('Please executed topologyJudgement method')
-        for i in range(0,len(self.l1)):
-            if(self.l1[i].point.selected == True):
-                temp = at.get_attr(self.l1[i].point,'innerType')
-                at.add_attr(self.l2[i].point,'innerType',temp)        
+
+        l1 = self.sCheckCon.tpPointList
+        l2 = self.cCheckCon.tpPointList    
+
+        for i in range(0,len(l1)):
+            if(l1[i].point.selected == True):
+                temp = at.get_attr(l1[i].point,'innerFill')
+                at.add_attr(l2[i].point,'innerFill',temp)
+
+    def deleteAttr(self,attribute):
+        """
+        delete attribute to same point in same group
+        """
+        if self.cCheckCon == None:
+            raise Exception('Please executed topologyJudgement method')
+
+        l1 = self.sCheckCon.tpPointList
+        l2 = self.cCheckCon.tpPointList    
+
+        for i in range(0,len(l1)):
+            if(l1[i].point.selected == True):
+                at.del_attr(l2[i].point,attribute)
+
