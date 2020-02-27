@@ -6,7 +6,7 @@ from jsonConverter.converter import *
 2020/02/20
 Created by heesup Kim
 """
-def selectAttribute(groupFilePath,originalFile,standardContour,k):
+def selectAttribute(groupFilePath,originalFile,standardContour,num):
 	"""
 	To select all same group's contours point that is same point with standard contour
 
@@ -16,7 +16,7 @@ def selectAttribute(groupFilePath,originalFile,standardContour,k):
 		originalFile :: File
 			file that has total contours
 		standardContour :: RContour
-		k :: int
+		num :: int
             value of divie(insert None topology at divided position) 
 	"""
 	controllerList = []
@@ -30,12 +30,12 @@ def selectAttribute(groupFilePath,originalFile,standardContour,k):
 
 	for i  in range(0,len(contoursList)):
 		if(standardContour != contoursList[i]):
-			controllerList.append(topologyJudgementController(standardContour,contoursList[i],k))
+			controllerList.append(topologyJudgementController(standardContour,contoursList[i],num))
 
 	for i in range(0, len(controllerList)):
 		controllerList[i].giveSelected()
 
-def penPairAttribute(groupFilePath,originalFile,standardContour,k):
+def penPairAttribute(groupFilePath,originalFile,standardContour,num):
 	"""
 	To give penPair attribute all same group's contours point that is same point with standard contour
 
@@ -45,7 +45,7 @@ def penPairAttribute(groupFilePath,originalFile,standardContour,k):
 		originalFile :: File
 			file that has total contours
 		standardContour :: RContour
-		k :: int
+		num :: int
             value of divie(insert None topology at divided position) 
 	"""
 	controllerList = []
@@ -59,12 +59,12 @@ def penPairAttribute(groupFilePath,originalFile,standardContour,k):
 
 	for i  in range(0,len(contoursList)):
 		if(standardContour != contoursList[i]):
-			controllerList.append(topologyJudgementController(standardContour,contoursList[i],k))
+			controllerList.append(topologyJudgementController(standardContour,contoursList[i],num))
 
 	for i in range(0, len(controllerList)):
 		controllerList[i].giveAttrPenPair()
 
-def dependXAttribute(groupFilePath,originalFile,standardContour,k):
+def dependXAttribute(groupFilePath,originalFile,standardContour,num):
 	"""
 	To give dependX attribute all same group's contours point that is same point with standard contour
 
@@ -74,7 +74,7 @@ def dependXAttribute(groupFilePath,originalFile,standardContour,k):
 		originalFile :: File
 			file that has total contours
 		standardContour :: RContour
-		k :: int
+		num :: int
             value of divie(insert None topology at divided position) 
 	"""
 	controllerList = []
@@ -88,12 +88,12 @@ def dependXAttribute(groupFilePath,originalFile,standardContour,k):
 
 	for i  in range(0,len(contoursList)):
 		if(standardContour != contoursList[i]):
-			controllerList.append(topologyJudgementController(standardContour,contoursList[i],k))
+			controllerList.append(topologyJudgementController(standardContour,contoursList[i],num))
 
 	for i in range(0, len(controllerList)):
 		controllerList[i].giveDependX()
 
-def dependYAttribute(groupFilePath,originalFile,standardContour,k):
+def dependYAttribute(groupFilePath,originalFile,standardContour,num):
 	"""
 	To give dependX attribute all same group's contours point that is same point with standard contour
 
@@ -103,7 +103,7 @@ def dependYAttribute(groupFilePath,originalFile,standardContour,k):
 		originalFile :: File
 			file that has total contours
 		standardContour :: RContour
-		k :: int
+		num :: int
             value of divie(insert None topology at divided position) 
 	"""
 	controllerList = []
@@ -117,12 +117,12 @@ def dependYAttribute(groupFilePath,originalFile,standardContour,k):
 
 	for i  in range(0,len(contoursList)):
 		if(standardContour != contoursList[i]):
-			controllerList.append(topologyJudgementController(standardContour,contoursList[i],k))
+			controllerList.append(topologyJudgementController(standardContour,contoursList[i],num))
 
 	for i in range(0, len(controllerList)):
 		controllerList[i].giveDependY()
 
-def innerFillAttribute(groupFilePath,originalFile,standardContour,k):
+def innerFillAttribute(groupFilePath,originalFile,standardContour,num):
 	"""
 	To give innerFill attribute all same group's contours point that is same point with standard contour
 
@@ -132,7 +132,7 @@ def innerFillAttribute(groupFilePath,originalFile,standardContour,k):
 		originalFile :: File
 			file that has total contours
 		standardContour :: RContour
-		k :: int
+		num :: int
             value of divie(insert None topology at divided position) 
 	"""
 	controllerList = []
@@ -146,12 +146,12 @@ def innerFillAttribute(groupFilePath,originalFile,standardContour,k):
 
 	for i  in range(0,len(contoursList)):
 		if(standardContour != contoursList[i]):
-			controllerList.append(topologyJudgementController(standardContour,contoursList[i],k))
+			controllerList.append(topologyJudgementController(standardContour,contoursList[i],num))
 
 	for i in range(0, len(controllerList)):
 		controllerList[i].giveInnerFill()
 
-def deleteAttribute(groupFilePath,originalFile,standardContour,k):
+def deleteAttribute(groupFilePath,originalFile,standardContour,num):
 	"""
 	To delete attributet all same group's contours point that is same point with standard contour
 
@@ -161,7 +161,7 @@ def deleteAttribute(groupFilePath,originalFile,standardContour,k):
 		originalFile :: File
 			file that has total contours
 		standardContour :: RContour
-		k :: int
+		num :: int
             value of divie(insert None topology at divided position) 
 	"""
 	controllerList = []
@@ -174,7 +174,7 @@ def deleteAttribute(groupFilePath,originalFile,standardContour,k):
 			contoursList.append(k.contours[groupDict[k][i]])
 
 	for i  in range(0,len(contoursList)):
-		controllerList.append(topologyJudgementController(standardContour,contoursList[i],k))
+		controllerList.append(topologyJudgementController(standardContour,contoursList[i],num))
 
 	for i in range(0, len(controllerList)):
 		controllerList[i].deleteAttr()				
