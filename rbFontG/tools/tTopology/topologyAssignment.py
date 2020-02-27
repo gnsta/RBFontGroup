@@ -27,13 +27,16 @@ class checkCon:
     """
     def __init__(self,con,k):
         """
-        con : Rcontour
+        con :: Rcontour
+
+        k :: int
+                value of divie(insert None topology at divided position) 
         
-        pointList : Rcontour's Rpoint's list
+        pointList :: Rcontour's Rpoint's list
         
-        slist : Rpoint's list sorted by startPoint and clockwise(not include offcurve)
+        slist :: Rpoint's list sorted by startPoint and clockwise(not include offcurve)
         
-        tpPointList : topologicalRpoint's list sorted by startPoint and clockwise 
+        tpPointList :: topologicalRpoint's list sorted by startPoint and clockwise
         """
         self.con = con
         self.k = k
@@ -106,8 +109,15 @@ class checkCon:
         """
         Assign x phase ,and y phase and create topologicalRpoint object and make List
 
+        num :: int
+                value of divie(insert None topology at divided position) 
+
         Return: List
             topologicalRpoint object's List
+
+        2020/02/27
+        modify by Kim Heesup
+        위상부여시 상수 num의 차이만큼 점 사이의 거리가 생기면 none값을 부여
         """
         sortByX = sorted(self.pointList,key = lambda RPoint: RPoint.x)
         sortByY = sorted(self.pointList,key = lambda RPoint: RPoint.y)
@@ -115,29 +125,29 @@ class checkCon:
         sortByXNone = []
         sortByYNone = []
         
+        #수정부분
         term = num
-        idx = 0
+        idx = 1
         
         tpRpl =[]
+
+        sortByXNone.append(sortByX[0])
         
         while (idx < len(sortByX)):
-            if(term < sortByX[idx].x):
+            if(term < sortByX[idx].x - sortByX[idx-1].x):
                 sortByXNone.append(None)
-                term = term + num
-            else:
-                sortByXNone.append(sortByX[idx])
-                idx = idx + 1
+
+            sortByXNone.append(sortByX[idx])
+            idx = idx + 1    
         
-        term = num
-        idx = 0
+        idx = 1
                 
         while(idx < len(sortByY)):
-            if(term < sortByY[idx].y):
+            if(term < sortByY[idx].y- sortByY[idx-1].y):
                 sortByYNone.append(None)
-                term = term + num
-            else:
-                sortByYNone.append(sortByY[idx])
-                idx = idx +1
+            
+            sortByYNone.append(sortByY[idx])
+            idx = idx +1
                            
                 
         #assign topological
