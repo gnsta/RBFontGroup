@@ -1,6 +1,32 @@
-def getMaxXValue(con):
+"""
+2020/03/09
+modify by Kim heesup
+
+improve performance
+"""
+class GetMaxMinPointValue:
+    def __init__(self,con):
+        self.con = con
+        self.p_list = []
+
+        for p in self.con.points:
+            if(p.type != "offcurve"):
+                self.p_list.append(p)
+
+        self.sortByX = sorted(self.p_list,key = lambda RPoint : RPoint.x)
+        self.sortByY = sorted(self.p_list,key = lambda RPoint : RPoint.y)
+
+    def getMaxXValue(self):
+        return self.sortByX[-1].x
+    def getMinXValue(self):
+        return self.sortByX[0].x
+    def getMaxYValue(self):
+        return self.sortByY[-1].y
+    def getMinYValue(self):
+        return self.sortByY[0].y     
+
+'''def getMaxXValue(con):
     """
-    create by Kim heesup
 
     Get maximum x value about contours
     
@@ -68,7 +94,7 @@ def getMinYValue(con):
         if(p.type != "offcurve"):
             if(min >  p.y):
                 min = p.y
-    return min
+    return min'''
 
 
 class Matrix:
@@ -129,20 +155,19 @@ class Matrix:
         Return:
             point position
         """
+
+        getMinMax = GetMaxMinPointValue(self.con)
     
-        maxx = getMaxXValue(self.con) + 10
-        minx = getMinXValue(self.con) - 10
-        maxy = getMaxYValue(self.con) + 10
-        miny = getMinYValue(self.con) - 10
+        maxx = getMinMax.getMaxXValue() + 10
+        minx = getMinMax.getMinXValue() - 10
+        maxy = getMinMax.getMaxYValue() + 10
+        miny = getMinMax.getMinYValue() - 10
     
-        dis_x = maxx - minx
-        dis_y = maxy - miny
-    
-        term_x = float(dis_x / self.kx)
-        term_y = float(dis_y / self.ky)      
+        term_x = float((maxx - minx) / self.kx)
+        term_y = float((maxy - miny) / self.ky)      
         
     
-        compart_x = []
+        '''compart_x = []
         compart_y = []
     
         compart_x.append(minx)
@@ -176,7 +201,15 @@ class Matrix:
             if((compart_y[i] <= p.y)):
                 position_y = i
             else:
-                break    
+                break'''
+
+        position_x = int((p.x - minx) // term_x);
+        position_y = int((p.y - miny) // term_y);
+
+        if(position_x >= self.kx):
+            position_x = position_x - 1;
+        if(position_y >= self.ky):
+            position_y = position_y - 1;
         
         rl = [position_x, position_y]
     

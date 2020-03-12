@@ -6,7 +6,7 @@ from jsonConverter.converter import *
 2020/02/20
 Created by heesup Kim
 """
-def selectAttribute(groupFilePath,originalFile,standardContour,num):
+def selectAttribute(groupDict,standardContour,num):
 	"""
 	To select all same group's contours point that is same point with standard contour
 
@@ -21,8 +21,6 @@ def selectAttribute(groupFilePath,originalFile,standardContour,num):
 	"""
 	controllerList = []
 	contoursList = []
-	groupDict = json2groupDict(groupFilePath,originalFile)
-
 	#create topologyJudgementController object
 	for k in groupDict.keys():
 		for i in range(0,len(groupDict[k])):
@@ -35,7 +33,7 @@ def selectAttribute(groupFilePath,originalFile,standardContour,num):
 	for i in range(0, len(controllerList)):
 		controllerList[i].giveSelected()
 
-def penPairAttribute(groupFilePath,originalFile,standardContour,num):
+def penPairAttribute(groupDict,standardContour,num):
 	"""
 	To give penPair attribute all same group's contours point that is same point with standard contour
 
@@ -50,7 +48,6 @@ def penPairAttribute(groupFilePath,originalFile,standardContour,num):
 	"""
 	controllerList = []
 	contoursList = []
-	groupDict = json2groupDict(groupFilePath,originalFile)
 
 	#create topologyJudgementController object
 	for k in groupDict.keys():
@@ -64,7 +61,7 @@ def penPairAttribute(groupFilePath,originalFile,standardContour,num):
 	for i in range(0, len(controllerList)):
 		controllerList[i].giveAttrPenPair()
 
-def dependXAttribute(groupFilePath,originalFile,standardContour,num):
+def dependXAttribute(groupDict,standardContour,num):
 	"""
 	To give dependX attribute all same group's contours point that is same point with standard contour
 
@@ -79,7 +76,6 @@ def dependXAttribute(groupFilePath,originalFile,standardContour,num):
 	"""
 	controllerList = []
 	contoursList = []
-	groupDict = json2groupDict(groupFilePath,originalFile)
 
 	#create topologyJudgementController object
 	for k in groupDict.keys():
@@ -93,7 +89,7 @@ def dependXAttribute(groupFilePath,originalFile,standardContour,num):
 	for i in range(0, len(controllerList)):
 		controllerList[i].giveDependX()
 
-def dependYAttribute(groupFilePath,originalFile,standardContour,num):
+def dependYAttribute(groupDict,standardContour,num):
 	"""
 	To give dependX attribute all same group's contours point that is same point with standard contour
 
@@ -108,7 +104,6 @@ def dependYAttribute(groupFilePath,originalFile,standardContour,num):
 	"""
 	controllerList = []
 	contoursList = []
-	groupDict = json2groupDict(groupFilePath,originalFile)
 
 	#create topologyJudgementController object
 	for k in groupDict.keys():
@@ -122,7 +117,7 @@ def dependYAttribute(groupFilePath,originalFile,standardContour,num):
 	for i in range(0, len(controllerList)):
 		controllerList[i].giveDependY()
 
-def innerFillAttribute(groupFilePath,originalFile,standardContour,num):
+def innerFillAttribute(groupDict,standardContour,num):
 	"""
 	To give innerFill attribute all same group's contours point that is same point with standard contour
 
@@ -137,7 +132,6 @@ def innerFillAttribute(groupFilePath,originalFile,standardContour,num):
 	"""
 	controllerList = []
 	contoursList = []
-	groupDict = json2groupDict(groupFilePath,originalFile)
 
 	#create topologyJudgementController object
 	for k in groupDict.keys():
@@ -151,7 +145,7 @@ def innerFillAttribute(groupFilePath,originalFile,standardContour,num):
 	for i in range(0, len(controllerList)):
 		controllerList[i].giveInnerFill()
 
-def deleteAttribute(groupFilePath,originalFile,standardContour,num):
+def deleteAttribute(groupDict,standardContour,num):
 	"""
 	To delete attributet all same group's contours point that is same point with standard contour
 
@@ -166,7 +160,6 @@ def deleteAttribute(groupFilePath,originalFile,standardContour,num):
 	"""
 	controllerList = []
 	contoursList = []
-	groupDict = json2groupDict(groupFilePath,originalFile)
 
 	#create topologyJudgementController object
 	for k in groupDict.keys():

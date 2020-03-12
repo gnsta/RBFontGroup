@@ -7,6 +7,18 @@ from jsonConverter.converter import *
 Created by heesup Kim
 """
 def mselectAttribute(groupFilePath,originalFile,standardMatrix):
+    """
+    select points that are included same group
+    Args:
+        groupFilePath :: str
+            json file that include same group in the form of dictionary
+
+        originalFile :: RFont
+            original ufo File
+
+        standardMatrix :: Matrix
+            Matrix that is created by standard Contour
+    """
     controllerList = []
     contoursList = []
     groupDict = json2groupDict(groupFilePath,originalFile)
@@ -25,6 +37,18 @@ def mselectAttribute(groupFilePath,originalFile,standardMatrix):
         controllerList[i].mgiveSelected()
 
 def mpenPairAttribute(groupFilePath,originalFile,standardMatrix):
+    """
+    give penpair attribute to points that are included same group
+    Args:
+        groupFilePath :: str
+            json file that include same group in the form of dictionary
+
+        originalFile :: RFont
+            original ufo File
+
+        standardMatrix :: Matrix
+            Matrix that is created by standard Contour
+    """
     controllerList = []
     contoursList = []
     groupDict = json2groupDict(groupFilePath,originalFile)
@@ -43,6 +67,18 @@ def mpenPairAttribute(groupFilePath,originalFile,standardMatrix):
         controllerList[i].mgiveAttrPenPair()
 
 def mdependXAttribute(groupFilePath,originalFile,standardMatrix):
+    """
+    give dependX attribute to points that are included same group
+    Args:
+        groupFilePath :: str
+            json file that include same group in the form of dictionary
+
+        originalFile :: RFont
+            original ufo File
+
+        standardMatrix :: Matrix
+            Matrix that is created by standard Contour
+    """
     controllerList = []
     contoursList = []
     groupDict = json2groupDict(groupFilePath,originalFile)
@@ -61,6 +97,18 @@ def mdependXAttribute(groupFilePath,originalFile,standardMatrix):
         controllerList[i].mgiveDependX()
 
 def mdependYAttribute(groupFilePath,originalFile,standardMatrix):
+    """
+    give dependY attribute to points that are included same group
+    Args:
+        groupFilePath :: str
+            json file that include same group in the form of dictionary
+
+        originalFile :: RFont
+            original ufo File
+
+        standardMatrix :: Matrix
+            Matrix that is created by standard Contour
+    """
     controllerList = []
     contoursList = []
     groupDict = json2groupDict(groupFilePath,originalFile)
@@ -79,6 +127,18 @@ def mdependYAttribute(groupFilePath,originalFile,standardMatrix):
         controllerList[i].mgiveDependY()
 
 def minnerFillAttribute(groupFilePath,originalFile,standardMatrix):
+    """
+    give innerFill attribute to points that are included same group
+    Args:
+        groupFilePath :: str
+            json file that include same group in the form of dictionary
+
+        originalFile :: RFont
+            original ufo File
+
+        standardMatrix :: Matrix
+            Matrix that is created by standard Contour
+    """
     controllerList = []
     contoursList = []
     groupDict = json2groupDict(groupFilePath,originalFile)
@@ -96,7 +156,22 @@ def minnerFillAttribute(groupFilePath,originalFile,standardMatrix):
     for i in range(0,len(controllerList)):
         controllerList[i].mgiveInnerFill()
 
-def mdeleteAttribute(groupFilePath,originalFile,standardMatrix):
+def mdeleteAttribute(groupFilePath,originalFile,standardMatrix,attribute):
+    """
+    delete attribute to points that are included same group
+    Args:
+        groupFilePath :: str
+            json file that include same group in the form of dictionary
+
+        originalFile :: RFont
+            original ufo File
+
+        standardMatrix :: Matrix
+            Matrix that is created by standard Contour
+
+        attribute :: str
+            delete Atrribute
+    """
     controllerList = []
     contoursList = []
     groupDict = json2groupDict(groupFilePath,originalFile)
@@ -111,5 +186,5 @@ def mdeleteAttribute(groupFilePath,originalFile,standardMatrix):
                 controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        controllerList[i].mdeleteAttr()
+        controllerList[i].mdeleteAttr(attribute)
 

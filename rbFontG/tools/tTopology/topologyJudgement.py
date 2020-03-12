@@ -24,8 +24,8 @@ class topologyJudgementController:
         self.cCon = cCon
         self.k = k
         
-        self.sCheckCon = checkCon(sCon,10000000000)
-        self.cCheckCon = checkCon(cCon,10000000000)
+        self.sCheckCon = checkCon(sCon,self.k)
+        self.cCheckCon = checkCon(cCon,self.k)
         
     def topologyJudgement(self):
         """

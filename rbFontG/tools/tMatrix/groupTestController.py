@@ -1,8 +1,13 @@
 from rbFontG.tools.tMatrix.PhaseTool import *
 import math
+import numpy as np
 class groupTestController:
     """
     create by Kim heesup
+
+    2020/03/06
+    modify by Kim heesup
+    add numpy
     """
     def __init__(self,matrix,k):
         """
@@ -30,10 +35,10 @@ class groupTestController:
         
         cl = newMatrix.getDivideStatus()
         
-        print("*************************************")
+        '''print("*************************************")
         print("sl : " ,sl)
         print("cl : " , cl)
-        print("*************************************")
+        print("*************************************")'''
 
         '''resultMatrix = []
 
@@ -65,7 +70,10 @@ class groupTestController:
         compareX = []
         compareY = []
 
-        for i in range(0,self.matrix.getKx()):
+        nsl = np.array(sl)
+        ncl = np.array(cl)
+
+        '''for i in range(0,self.matrix.getKx()):
             compareX.append(0)
 
         for i in range(0,self.matrix.getKy()):
@@ -75,20 +83,27 @@ class groupTestController:
             compareX[i] = abs(sl[0][i] - cl[0][i])
 
         for i in range(0,len(sl[1])):
-            compareY[i] = abs(sl[1][i] - cl[1][i])
+            compareY[i] = abs(sl[1][i] - cl[1][i])'''
 
-        print("compareX" , compareX)
-        print("compareY ", compareY)
+        ncompare = np.abs(nsl - ncl)
+
+        '''print("compareX" , ncompare[0])
+        print("compareY ", ncompare[1])'''
 
 
-        for  i in range(0,len(compareX)):
+        '''for  i in range(0,len(compareX)):
             if(self.k < compareX[i]):
                 return None
         for i in range(0,len(compareY)):
             if(self.k < compareY[i]):
-                return None
+                return None'''
 
-        return con
+        check = np.all(ncompare < self.k)
+
+        if check == True:
+            return con
+        else:
+            return None
         
 
         #grouping by 2 value

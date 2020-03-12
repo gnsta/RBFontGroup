@@ -17,7 +17,9 @@ class parseUnicodeController:
     }
 
     vowel_horizontal = [8, 12, 13, 17, 18]
+    vowel_horizontal_low = [8,12,18]
     vowel_vertical = [0, 1, 2, 3, 4, 5, 6, 7, 20]
+    vowel_vertical_double = [5,7]
     vowel_double = [9, 10, 11, 14, 15, 16, 19]
     
     def __init__(self,code):
