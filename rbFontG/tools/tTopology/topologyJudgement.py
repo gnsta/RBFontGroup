@@ -3,7 +3,7 @@ from fwig.tools import attributetools as at
 
 class topologyJudgementController:
     """
-    Create by Kim heesup
+    Create by Kimheesup
     """
     def __init__(self,sCon,cCon,k):
         """
