@@ -92,7 +92,7 @@ def getMatchGroupDicByGlyph(inputGlyph, groupDict):
 
 class EditGroupMenu:
 
-	def __init__(self, font, file,jsonFileName):
+	def __init__(self, font, file):
 		
 		self.font = font
 		self.groupDict = None
@@ -108,7 +108,6 @@ class EditGroupMenu:
 		self.window = None		# 현재 띄워져 있는 ufo 윈도우
 		self.mode = None  		# 연산 방법(matrix, topology)
 		self.w3 = None
-		self.jsonFileName = jsonFileName
 		self.createUI()
 		
 		
