@@ -10,7 +10,7 @@ create By Kim heesup
 
 baseDir = "/Users/font/Desktop/GroupDict/"
 
-def searchGroup(glyph,contourNumber,mode,jsonFileName):
+def searchGroup(glyph,contourNumber,mode):
 	"""
 	check that contour group is created
 	if exist return file number else return None
@@ -29,12 +29,15 @@ def searchGroup(glyph,contourNumber,mode,jsonFileName):
 
 	Return :: List
 		contain fileNumber and syllable and last data is checkdata(if 0 -> grouped , 1 -> not grouped)
+
+		수정부분 : json 파일로 찾지 말고 set 이용하여 해결
 	"""
 
 	glyphConfigure = getConfigure(glyph)
 
 	check = 0
 	positionNumber = None
+	searchSmartSet = None
 	#해당 컨투어가 초성인지 중성인지 종성인지 확인을 해 보아햐함
 	#!!
 	for i in range(0,len(glyphConfigure[str(glyph.unicode)])):
@@ -50,25 +53,51 @@ def searchGroup(glyph,contourNumber,mode,jsonFileName):
 	if mode == 0:
 		setStat = getSmartSetStatMatrix()
 		print("현재 스마트 셋의 상태 : ", setStat)
-		searchFileName = "Matrix" + jsonFileName
+		searchMode = "Matrix"
 	elif mode == 1:
 		setStat = getSmartSetStatTopology()
 		print("현재 스마트 셋의 상태 : ", setStat)
-		searchFileName = "Topology" + jsonFileName
+		searchMode = "Topology"
+
+	if positionNumber == 0:
+		positionName = "first"
+	elif positionNumber == 1:
+		positionName = "middle"
+	else:
+		positionName = "final"
 
 
 
-	with open(baseDir + searchFileName, 'r') as f:
-		json_data = json.load(f)
+	sSets = getSmartSets()
+	glyphNames = list()
+	check = 0
 
-	glyphUniName =  "uni" + hex(glyph.unicode)[2:].upper()
+	for sSet in sSets:
+		checkSetName = str(sSet.name)
+		checkSetNameList = checkSetName.split('_')
+		print(checkSetNameList)
+		if checkSetNameList[1] != positionName or checkSetNameList[2] != searchMode:
+			continue
+		print(sSet.glyphNames) 
+		for item in sSet.glyphNames:
+			if str(item) == glyph.name:
+				searchSmartSet = sSet
+				check = 1
+				break
 
-	fileNumber = json_data[glyphUniName][str(contourNumber)]
+		if check == 1:
+			break
 
-	if fileNumber != 0:
+	print(searchSmartSet)
+
+	#glyphUniName =  "uni" + hex(glyph.unicode)[2:].upper()
+
+	#fileNumber = json_data[glyphUniName][str(contourNumber)]
+
+	if searchSmartSet is not None:
 		#팝업창으로 띄워주면 좋을 부분
 		print(Message("이미 그룹 연산이 진행이 되어 있으므로 그룹화 작업을 생략합니다."))
-		return [fileNumber,positionNumber,0]
+		return [checkSetNameList[0],positionNumber,0]
 	else:
 		if positionNumber == 0:
 			appendNumber = setStat["first"] + 1
@@ -77,16 +106,14 @@ def searchGroup(glyph,contourNumber,mode,jsonFileName):
 		elif positionNumber == 2:
 			appendNumber = setStat["final"] + 1
 
-		json_data[glyphUniName][positionNumber] = appendNumber
-
-		with open(baseDir + searchFileName,'w',encoding = 'utf-8') as make_file:
-			json.dump(json_data,make_file,indent = '\t')
+		#json_data[glyphUniName][positionNumber] = appendNumber
 
 		return [appendNumber,positionNumber,1]
 
 def setGroup(glyph,contourNumber,mode,jsonFileName,appendNumber):
 	"""
 	store group information about glyph's contour to json File
+	(Not Using)
 
 	Args:
 		glyph :: Rglyph
@@ -105,9 +132,10 @@ def setGroup(glyph,contourNumber,mode,jsonFileName,appendNumber):
 	"""
 
 	if mode == 0:
-		searchFileName = "Matrix" + jsonFileName
+		searchFileName = "Matrix"
 	elif mode == 1:
-		searchFileName = "Topology" + jsonFileName
+		searchFileName = "Topology"
+
 
 	glyphUniName =  "uni" + hex(glyph.unicode)[2:].upper()
 
