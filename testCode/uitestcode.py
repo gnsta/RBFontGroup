@@ -33,7 +33,7 @@ if __name__ == '__main__':
   
     # print(groupList)
    
-    MakeJsonController(testPath,testFile)
-    tempFileName = testPath.split('/')[-1]
-    jsonFileName = tempFileName.split('.')[0] + '.json'
-    menuWindow = ew.EditGroupMenu(CurrentFont(),testFile,jsonFileName)
+    #MakeJsonController(testPath,testFile)
+    #tempFileName = testPath.split('/')[-1]
+    #jsonFileName = tempFileName.split('.')[0] + '.json'
+    menuWindow = ew.EditGroupMenu(CurrentFont(),testFile)
