@@ -14,7 +14,7 @@ matrixMode = 0
 topologyMode = 1
 
 
-def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, file,checkSetData,jsonFileName):
+def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, file,checkSetData):
 	"""
 	2020/03/35 
 	modify by Kim heesup
@@ -36,9 +36,6 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 			File to investigate
 		checkSetData :: List
 			[setNumber, syllableNumber] (using to File naming)
-		jsonFileName :: string
-			for example
-			grouptest.ufo - > groupTest
 	Return : Dictionary
 		key is glyph and value is list that same contours index
 
@@ -74,7 +71,7 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 				if result is not None:
 					smartContourList.append(i)
 					smartCheck = 1
-					setGroup(compareGlyph,i,matrixMode,jsonFileName,checkSetData[0])
+					#setGroup(compareGlyph,i,matrixMode,jsonFileName,checkSetData[0])
 
 		if(smartCheck == 1):
 			glyphUniName = "uni"+hex(compareGlyph.unicode)[2:].upper()
@@ -87,7 +84,7 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 	addSmartSet(smartSet)	
 
 
-def getMatchGroupByTopology(standardGlyph,standardContour, k, file,checkSetData,jsonFileName):
+def getMatchGroupByTopology(standardGlyph,standardContour, k, file,checkSetData):
 	"""
 	2020/03/25
 	modify by Kim heesup
@@ -105,9 +102,6 @@ def getMatchGroupByTopology(standardGlyph,standardContour, k, file,checkSetData,
 			File to investigate
 		checkSetData :: List
 			[setNumber, syllableNumber] (using to File naming)
-		jsonFileName :: string
-			for example
-			grouptest.ufo - > groupTest
 	Return : Dictionary
 		key is glyph and value is list that same contours index
 
@@ -134,14 +128,12 @@ def getMatchGroupByTopology(standardGlyph,standardContour, k, file,checkSetData,
 			if(resul == True):
 				smartCheck = 1
 				smartContourList.append(i)
-				setGroup(compareGlyph,i,topologyMode,jsonFileName,checkSetData[0])
 
 		if(smartCheck == 1):
 			glyphUniName = "uni"+hex(compareGlyph.unicode)[2:].upper()
 			smartGroupDict[glyphUniName] = smartContourList
 			smartSetGlyphs.append("uni"+hex(compareGlyph.unicode)[2:].upper())
 			smartContourList = []
-			#setGroup(compareGlyph,checkSetData[1],1,jsonFileName,checkSetData[0])
 
 	smartSet.glyphNames = smartSetGlyphs
 	addSmartSet(smartSet)
@@ -166,8 +158,7 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, currentWindow, main
 
 	"""
 	#currentWindow.group = search.getGroupDictFile(standardGlyph, contourIndex, currentWindow.font, mainWindow.mode, currentWindow.widthValue, currentWindow.marginValue)
-	checkSetData = searchGroup(standardGlyph,contourIndex,mainWindow.mode,mainWindow.jsonFileName)
-	#print("mainWindow group = ", mainWindow.group)
+	checkSetData = searchGroup(standardGlyph,contourIndex,mainWindow.mode)
 	if checkSetData[2] == 0:
 		currentWindow.groupDict = findContoursGroup(checkSetData,mainWindow)
 		print("이미 그룹화가 진행된 컨투어입니다.")
@@ -175,58 +166,17 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, currentWindow, main
 		if mainWindow.mode is matrixMode:
 			margin = int(currentWindow.w.margin.slider.get())
 			width = int(currentWindow.w.matrixWidth.slider.get())
-			getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, width, file, checkSetData, mainWindow.jsonFileName)
+			getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, width, file, checkSetData)
 			currentWindow.groupDict = findContoursGroup(checkSetData,mainWindow)
 
 		elif mainWindow.mode is topologyMode:
 			k = int(currentWindow.w.topologyK.slider.get())
-			getMatchGroupByTopology(standardGlyph, standardGlyph.contours[contourIndex], k, currentWindow.font,checkSetData,mainWindow.jsonFileName)
+			getMatchGroupByTopology(standardGlyph, standardGlyph.contours[contourIndex], k, currentWindow.font,checkSetData)
 			currentWindow.groupDict = findContoursGroup(checkSetData,mainWindow)
 
-		
-		#if currentWindow.group is None:
-			#print(Message("There is no matching group.")); return;
-
-		#else:
-			#currentWindow.mode = mainWindow.mode
-			#saveGroupDict(currentWindow)
-
-	#updateLineView(currentWindow)
-	#mainWindow.glyphs = currentWindow.glyphs
 	print(currentWindow.groupDict)
 	mainWindow.groupDict = currentWindow.groupDict
 
-'''def saveGroupDict(currentWindow):
-	"""
-		2020/03/23
-		created by H.W. Cho
-
-		Save searched glyphs to JSON file.
-
-		Args :
-			currentWindow(toolMenu object)
-	"""
-	path = search.getGroupDictPath(currentWindow.group, currentWindow.mode, currentWindow.widthValue, currentWindow.marginValue)
-	groupDict = currentWindow.group.copy()
-	convert.groupDict2JSON(groupDict, path)
-
-def updateLineView(currentWindow):
-	"""
-		2020/03/23
-		created by H.W. Cho
-
-		Update multiLineView's glyphs. Use when there is change of currentWindow.group
-
-		Args :
-			currentWindow(toolMenu object)
-	"""
-	currentWindow.glyphs = []
-
-	for glyph in currentWindow.group:
-		currentWindow.glyphs.append(glyph)
-
-	currentWindow.w.lineView.set(currentWindow.glyphs)
-	currentWindow.w.lineView.update()'''
 	
 def findContoursGroup(checkSetData,mainWindow):
 	"""
@@ -246,6 +196,7 @@ def findContoursGroup(checkSetData,mainWindow):
 	ssets = getSmartSets()
 	glyphList = list()
 	res = dict()
+	positionName  = None
 
 	if mainWindow.mode == 0:
 		modeName = "Matrix"
@@ -257,7 +208,10 @@ def findContoursGroup(checkSetData,mainWindow):
 	elif checkSetData[1] == 1:
 		positionName = "middle"
 	else:
-		positonName = "final"
+		positionName = "final"
+
+	print("checkSetData :", checkSetData)
+	print("positionName :",positionName)
 
 
 	for sset in ssets:
