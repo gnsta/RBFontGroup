@@ -43,9 +43,10 @@ class toolsWindow:
 
 		self.defaultKey = "com.asaumierdemers.BroadNibBackground"
 		# self.mainWindow.mode = mainWindow.w.methodRadioGroup.get()		# mode 0: matrix, 1: topology
-		self.groupDict = None
+
 		self.file = mainWindow.file
-		self.glyphs = []
+		self.groupDict = None
+
 		self.font = mainWindow.font
 		self.mainWindow = mainWindow
 		self.marginValue = 0
@@ -55,9 +56,9 @@ class toolsWindow:
 
 
 	def createUI(self, sender):
-		x = 10; y = 10; w = 150; h = 22; space = 10; size = (800,600); pos = (800,0);
+		x = 10; y = 10; w = 150; h = 22; space = 10; size = (180,300); pos = (800,300);
 
-		self.w = FloatingWindow((size[0],size[1]), "ToolsWindow")
+		self.w = FloatingWindow((pos[0],pos[1], size[0],size[1]), "ToolsWindow")
 		
 		self.w.searchOptionText = TextBox((x,y,w,h), "Search Option", alignment="center")
 		y += h + space
@@ -68,6 +69,9 @@ class toolsWindow:
 
 		self.w.divider1 = HorizontalLine((x,y,w,h))
 		y += h + space
+
+		"""
+		# deprecated => preset margin, width, k
 
 		h = 50
 		self.marginValue = getExtensionDefault("%s.%s" %(self.defaultKey, "margin"), 0)
@@ -83,17 +87,18 @@ class toolsWindow:
 		self.mainWindow.kValue = self.kValue
 		self.w.topologyK = SliderGroup((x,y,w,h), "K :", 0, 400, self.kValue, callback=self.kChanged)
 		y += h + space
-		
+		"""
+
 		"""
 		# 2020/03/16 modified by cho : width & height should be same
 		
 		heightValue = getExtensionDefault("%s.%s" %(self.defaultKey, "height"), 10)
 		self.w.matrixHeight = SliderGroup((x,y,w,h), "Height:", 0, 100, heightValue, callback=self.heightChanged)
 		y += h + space
-		"""
 	
 		self.w.divider2 = HorizontalLine((x,y,w,h))
 		y += h + space
+		"""
 
 		h = 22
 		self.w.editTextBox = TextBox((x,y,w-40, h), "Input Glyph : ", alignment="left")
@@ -109,14 +114,12 @@ class toolsWindow:
 		self.w.searchGlyphListButton = Button((x,y,w,h), "Search", callback=self.searchGlyphListCallback)
 		y += h + space
 
-		x = w + 30
-		self.w.lineView = MultiLineView((x,0,-0,-0), pointSize=30)
-		self.w.lineView.setFont(self.mainWindow.font)
-
 		self.w.open()
+
 
 	def methodChangedCallback(self, sender):
 		# select matrix or topology
+		"""
 		if self.w.methodRadioGroup.get() == 0:
 			self.w.margin.enable()
 			self.w.matrixWidth.enable()
@@ -126,11 +129,12 @@ class toolsWindow:
 			self.w.margin.disable()
 			self.w.matrixWidth.disable()
 			self.w.topologyK.enable()
-
+		"""
 		self.mainWindow.mode = self.w.methodRadioGroup.get()
-
 	
-
+	"""
+	# deprecated => preset values...
+	
 	def marginChanged(self, sender):
 	    
 	    setExtensionDefault("%s.%s" %(self.defaultKey, "margin"), int(sender.get()))
@@ -145,6 +149,7 @@ class toolsWindow:
 	    
 	    setExtensionDefault("%s.%s" %(self.defaultKey, "k"), int(sender.get()))
 	    self.w.topologyK.updateView()
+	"""
 	    
 	# def heightChanged(self, sneder):
 	    

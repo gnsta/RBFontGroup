@@ -1,0 +1,11 @@
+import mojo.extensions
+
+toolName = "FontTool"
+fontToolBundle = mojo.extensions.ExtensionBundle(toolName)
+baseDir = fontToolBundle.resourcesPath() + "/GroupDict/"
+saveFilePath = baseDir
+ufoPath = "/Users/sslab/Desktop/groupTest2350.ufo"
+ImagePath = fontToolBundle.resourcesPath()+"/"
+
+attrImgList = ["innerFill", "penPair", "dependX", "dependY",  "rubbish", "select"]
+

@@ -2,16 +2,16 @@ import os
 from rbFontG.tools.parseUnicodeControll import *
 import jsonConverter.converter as convert
 from parseSyllable.configSyllable import *
+import pathManager.pathSetting as extPath
 """
 Data Example :
 	data = {'uniB232': [[3], [4,5], [0,1,2]]}
 	data = {'uniB12F': [[0], [1,2], [3,4,5]]}
 
-Depend on Data, Destination Dir should be baseDir + dirPostFix
+Depend on Data, Destination Dir should be extPath.baseDir + dirPostFix
 """
 
 dirPostFix = ['first', 'middle', 'last']
-baseDir = "/Users/font/Desktop/GroupDict/"
 
 
 def getGroupDictFile(RGlyph, idx, fontFile,mode,width,margin):
@@ -20,7 +20,7 @@ def getGroupDictFile(RGlyph, idx, fontFile,mode,width,margin):
     created by H.W. Cho
     
     Return Matching GroupDict(dict) with RGlyph.contours[idx](RContour) from fontFile(RFont)
-    Filenames would like to be baseDir / dirPostFix / 'ㄱ' / + number.json
+    Filenames would like to be extPath.baseDir / dirPostFix / 'ㄱ' / + number.json
     
     Args:
         - RGlyph(RGlyph)
@@ -46,11 +46,11 @@ def getGroupDictFile(RGlyph, idx, fontFile,mode,width,margin):
     tmpObject = parseUnicodeController(RGlyph.unicode)																			# RGlyph 객체의 컨투어에 대한 이름을 찾아야 함 
     uniCodeData = tmpObject.getChars()[configIdx]																				# ex) 갏 tmpObject.getChars() => ['ㄱ', 'ㅏ', 'ㅀ']
 
-    # 저장 경로는 기본 경로(baseDir) + 초/중/종 구분 경로 + '음절 구분 경로'
+    # 저장 경로는 기본 경로(extPath.baseDir) + 초/중/종 구분 경로 + '음절 구분 경로'
     if mode == 0:
-    	targetDir = baseDir+ 'matrix/' + str(width) +'_' + str(margin)+ '/' + dirPostFix[configIdx] + '/' + str(uniCodeData) + '/'
+    	targetDir = extPath.baseDir+ 'matrix/' + str(width) +'_' + str(margin)+ '/' + dirPostFix[configIdx] + '/' + str(uniCodeData) + '/'
     else:
-    	targetDir = baseDir+ 'topology/' + dirPostFix[configIdx] + '/' + str(uniCodeData) + '/'
+    	targetDir = extPath.baseDir+ 'topology/' + dirPostFix[configIdx] + '/' + str(uniCodeData) + '/'
     
     
     try:
@@ -111,9 +111,9 @@ def getGroupDictPath(groupDict,mode,width,margin):
 		tmpObject = parseUnicodeController(RGlyph.unicode)
 		uniCodeData = tmpObject.getChars()[configIdx]
 		if mode == 0:
-			targetDir = baseDir+  'matrix/' + str(width) +'_' + str(margin)+ '/' + dirPostFix[configIdx] + '/' + str(uniCodeData) + '/'
+			targetDir = extPath.baseDir+  'matrix/' + str(width) +'_' + str(margin)+ '/' + dirPostFix[configIdx] + '/' + str(uniCodeData) + '/'
 		else:
-			targetDir = baseDir+ 'topology/' + dirPostFix[configIdx] + '/' + str(uniCodeData) + '/'
+			targetDir = extPath.baseDir+ 'topology/' + dirPostFix[configIdx] + '/' + str(uniCodeData) + '/'
 
 		count = len(RGlyph.contours[idx].points)
 	

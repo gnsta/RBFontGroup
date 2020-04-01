@@ -3,10 +3,6 @@ from parseSyllable.configVersion1 import *
 from parseSyllable.configVersion2 import *
 
 def getConfigure(RGlyph):
-	"""
-	Return :: Dictionary
-		{"glyph.unicode" : [[first contour's index],[middle contour's index],[final contour's index]]}
-	"""
 
 	unicodeObj = parseUnicodeController(RGlyph.unicode)
 	uniCodeIdx = unicodeObj.parseUnicode()

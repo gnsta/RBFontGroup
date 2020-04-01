@@ -11,7 +11,7 @@ if __name__ == '__main__':
     BroadNibBackgroundDefaultKey = "com.asaumierdemers.BroadNibBackground"
     
     g = CurrentGlyph()
-    testPath = "/Users/font/Desktop/groupTestSmall.ufo"
+    testPath = "/Users/sslab/Desktop/groupTest2350.ufo"
     testFile = OpenFont(testPath,showInterface = False)
     
     
@@ -33,7 +33,9 @@ if __name__ == '__main__':
   
     # print(groupList)
    
-    #MakeJsonController(testPath,testFile)
-    #tempFileName = testPath.split('/')[-1]
-    #jsonFileName = tempFileName.split('.')[0] + '.json'
-    menuWindow = ew.EditGroupMenu(CurrentFont(),testFile)
+    groupDict = None
+    MakeJsonController(testPath,testFile)
+    tempFileName = testPath.split('/')[-1]
+    jsonFileName = tempFileName.split('.')[0] + '.json'
+    print(jsonFileName)
+    menuWindow = ew.EditGroupMenu(CurrentFont(), groupDict, testFile,jsonFileName)
