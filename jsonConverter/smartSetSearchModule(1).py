@@ -2,10 +2,7 @@ from mojo.UI import *
 from parseSyllable.configSyllable import *
 import json
 import os
-from rbFontG.tools.tMatrix.PhaseTool import *
-from rbFontG.tools.tMatrix.groupTestController import *
-from rbFontG.tools.tTopology.topologyJudgement import *
-from rbFontG.tools.tTopology.topologyAssignment import *
+from rbFontG.tools.parseUnicodeControll import *
 
 """
 2020/03/25
@@ -14,7 +11,7 @@ create By Kim heesup
 
 baseDir = "/Users/font/Desktop/GroupDict/"
 
-def searchGroup(glyph,contourNumber,mode,mainWindow):
+def searchGroup(glyph,contourNumber,mode):
 	"""
 	check that contour group is created
 	if exist return file number else return None
@@ -31,13 +28,11 @@ def searchGroup(glyph,contourNumber,mode,mainWindow):
 		jsonFileName :: Stirng
 			file name that include data about contour group name
 
-		mainWindow :: tool Menu object
-			to get font File
-
 	Return :: List
 		contain fileNumber and syllable and last data is checkdata(if 0 -> grouped , 1 -> not grouped)
 
 		수정부분 : json 파일로 찾지 말고 set 이용하여 해결
+				 그룹핑 자체를 초, 중 ,종 으로 하지 않고 컨투어의 이름으로 바꿈 
 	"""
 
 	glyphConfigure = getConfigure(glyph)
@@ -56,6 +51,8 @@ def searchGroup(glyph,contourNumber,mode,mainWindow):
 
 		if check == 1:
 			break
+	puc = parseUnicodeController(g.unicode)
+	charsList = puc.getChars()
 
 	if mode == 0:
 		setStat = getSmartSetStatMatrix()
@@ -66,12 +63,16 @@ def searchGroup(glyph,contourNumber,mode,mainWindow):
 		print("현재 스마트 셋의 상태 : ", setStat)
 		searchMode = "Topology"
 
-	if positionNumber == 0:
+
+
+	posiitonName = charsList[positionNumber]
+
+	'''if positionNumber == 0:
 		positionName = "first"
 	elif positionNumber == 1:
 		positionName = "middle"
 	else:
-		positionName = "final"
+		positionName = "final"'''
 
 
 
@@ -82,34 +83,16 @@ def searchGroup(glyph,contourNumber,mode,mainWindow):
 	for sSet in sSets:
 		checkSetName = str(sSet.name)
 		checkSetNameList = checkSetName.split('_')
+		print(checkSetNameList)
 		if checkSetNameList[1] != positionName or checkSetNameList[2] != searchMode:
 			continue
-		#검사를 진행을 해야함(기준 컨투어는 알고 있고 비교 글리프에 있는 컨투어는 순회를 하면서 조사하는 방식)
-		#matrix 체크에서는 같은 그룹이 아니면 None이고 topology 에서는 같은 그룹이 아니면 flase반환
-		standardNameList = checkSetNameList[3].split('-')
-		standardGlyphUnicode = int(standardNameList[0][1:])
-		standardIdx = int(standardNameList[1][0:len(standardNameList)-1]) 
+		print(sSet.glyphNames) 
 		for item in sSet.glyphNames:
-			#if item != glyph.name:
-				#continue
-			if mode == 0:
-				standardGlyph = mainWindow.file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
-				#width값은 정해져 있다고 생각을 하고 진행
-				standardMatrix=Matrix(standardGlyph.contours[standardIdx],10)
-				compareController = groupTestController(standardMatrix,0)
-				result = compareController.conCheckGroup(glyph[contourNumber])
-				if result is not None: 
-					searchSmartSet = sSet
-					check = 1
-					break
-			elif mode == 1:
-				standardGlyph = mainWindow.file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
-				result = topologyJudgementController(standardGlyph.contours[standardIdx],glyph[contourNumber],200).topologyJudgement()
-				if result is not False: 
-					searchSmartSet = sSet
-					check = 1
-					break
-					
+			if str(item) == glyph.name:
+				searchSmartSet = sSet
+				check = 1
+				break
+
 		if check == 1:
 			break
 
@@ -125,11 +108,11 @@ def searchGroup(glyph,contourNumber,mode,mainWindow):
 		return [checkSetNameList[0],positionNumber,0]
 	else:
 		if positionNumber == 0:
-			appendNumber = setStat["first"] + 1
+			appendNumber = setStat[posiitonName] + 1
 		elif positionNumber == 1:
-			appendNumber = setStat["middle"] + 1
+			appendNumber = setStat[posiitonName] + 1
 		elif positionNumber == 2:
-			appendNumber = setStat["final"] + 1
+			appendNumber = setStat[posiitonName] + 1
 
 		#json_data[glyphUniName][positionNumber] = appendNumber
 
@@ -178,17 +161,21 @@ def setGroup(glyph,contourNumber,mode,jsonFileName,appendNumber):
 	
 def getSmartSetStatMatrix():
 	"""
-	check minimum file number according to syllable
+	check how many set about matrix
+	not count other
+
+	Args:
+		character : hangle char
+			investigated hangle character
 
 	set name format example
 		:##(number)_##(syllable)_####(mode)
 	"""
 
-	matrixSetStat = {"first" : 0, "middle" : 0 , "final" : 0}
-
-	firstl = list()
-	middlel = list()
-	finall = list()
+	matrixSetStat = {'ㄱ':0, 'ㄲ':0, 'ㄴ':0, 'ㄷ':0, 'ㄸ':0, 'ㄹ':0, 'ㅁ':0, 'ㅂ':0, 'ㅃ':0, 'ㅅ':0, 'ㅆ':0,
+        'ㅇ':0,'ㅈ':0, 'ㅉ':0, 'ㅊ':0, 'ㅋ':0, 'ㅌ':0, 'ㅍ':0, 'ㅎ':0, 'ㅏ':0,'ㅐ':0, 'ㅑ':0,'ㅒ':0,'ㅓ':0, 'ㅔ':0,
+        'ㅕ':0,'ㅖ':0,'ㅗ':0, 'ㅘ':0, 'ㅙ':0, 'ㅚ':0,'ㅛ':0,'ㅜ':0,'ㅝ':0,'ㅞ':0,'ㅟ':0,'ㅠ':0, 'ㅡ':0,'ㅢ':0,'ㅣ':0,
+        'ㄱㅅ' : 0,'ㄴㅈ': 0,'ㄴㅎ':0,'ㄹㄱ':0,'ㄹㅁ':0,'ㄹㅂ':0,'ㄹㅅ':0,'ㄹㅌ':0,'ㄹㅍ':0,'ㄹㅎ':0,'ㅂㅅ':0}
 
 	setList = getSmartSets()
 
@@ -200,47 +187,13 @@ def getSmartSetStatMatrix():
 		setSyllable = setNameList[1]
 
 		if modeName ==  "Matrix":
-			#matrixSetStat[setSyllable] += 1
-			if setSyllable == "first":
-				firstl.append(setNumber)
-			elif setSyllable == "middle":
-				middlel.append(setNumber)
-			elif setSyllable == "final":
-				finall.append(setNumber)
-
-	firstl.sort()
-	middlel.sort()
-	finall.sort()
-
-	check = 0 
-	for i in range(0,len(firstl)):
-		if (i +1) != firstl[i]:
-			matrixSetStat["first"] = i
-			check = 1
-	if check == 0:
-		matrixSetStat["first"] = len(firstl)
-
-	check = 0 
-	for i in range(0,len(middlel)):
-		if (i +1) != middlel[i]:
-			matrixSetStat["middle"] = i
-			check = 1
-	if check == 0:
-		matrixSetStat["middle"] = len(middlel)
-
-	check = 0 
-	for i in range(0,len(finall)):
-		if (i +1) != finall[i]:
-			matrixSetStat["final"] = i
-			check = 1
-	if check == 0:
-		matrixSetStat["final"] = len(finall)
+			matrixSetStat[setSyllable] += 1
 
 	return matrixSetStat
 
 
 
-def getSmartSetStatTopology():
+def getSmartSetStatTopology(character):
 	"""
 	check how many set about topology
 	not count other
@@ -249,11 +202,10 @@ def getSmartSetStatTopology():
 		:##(number)_##(syllable)_####(mode)
 	"""
 
-	topologySetStat  = {"first" : 0 , "middle" : 0 , "final" : 0}
-
-	firstl = list()
-	middlel = list()
-	finall = list()
+	matrixSetStat = {'ㄱ':0, 'ㄲ':0, 'ㄴ':0, 'ㄷ':0, 'ㄸ':0, 'ㄹ':0, 'ㅁ':0, 'ㅂ':0, 'ㅃ':0, 'ㅅ':0, 'ㅆ':0,
+        'ㅇ':0,'ㅈ':0, 'ㅉ':0, 'ㅊ':0, 'ㅋ':0, 'ㅌ':0, 'ㅍ':0, 'ㅎ':0, 'ㅏ':0,'ㅐ':0, 'ㅑ':0,'ㅒ':0,'ㅓ':0, 'ㅔ':0,
+        'ㅕ':0,'ㅖ':0,'ㅗ':0, 'ㅘ':0, 'ㅙ':0, 'ㅚ':0,'ㅛ':0,'ㅜ':0,'ㅝ':0,'ㅞ':0,'ㅟ':0,'ㅠ':0, 'ㅡ':0,'ㅢ':0,'ㅣ':0,
+        'ㄱㅅ' : 0,'ㄴㅈ': 0,'ㄴㅎ':0,'ㄹㄱ':0,'ㄹㅁ':0,'ㄹㅂ':0,'ㄹㅅ':0,'ㄹㅌ':0,'ㄹㅍ':0,'ㄹㅎ':0,'ㅂㅅ':0}
 
 	setList = getSmartSets()
 
@@ -265,42 +217,7 @@ def getSmartSetStatTopology():
 		setSyllable = setNameList[1]
 
 		if modeName == "Topology":
-			#topologySetStat[setSyllable] += 1
-			if setSyllable == "first":
-				firstl.append(setNumber)
-			elif setSyllable == "middle":
-				middlel.append(setNumber)
-			elif setSyllable == "final":
-				finall.append(setNumber)
-
-
-	firstl.sort()
-	middlel.sort()
-	finall.sort()
-
-	check = 0 
-	for i in range(0,len(firstl)):
-		if (i +1) != firstl[i]:
-			topologySetStat["first"] = i
-			check = 1
-	if check == 0:
-		topologySetStat["first"] = len(firstl)
-
-	check = 0 
-	for i in range(0,len(middlel)):
-		if (i +1) != middlel[i]:
-			topologySetStat["middle"] = i
-			check = 1
-	if check == 0:
-		topologySetStat["middle"] = len(middlel)
-
-	check = 0 
-	for i in range(0,len(finall)):
-		if (i +1) != finall[i]:
-			topologySetStat["final"] = i
-			check = 1
-	if check == 0:
-		topologySetStat["final"] = len(finall)
+			topologySetStat[setSyllable] += 1
 
 	return topologySetStat
 

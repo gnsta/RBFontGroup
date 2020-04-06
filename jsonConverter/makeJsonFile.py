@@ -11,6 +11,8 @@ def MakeJsonController(testPath,testFile):
     나중에 경로 변환 필요
     실제로 유아이에서 자원을 뽑아 올 때의 경로는
     /Applications/RoboFont.app/Contents/Resources 이다.
+
+    더이상 사용하지 않음
     """
 
     try:
