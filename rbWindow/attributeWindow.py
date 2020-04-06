@@ -18,31 +18,6 @@ class NotSetExist(Exception):
 		super().__init__('어느 그룹에도 속해있지 않은 글리프입니다.')
 
 
-def findCurrentContoursGroup(glyph,contourIndex):
-	"""
-	2020/04/06
-	created by Kim Heesup
-	find Current contour's group to insert attribute
-
-	Args:
-		glyph :: RGlyph
-			current glyph
-		contourIndex :: int
-			search contour index
-	Return:
-		if group exist return groupDictionary else None
-	"""
-
-	for sset in ssets:
-		nameList = str(sset.name).split('_')
-		standardNameList = nameList[3].split('-')
-		standardGlyphUnicode = int(standardNameList[0][1:])
-		standardIdx = int(standardNameList[1][0:len(standardNameList[1])-1])
-		if (nameList[0] == str(checkSetData[0])) and (nameList[1] == positionName) and (nameList[2] == modeName):
-			groupSet = sset
-			break
-
-
 class attributeWindow:
 	"""
 	2020/04/06
