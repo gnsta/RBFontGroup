@@ -2,17 +2,76 @@ from vanilla import FloatingWindow, RadioGroup, Button, HUDFloatingWindow, Image
 from rbFontG.tools.tTopology import topologyButtonEvent as tbt
 from rbFontG.tools.tMatrix import matrixButtonEvent as mbt
 from rbFontG.tools.tMatrix.PhaseTool import *
+from mojo.UI import *
+from jsonConverter.smartSetSearchModule import *
 
 
 matrixMode = 0
 topologyMode = 1
 
+
+class NotSetExist(Exception):
+	"""
+	exception that Currnet glyph is not included any set
+	"""
+	def __init__(self):
+		super().__init__('어느 그룹에도 속해있지 않은 글리프입니다.')
+
+
+def findCurrentContoursGroup(glyph,contourIndex):
+	"""
+	2020/04/06
+	created by Kim Heesup
+	find Current contour's group to insert attribute
+
+	Args:
+		glyph :: RGlyph
+			current glyph
+		contourIndex :: int
+			search contour index
+	Return:
+		if group exist return groupDictionary else None
+	"""
+
+	for sset in ssets:
+		nameList = str(sset.name).split('_')
+		standardNameList = nameList[3].split('-')
+		standardGlyphUnicode = int(standardNameList[0][1:])
+		standardIdx = int(standardNameList[1][0:len(standardNameList[1])-1])
+		if (nameList[0] == str(checkSetData[0])) and (nameList[1] == positionName) and (nameList[2] == modeName):
+			groupSet = sset
+			break
+
+
 class attributeWindow:
+	"""
+	2020/04/06
+	modify by Kim heesup
+	change standardContour to user What the user is currently working on
+
+	팝업창 하나 필요
+	지금 띄워져 있는 글리프에 대하여 몇번 컨투어를 조작 할 것인지...
+	"""
 
 	def __init__(self, mainWindow, mode):
 		self.mainWindow = mainWindow
 		self.mode = mode
-		self.matrix = Matrix(self.mainWindow.standardContour,self.mainWindow.widthValue)
+		#팝압창이 나오고 컴투어 인덱스 번호를 받음
+		contourNumber =None
+		try:
+			newGlyph = mainWindow.file[CurrentGlyphWindow().getGlyph().name]
+			checkSetData = searchGroup(newGLyph,contourNumber,mainWindow.mode,mainWindow)
+			if checkSetData[2] == 0:
+				raise NotSetExist
+
+			mainWindow.standardContour = newGlyph.contours[contourNumber]
+			mainWindow.groupDict = findContoursGroup(checkSetData,mainWindow)
+		except Exception as e:
+			print("예외가 발생했습니다",e)
+
+		#예외가 발생하면 ui가 팝업되지 않도록
+		
+
 
 	def createUI(self):
 		x = 10; y = 10; w = 150; h = 30; space = 5; size = (180,200); pos = (1200,300);
@@ -68,22 +127,22 @@ class attributeWindow:
 		콜백 메소드에 연결할 메소드(Matrix)
 	"""
 	def mhandleInnerFill(self, sender):
-		mbt.minnerFillAttribute(self.mainWindow.groupDict, self.matrix)
+		mbt.minnerFillAttribute(self.mainWindow.groupDict, Matrix(self.mainWindow.standardContour,self.mainWindow.widthValue),30)
 
 	def mhandlePenPair(self, sender):
-		mbt.mpenPairAttribute(self.mainWindow.groupDict, self.matrix)
+		mbt.mpenPairAttribute(self.mainWindow.groupDict, Matrix(self.mainWindow.standardContour,self.mainWindow.widthValue),30)
 
 	def mhandleDependX(self, sender):
-		mbt.mdependXAttribute(self.mainWindow.groupDict, self.matrix)
+		mbt.mdependXAttribute(self.mainWindow.groupDict, Matrix(self.mainWindow.standardContour,self.mainWindow.widthValue),30)
 
 	def mhandleDependY(self, sender):
-		mbt.mdependYAttribute(self.mainWindow.groupDict, self.matrix)
+		mbt.mdependYAttribute(self.mainWindow.groupDict, Matrix(self.mainWindow.standardContour,self.mainWindow.widthValue),30)
 
 	def mhandleDelete(self, sender):
 		pass
 
 	def mhandleSelect(self, sender):
-		mbt.mselectAttribute(self.mainWindow.groupDict, self.matrix)
+		mbt.mselectAttribute(self.mainWindow.groupDict, Matrix(self.mainWindow.standardContour,self.mainWindow.widthValue),30)
 
 
 
@@ -93,19 +152,19 @@ class attributeWindow:
 		콜백 메소드에 연결할 메소드(Topology)
 	"""
 	def thandleInnerFill(self, sender):
-		tbt.minnerFillAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,500)
+		tbt.innerFillAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,200)
 
 	def thandlePenPair(self, sender):
-		tbt.minnerFillAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,500)
+		tbt.penPairAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,200)
 
 	def thandleDependX(self, sender):
-		tbt.minnerFillAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,500)
+		tbt.dependXAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,200)
 
 	def thandleDependY(self, sender):
-		tbt.minnerFillAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,500)
+		tbt.dependYAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,200)
 
 	def thandleDelete(self, sender):
 		pass
 
 	def thandleSelect(self, sender):
-		tbt.minnerFillAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,500)
+		tbt.selectAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,200)

@@ -18,7 +18,7 @@ import rbWindow.Controller.toolMenuController as tMC
 
 def text2Glyph(inputText, font):
 	"""
-	2020/03/23
+	2020/03/23 
 	created by H.W. Cho
 	return matching RGlyph object to inputText(str)
 

@@ -1,20 +1,21 @@
 import jsonConverter.searchModule as search
 from mojo.UI import MultiLineView, SelectGlyph
-import rbFontG.tools.tMatrix.PhaseTool
-import rbFontG.tools.tMatrix.groupTestController
-from rbFontG.tools.tTopology import topologyJudgement as tj
-from rbFontG.tools.tTopology import topologyAssignment as ta
+from rbFontG.tools.tMatrix.PhaseTool import *
+from rbFontG.tools.tMatrix.groupTestController import *
+from rbFontG.tools.tTopology.topologyJudgement import *
+from rbFontG.tools.tTopology.topologyAssignment import *
 from rbFontG.tools import parseUnicodeControll as puc
 import jsonConverter.converter as convert
 from jsonConverter.smartSetSearchModule import *
 from parseSyllable.configSyllable import *
 from mojo.UI import *
+from parseSyllable.configSyllable import *
 
 matrixMode = 0
 topologyMode = 1
 
 
-def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, file,checkSetData):
+def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, file,checkSetData,mainWindow):
 	"""
 	2020/03/35 
 	modify by Kim heesup
@@ -36,6 +37,8 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 			File to investigate
 		checkSetData :: List
 			[setNumber, syllableNumber] (using to File naming)
+		mainWindow :: tool Menu object
+			to get font File in searchGroup function
 	Return : Dictionary
 		key is glyph and value is list that same contours index
 
@@ -49,24 +52,29 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 
 	contour = standardGlyph.contours[contourIndex]
 
-	standardMatrix = rbFontG.tools.tMatrix.PhaseTool.Matrix(contour,width)
-	compareController = rbFontG.tools.tMatrix.groupTestController.groupTestController(standardMatrix,0)
+	standardMatrix = Matrix(contour,width)
+	#k에 대한 마진값 적용하는 부분 넣어 주워야 함
+	compareController = groupTestController(standardMatrix,0)
 	smartSetGlyphs = []
 	smartSet = SmartSet()
 
 	if checkSetData[1] == 0:
-		smartSet.name = str(checkSetData[0]) + "_first_Matrix"
+		smartSet.name = str(checkSetData[0]) + "_first_Matrix_" + "(" + str(standardGlyph.unicode) + "-" + str(contourIndex) + ")"
 	elif checkSetData[1] == 1:
-		smartSet.name = str(checkSetData[0])  + "_middle_Matrix"
+		smartSet.name = str(checkSetData[0])  + "_middle_Matrix_" +"(" + str(standardGlyph.unicode) + "-" + str(contourIndex) + ")"
 	elif checkSetData[1] == 2:
-		smartSet.name = str(checkSetData[0]) + "_final_Matrix"
+		smartSet.name = str(checkSetData[0]) + "_final_Matrix_"+"(" + str(standardGlyph.unicode) + "-" + str(contourIndex) + ")"
 
 	smartGroupDict = {}
 	smartContourList = [] 
 
 	for compareGlyph in file:
 		smartCheck = 0
+		#print(checkSetData[1])
+		#print(getConfigure(compareGlyph))
+		searchContours = getConfigure(compareGlyph)[str(compareGlyph.unicode)][checkSetData[1]]
 		for i in range(0,len(compareGlyph.contours)):
+			if i in searchContours:	
 				result = compareController.conCheckGroup(compareGlyph.contours[i])
 				if result is not None:
 					smartContourList.append(i)
@@ -81,10 +89,11 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 			#setGroup(compareGlyph,checkSetData[1],0,jsonFileName,checkSetData[0])
 
 	smartSet.glyphNames = smartSetGlyphs
-	addSmartSet(smartSet)	
+	addSmartSet(smartSet)
+	updateAllSmartSets()	
 
 
-def getMatchGroupByTopology(standardGlyph,standardContour, k, file,checkSetData):
+def getMatchGroupByTopology(standardGlyph,contourIndex, k, file,checkSetData,mainWindow):
 	"""
 	2020/03/25
 	modify by Kim heesup
@@ -94,14 +103,16 @@ def getMatchGroupByTopology(standardGlyph,standardContour, k, file,checkSetData)
 	Args :
 		standardGlyph : RGlyph 
 			glyph include standard contour
-		standardContour :  RContour
-			standard contour that is included on standardGlyph
+		contourIndex ::  int
+			standard contour index that is included on standardGlyph
 		k : int
 			value of divide the x-axis and y-axis to consider None point
 		file  : OpenFont
 			File to investigate
 		checkSetData :: List
 			[setNumber, syllableNumber] (using to File naming)
+		mainWindow :: tool Menu object
+			to get font File in searchGroup function
 	Return : Dictionary
 		key is glyph and value is list that same contours index
 
@@ -112,22 +123,24 @@ def getMatchGroupByTopology(standardGlyph,standardContour, k, file,checkSetData)
 	smartSetGlyphs = []
 	smartSet = SmartSet()
 	if checkSetData[1] == 0:
-		smartSet.name = str(checkSetData[0]) + "_first_Topology"
+		smartSet.name = str(checkSetData[0]) + "_first_Topology_" +"(" + str(standardGlyph.unicode) + "-" + str(contourIndex) + ")"
 	elif checkSetData[1] == 1:
-		smartSet.name = str(checkSetData[0])  + "_middle_Topology"
+		smartSet.name = str(checkSetData[0])  + "_middle_Topology_"+"(" + str(standardGlyph.unicode) + "-" + str(contourIndex) + ")"
 	elif checkSetData[1] == 2:
-		smartSet.name = str(checkSetData[0]) + "_final_Topology"
+		smartSet.name = str(checkSetData[0]) + "_final_Topology_"+"(" + str(standardGlyph.unicode) + "-" + str(contourIndex) + ")"
 	smartGroupDict = {}
 	smartContourList = [] 
 
 
 	for compareGlyph in file:
 		smartCheck = 0
+		searchContours = getConfigure(compareGlyph)[str(compareGlyph.unicode)][checkSetData[1]]
 		for i in range(0,len(compareGlyph.contours)):
-			resul = tj.topologyJudgementController(standardContour,compareGlyph.contours[i],k).topologyJudgement()
-			if(resul == True):
-				smartCheck = 1
-				smartContourList.append(i)
+			if i in searchContours:
+				resul = topologyJudgementController(standardGlyph.contours[contourIndex],compareGlyph.contours[i],k).topologyJudgement()
+				if(resul == True):
+					smartCheck = 1
+					smartContourList.append(i)
 
 		if(smartCheck == 1):
 			glyphUniName = "uni"+hex(compareGlyph.unicode)[2:].upper()
@@ -137,6 +150,7 @@ def getMatchGroupByTopology(standardGlyph,standardContour, k, file,checkSetData)
 
 	smartSet.glyphNames = smartSetGlyphs
 	addSmartSet(smartSet)
+	updateAllSmartSets()
 			
 
 def handleSearchGlyphList(standardGlyph, contourIndex, file, currentWindow, mainWindow):
@@ -158,7 +172,7 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, currentWindow, main
 
 	"""
 	#currentWindow.group = search.getGroupDictFile(standardGlyph, contourIndex, currentWindow.font, mainWindow.mode, currentWindow.widthValue, currentWindow.marginValue)
-	checkSetData = searchGroup(standardGlyph,contourIndex,mainWindow.mode)
+	checkSetData = searchGroup(standardGlyph,contourIndex,mainWindow.mode,mainWindow)
 	if checkSetData[2] == 0:
 		currentWindow.groupDict = findContoursGroup(checkSetData,mainWindow)
 		print("이미 그룹화가 진행된 컨투어입니다.")
@@ -166,12 +180,14 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, currentWindow, main
 		if mainWindow.mode is matrixMode:
 			margin = int(currentWindow.w.margin.slider.get())
 			width = int(currentWindow.w.matrixWidth.slider.get())
-			getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, width, file, checkSetData)
+			#일단은 margin0, width 10으로 고정
+			getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, width, file, checkSetData,mainWindow)
 			currentWindow.groupDict = findContoursGroup(checkSetData,mainWindow)
 
 		elif mainWindow.mode is topologyMode:
 			k = int(currentWindow.w.topologyK.slider.get())
-			getMatchGroupByTopology(standardGlyph, standardGlyph.contours[contourIndex], k, currentWindow.font,checkSetData)
+			#k값은 200으로 고정
+			getMatchGroupByTopology(standardGlyph,contourIndex, k, currentWindow.font,checkSetData,mainWindow)
 			currentWindow.groupDict = findContoursGroup(checkSetData,mainWindow)
 
 	print(currentWindow.groupDict)
@@ -188,6 +204,9 @@ def findContoursGroup(checkSetData,mainWindow):
 
 		mainWindow :: object
 			editWindow object
+
+		mode :: int
+		0 -> matrix , 1- > topology
 	Return :: Dictionary
 		key is glyph and value is list that same contours index
 	"""
@@ -216,8 +235,10 @@ def findContoursGroup(checkSetData,mainWindow):
 
 	for sset in ssets:
 		nameList = str(sset.name).split('_')
+		standardNameList = nameList[3].split('-')
+		standardGlyphUnicode = int(standardNameList[0][1:])
+		standardIdx = int(standardNameList[1][0:len(standardNameList[1])-1])
 		if (nameList[0] == str(checkSetData[0])) and (nameList[1] == positionName) and (nameList[2] == modeName):
-			print('a')
 			groupSet = sset
 			break
 
@@ -226,7 +247,21 @@ def findContoursGroup(checkSetData,mainWindow):
 
 
 	for g in glyphList:
-		res[g] = getConfigure(g)[str(g.unicode)][checkSetData[1]]
+		searchContours = []
+		for i,comc in enumerate(g.contours):
+			if mainWindow.mode == 0:
+				standardGlyph = mainWindow.file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+				standardMatrix=Matrix(standardGlyph.contours[standardIdx],10)
+				compareController = groupTestController(standardMatrix,0)
+				result = compareController.conCheckGroup(comc)
+				if result is not None:
+					searchContours.append(i)
+			elif mainWindow.mode == 1:
+				standardGlyph = mainWindow.file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+				result = topologyJudgementController(standardGlyph.contours[standardIdx],comc,200).topologyJudgement()
+				if result is not False:
+					searchContours.append(i)
+		res[g] = searchContours
 
 	return res
 
