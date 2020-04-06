@@ -1,4 +1,4 @@
-class topologicalRpoint:
+4class topologicalRpoint:
     """
     create by Kim heesup
     """
@@ -69,12 +69,12 @@ class checkCon:
         slist = []
         
         for i in range(0,len(self.pointList)):
-            if(pointList[i].type != "offcurve"):
+            if(self.pointList[i].type != "offcurve"):
                 if(minY > self.pointList[i].y):
                     minY = self.pointList[i].y
                 
         for i in range(0,len(self.pointList)):
-            if(pointList[i].type != "offcurve"):
+            if(self.pointList[i].type != "offcurve"):
                 if(minY == self.pointList[i].y):
                     candidatePoints.append(self.pointList[i])
                 

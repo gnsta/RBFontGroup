@@ -18,7 +18,7 @@ class matrixRelocatePoint:
 		self.ry = ry
 
 class groupPointMatchController:
-	def __init__(self,matrix,point,con):
+	def __init__(self,matrix,point,con,pointControllValue):
 		"""
 		controll match modify contour point and group contours point
 
@@ -34,26 +34,15 @@ class groupPointMatchController:
 		self.con = con
 
 		self.standardCon = matrix.getCon()
+		self.pointControllValue = pointControllValue
 
 	def matchPoint(self):
 		"""
 		match modify contour point and group contours point
 
 		return:
-			matched point
-
-		example(if divided 3 by 3)
-		-------------------------------------------------
-		|		|		|2	3	|
-		|		|	       4|1		|
-		-------------------------------------------------
-		|		|		|		|
-		|		|		|		|
-		-------------------------------------------------
-		|		|		|		|
-		|		|		|		|
-		-------------------------------------------------
-
+			matched point or None
+			if minimum distance over certain value, return None
 		if selected point is point 1
 
 		point 2, point 3 and point 4 is group contour's points
@@ -108,35 +97,44 @@ class groupPointMatchController:
 				indx = i
 				minDist = dist
 
+		if minDist > self.pointControllValue:
+			return None
+
 		return relocatepl[indx].point
 
 	def mgiveSelected(self):
 		insertPoint = self.matchPoint()
-		insertPoint.selected = True
+		if insertPoint is not None:
+			insertPoint.selected = True
 
 	def mgiveAttrPenPair(self):
 		insertPoint = self.matchPoint()
-		temp = at.get_attr(self.point,'penPair')
-		at.add_attr(insertPoint,'penPair',temp)
+		if insertPoint is not None:
+			temp = at.get_attr(self.point,'penPair')
+			at.add_attr(insertPoint,'penPair',temp)
 
 	def mgiveDependX(self):
 		insertPoint = self.matchPoint()
-		temp = at.get_attr(self.point,'dependX')
-		at.add_attr(insertPoint,'dependX',temp)
+		if insertPoint is not None:
+			temp = at.get_attr(self.point,'dependX')
+			at.add_attr(insertPoint,'dependX',temp)
 
 	def mgiveDependY(self):
 		insertPoint = self.matchPoint()
-		temp = at.get_attr(self.point,'dependY')
-		at.add_attr(insertPoint,'dependY',temp)
+		if insertPoint is not None:
+			temp = at.get_attr(self.point,'dependY')
+			at.add_attr(insertPoint,'dependY',temp)
 
 	def mgiveInnerFill(self):
 		insertPoint = self.matchPoint()
-		temp = at.get_attr(self.point,'innerFill')
-		at.add_attr(insertPoint,'innerFill',temp)
+		if insertPoint is not None:
+			temp = at.get_attr(self.point,'innerFill')
+			at.add_attr(insertPoint,'innerFill',temp)
 
 	def mdeleteAttr(self,attribute):
 		insertPoint = self.matchPoint()
-		at.del_attr(insertPoint,attribute)		
+		if insertPoint is not None:
+			at.del_attr(insertPoint,attribute)		
 
 
 
