@@ -1,9 +1,10 @@
-from vanilla import FloatingWindow, RadioGroup, Button, HUDFloatingWindow, ImageButton
+from vanilla import FloatingWindow, RadioGroup, Button, HUDFloatingWindow, ImageButton, TextBox, EditText
 from rbFontG.tools.tTopology import topologyButtonEvent as tbt
 from rbFontG.tools.tMatrix import matrixButtonEvent as mbt
 from rbFontG.tools.tMatrix.PhaseTool import *
 from mojo.UI import *
 from jsonConverter.smartSetSearchModule import *
+from rbWindow.Controller.toolMenuController import *
 
 
 matrixMode = 0
@@ -32,19 +33,40 @@ class attributeWindow:
 		self.mainWindow = mainWindow
 		self.mode = mode
 		#팝압창이 나오고 컴투어 인덱스 번호를 받음
-		contourNumber =None
-		try:
-			newGlyph = mainWindow.file[CurrentGlyphWindow().getGlyph().name]
-			checkSetData = searchGroup(newGLyph,contourNumber,mainWindow.mode,mainWindow)
-			if checkSetData[2] == 0:
-				raise NotSetExist
-
-			mainWindow.standardContour = newGlyph.contours[contourNumber]
-			mainWindow.groupDict = findContoursGroup(checkSetData,mainWindow)
-		except Exception as e:
-			print("예외가 발생했습니다",e)
+		self.w = HUDFloatingWindow((300,200), "Index Window")
+		self.w.textBox = TextBox((10,10,100,22),"Contour Index")
+		self.w.editText = EditText((140,10,50,22))
+		self.w.btn = Button((10,50,80,22),"Submit", callback=self.submitCallback)
+		self.w.open()
+		self.contourNumber =None
 
 		#예외가 발생하면 ui가 팝업되지 않도록
+		
+	def submitCallback(self,sender):
+
+		print("start")
+		print(self.w.editText.get())
+		print(type(self.w.editText.get()))
+		print("end")
+		self.contourNumber = int(self.w.editText.get())
+
+		try:
+			newGlyph = self.mainWindow.file[CurrentGlyphWindow().getGlyph().name]
+			print(newGlyph)
+			checkSetData = searchGroup(newGlyph,self.contourNumber,self.mainWindow.mode,self.mainWindow)
+			print(checkSetData)
+			if checkSetData[2] == 1:
+				raise NotSetExist
+
+			self.mainWindow.standardContour = newGlyph.contours[self.contourNumber]
+			self.mainWindow.groupDict = findContoursGroup(checkSetData,self.mainWindow)
+
+		except Exception as e:
+			Message("아직 그룹화가 진행되어지지 않았습니다.")
+			print("예외가 발생했습니다",e)
+			return
+
+		self.createUI()
 		
 
 
