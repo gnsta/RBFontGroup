@@ -1,4 +1,4 @@
-4class topologicalRpoint:
+class topologicalRpoint:
     """
     create by Kim heesup
     """
