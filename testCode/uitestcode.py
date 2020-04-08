@@ -11,7 +11,7 @@ if __name__ == '__main__':
     BroadNibBackgroundDefaultKey = "com.asaumierdemers.BroadNibBackground"
     
     g = CurrentGlyph()
-    testPath = "/Users/sslab/Desktop/groupTest2350.ufo"
+    testPath = "/Users/font/Desktop/groupTest.ufo"
     testFile = OpenFont(testPath,showInterface = False)
     
     
