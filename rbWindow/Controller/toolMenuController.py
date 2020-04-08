@@ -172,7 +172,7 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, currentWindow, main
 
 	"""
 	#currentWindow.group = search.getGroupDictFile(standardGlyph, contourIndex, currentWindow.font, mainWindow.mode, currentWindow.widthValue, currentWindow.marginValue)
-	checkSetData = searchGroup(standardGlyph,contourIndex,mainWindow.mode,mainWindow)
+	checkSetData = searchGroup(standardGlyph,contourIndex,mainWindow.mode,mainWindow,True)
 	if checkSetData[2] == 0:
 		currentWindow.groupDict = findContoursGroup(checkSetData,mainWindow)
 		print("이미 그룹화가 진행된 컨투어입니다.")
