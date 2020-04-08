@@ -14,7 +14,7 @@ create By Kim heesup
 
 baseDir = "/Users/font/Desktop/GroupDict/"
 
-def searchGroup(glyph,contourNumber,mode,mainWindow):
+def searchGroup(glyph,contourNumber,mode,mainWindow,message = False):
 	"""
 	check that contour group is created
 	if exist return file number else return None
@@ -104,7 +104,7 @@ def searchGroup(glyph,contourNumber,mode,mainWindow):
 					break
 			elif mode == 1:
 				standardGlyph = mainWindow.file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
-				result = topologyJudgementController(standardGlyph.contours[standardIdx],glyph[contourNumber],200).topologyJudgement()
+				result = topologyJudgementController(standardGlyph.contours[standardIdx],glyph[contourNumber],500).topologyJudgement()
 				if result is not False: 
 					searchSmartSet = sSet
 					check = 1
@@ -113,7 +113,7 @@ def searchGroup(glyph,contourNumber,mode,mainWindow):
 		if check == 1:
 			break
 
-	print(searchSmartSet)
+	print("searchSmartSet",searchSmartSet)
 
 	#glyphUniName =  "uni" + hex(glyph.unicode)[2:].upper()
 
@@ -121,7 +121,8 @@ def searchGroup(glyph,contourNumber,mode,mainWindow):
 
 	if searchSmartSet is not None:
 		#팝업창으로 띄워주면 좋을 부분
-		print(Message("이미 그룹 연산이 진행이 되어 있으므로 그룹화 작업을 생략합니다."))
+		if message == True:
+			print(Message("이미 그룹 연산이 진행이 되어 있으므로 그룹화 작업을 생략합니다."))
 		return [checkSetNameList[0],positionNumber,0]
 	else:
 		if positionNumber == 0:
