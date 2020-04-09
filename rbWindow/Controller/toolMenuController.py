@@ -90,7 +90,7 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 
 
 
-def getMatchGroupByTopology(standardGlyph,standardContour, k, file,checkSetData,jsonFileName):
+def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,jsonFileName):
 	"""
 	2020/03/25
 	modify by Kim heesup
@@ -180,7 +180,7 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, currentWindow, main
 
 		elif mainWindow.mode is topologyMode:
 			#k = int(currentWindow.w.topologyK.slider.get())
-			getMatchGroupByTopology(standardGlyph, standardGlyph.contours[contourIndex], k, currentWindow.font,checkSetData,mainWindow.jsonFileName)
+			getMatchGroupByTopology(standardGlyph, contourIndex, k, currentWindow.font,checkSetData,mainWindow.jsonFileName)
 			currentWindow.groupDict = findContoursGroup(checkSetData, mainWindow)
 		
 		#if currentWindow.group is None:

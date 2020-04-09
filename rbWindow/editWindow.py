@@ -212,7 +212,6 @@ class EditGroupMenu(object):
 			print(Message("먼저 속성을 부여할 그룹을 찾아야 합니다."))
 			return
 		self.w4 = attributeWindow(self,self.mode)
-		self.w4.createUI()
 
 
 	def popSearchWindow(self, sender):

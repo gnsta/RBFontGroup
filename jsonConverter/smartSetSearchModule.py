@@ -80,6 +80,7 @@ def searchGroup(glyph,contourNumber,mode,mainWindow,message = False):
 			continue
 		#검사를 진행을 해야함(기준 컨투어는 알고 있고 비교 글리프에 있는 컨투어는 순회를 하면서 조사하는 방식)
 		#matrix 체크에서는 같은 그룹이 아니면 None이고 topology 에서는 같은 그룹이 아니면 flase반환
+		print("checkSetNameList : ",checkSetNameList)
 		standardNameList = checkSetNameList[3].split('-')
 		standardGlyphUnicode = int(standardNameList[0][1:])
 		standardIdx = int(standardNameList[1][0:len(standardNameList)-1]) 
