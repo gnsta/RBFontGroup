@@ -24,8 +24,8 @@ class settingWindow:
 		self.w.markOptionTextBox = TextBox((x,y,w,h), "Marking Options")
 		y += h + space
 
-		self.w.checkGlyphListCheckBox = CheckBox((x,y,w,h), "Apply List Label", callback=self.checkGlyphListCallback)
-		y += h + space
+"""		self.w.checkGlyphListCheckBox = CheckBox((x,y,w,h), "Apply List Label", callback=self.checkGlyphListCallback)
+		y += h + space"""
 
 		h += 30
 		self.w.colorContourCheckBox= CheckBox((x,y,w,h), "Apply Contour Color", callback=self.colorContourCallback)
@@ -36,9 +36,10 @@ class settingWindow:
 		self.w.open()
 
 	def checkGlyphListCallback(self, sender):
-		print("before : ", self.mainWindow.selectedGlyphs)
+		pass
+"""		print("before : ", self.mainWindow.selectedGlyphs)
 		sWC.helpCheckGlyphList(self.w.checkGlyphListCheckBox, self.mainWindow)
-		print("after : ", self.mainWindow.selectedGlyphs)
+		print("after : ", self.mainWindow.selectedGlyphs)"""
 	def colorContourCallback(self, sender):
 
 		self.mainWindow.state = self.w.colorContourCheckBox.get()

@@ -1,4 +1,3 @@
-0
 from rbFontG.tools.tMatrix.PhaseTool import *
 from rbFontG.tools.tMatrix.groupPointMatch import *
 from jsonConverter.converter import *
@@ -7,10 +6,10 @@ from jsonConverter.converter import *
 2020/02/24
 Created by heesup Kim
 """
-def mselectAttribute(groupDict,standardMatrix,pointControllValue):
+def mselectAttribute(groupDict,standardMatrix):
     controllerList = []
     contoursList = []
-    #print("matrixButtonEvent standM:",standardMatrix)
+    print("matrixButtonEvent standM:",standardMatrix)
 
     for k in groupDict.keys():
         for i in range(0,len(groupDict[k])):
@@ -20,12 +19,12 @@ def mselectAttribute(groupDict,standardMatrix,pointControllValue):
         if(standardMatrix.con != contoursList[i]):
             for sp in standardMatrix.con.points:
                 if(sp.selected == True):
-                    controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i],pointControllValue))
+                    controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
         controllerList[i].mgiveSelected()
 
-def mpenPairAttribute(groupDict,standardMatrix,pointControllValue):
+def mpenPairAttribute(groupDict,standardMatrix):
     controllerList = []
     contoursList = []
 
@@ -37,12 +36,12 @@ def mpenPairAttribute(groupDict,standardMatrix,pointControllValue):
         if(standardMatrix.con != contoursList[i]):
             for sp in standardMatrix.con.points:
                 if(sp.selected == True):
-                    controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i],pointControllValue))
+                    controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
         controllerList[i].mgiveAttrPenPair()
 
-def mdependXAttribute(groupDict,standardMatrix,pointControllValue):
+def mdependXAttribute(groupDict,standardMatrix):
     controllerList = []
     contoursList = []
 
@@ -54,12 +53,12 @@ def mdependXAttribute(groupDict,standardMatrix,pointControllValue):
         if(standardMatrix.con != contoursList[i]):
             for sp in standardMatrix.con.points:
                 if(sp.selected == True):
-                    controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i],pointControllValue))
+                    controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
         controllerList[i].mgiveDependX()
 
-def mdependYAttribute(groupDict,standardMatrix,pointControllValue):
+def mdependYAttribute(groupDict,standardMatrix):
     controllerList = []
     contoursList = []
 
@@ -71,12 +70,12 @@ def mdependYAttribute(groupDict,standardMatrix,pointControllValue):
         if(standardMatrix.con != contoursList[i]):
             for sp in standardMatrix.con.points:
                 if(sp.selected == True):
-                    controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i],pointControllValue))
+                    controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
         controllerList[i].mgiveDependY()
 
-def minnerFillAttribute(groupDict,standardMatrix,pointControllValue):
+def minnerFillAttribute(groupDict,standardMatrix):
     controllerList = []
     contoursList = []
 
@@ -88,12 +87,12 @@ def minnerFillAttribute(groupDict,standardMatrix,pointControllValue):
         if(standardMatrix.con != contoursList[i]):
             for sp in standardMatrix.con.points:
                 if(sp.selected == True):
-                    controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i],pointControllValue))
+                    controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
         controllerList[i].mgiveInnerFill()
 
-def mdeleteAttribute(groupDict,standardMatrix,attribute,pointControllValue):
+def mdeleteAttribute(groupDict,standardMatrix,attribute):
     controllerList = []
     contoursList = []
 
@@ -104,7 +103,7 @@ def mdeleteAttribute(groupDict,standardMatrix,attribute,pointControllValue):
     for i in range(0,len(contoursList)):
         for sp in standardMatrix.con.points:
             if(sp.selected == True):
-                controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i],pointControllValue))
+                controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
         controllerList[i].mdeleteAttr(attribute)

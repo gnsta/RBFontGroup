@@ -4,51 +4,18 @@ from rbFontG.tools.tMatrix import matrixButtonEvent as mbt
 from rbFontG.tools.tMatrix.PhaseTool import *
 import pathManager.pathSetting as extPath
 import os
-from mojo.UI import *
-from jsonConverter.smartSetSearchModule import *
-
 
 matrixMode = 0
 topologyMode = 1
 
 
-class NotSetExist(Exception):
-	"""
-	exception that Currnet glyph is not included any set
-	"""
-	def __init__(self):
-		super().__init__('어느 그룹에도 속해있지 않은 글리프입니다.')
-
 
 class attributeWindow:
-	"""
-	2020/04/06
-	modify by Kim heesup
-	change standardContour to user What the user is currently working on
-
-	팝업창 하나 필요
-	지금 띄워져 있는 글리프에 대하여 몇번 컨투어를 조작 할 것인지...
-	"""
 
 	def __init__(self, mainWindow, mode):
 		self.mainWindow = mainWindow
 		self.mode = mode
-		#팝압창이 나오고 컴투어 인덱스 번호를 받음
-		contourNumber =None
-		try:
-			newGlyph = mainWindow.file[CurrentGlyphWindow().getGlyph().name]
-			checkSetData = searchGroup(newGLyph,contourNumber,mainWindow.mode,mainWindow)
-			if checkSetData[2] == 0:
-				raise NotSetExist
-
-			mainWindow.standardContour = newGlyph.contours[contourNumber]
-			mainWindow.groupDict = findContoursGroup(checkSetData,mainWindow)
-		except Exception as e:
-			print("예외가 발생했습니다",e)
-
-		#예외가 발생하면 ui가 팝업되지 않도록
-		
-
+		self.matrix = Matrix(self.mainWindow.standardContour,self.mainWindow.widthValue)
 
 	def createUI(self):
 		x = 10; y = 10; w = 100; h = 30; space = 5; size = (200,250); pos = (1200,300); minSize = (50,250);
@@ -107,22 +74,22 @@ class attributeWindow:
 		콜백 메소드에 연결할 메소드(Matrix)
 	"""
 	def mhandleInnerFill(self, sender):
-		mbt.minnerFillAttribute(self.mainWindow.groupDict, Matrix(self.mainWindow.standardContour,self.mainWindow.widthValue),30)
+		mbt.minnerFillAttribute(self.mainWindow.groupDict, self.matrix)
 
 	def mhandlePenPair(self, sender):
-		mbt.mpenPairAttribute(self.mainWindow.groupDict, Matrix(self.mainWindow.standardContour,self.mainWindow.widthValue),30)
+		mbt.mpenPairAttribute(self.mainWindow.groupDict, self.matrix)
 
 	def mhandleDependX(self, sender):
-		mbt.mdependXAttribute(self.mainWindow.groupDict, Matrix(self.mainWindow.standardContour,self.mainWindow.widthValue),30)
+		mbt.mdependXAttribute(self.mainWindow.groupDict, self.matrix)
 
 	def mhandleDependY(self, sender):
-		mbt.mdependYAttribute(self.mainWindow.groupDict, Matrix(self.mainWindow.standardContour,self.mainWindow.widthValue),30)
+		mbt.mdependYAttribute(self.mainWindow.groupDict, self.matrix)
 
 	def mhandleDelete(self, sender):
 		pass
 
 	def mhandleSelect(self, sender):
-		mbt.mselectAttribute(self.mainWindow.groupDict, Matrix(self.mainWindow.standardContour,self.mainWindow.widthValue),30)
+		mbt.mselectAttribute(self.mainWindow.groupDict, self.matrix)
 
 
 
@@ -143,10 +110,8 @@ class attributeWindow:
 	def thandleDependY(self, sender):
 		tbt.innerFillAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,500)
 
-
 	def thandleDelete(self, sender):
 		pass
 
 	def thandleSelect(self, sender):
-		tbt.selectAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,500)
-
+		tbt.innerFillAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,500)

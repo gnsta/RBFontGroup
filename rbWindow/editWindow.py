@@ -1,8 +1,8 @@
 from defconAppKit.windows.baseWindow import BaseWindowController
 from vanilla import EditText, FloatingWindow, CheckBox, Button, HelpButton, RadioGroup, HorizontalLine
-from mojo.UI import MultiLineView, SelectGlyph, Message
+from mojo.UI import MultiLineView, SelectGlyph, Message, setScriptingMenuNamingShortKeyForPath, createModifier
 from mojo.events import addObserver,removeObserver
-from mojo.drawingTools import fill, oval
+from mojo.drawingTools import fill, oval, rect
 from mojo.extensions import getExtensionDefault, setExtensionDefault
 from rbWindow.contourPen import BroadNibPen
 from rbWindow.sliderGroup import SliderGroup
@@ -13,6 +13,8 @@ from rbWindow.previewWindow import previewWindow
 from rbWindow.settingWindow import settingWindow
 from mojo.UI import CurrentFontWindow
 from AppKit import *
+from pynput.keyboard import Listener, Key, KeyCode
+
 
 
 def getMatchGroupDic(inputText, groupDict):
@@ -89,8 +91,7 @@ def getMatchGroupDicByGlyph(inputGlyph, groupDict):
 	
 	return None
 
-
-class EditGroupMenu:
+class EditGroupMenu(object):
 
 	def __init__(self, font, groupDict, file,jsonFileName):
 		
@@ -104,14 +105,51 @@ class EditGroupMenu:
 		self.layerName = self.font.layerOrder[0]
 		self.currentPen = None
 		self.file = file
-		self.widthValue = None
 		self.window = None		# 현재 띄워져 있는 ufo 윈도우
 		self.mode = None  		# 연산 방법(matrix, topology)
 		self.w3 = None
 		self.jsonFileName = jsonFileName
 		self.createUI()
 		
+		self.keyDict = None
+		addObserver(self, "shortcutFunction", "keyDown")
 		
+	
+	def shortcutFunction(self, sender):
+
+		print("called")
+		character = sender["event"].characters()
+		print(type(character))
+		print(character)
+		print(self.keyDict)
+		
+		if character == 'ㄴ':
+			character = 's'
+		elif character == 'ㅁ':
+			character = 'a'
+
+		if self.keyDict is None:
+			self.keyDict = dict()
+
+		try:
+			self.keyDict[character] = True
+		except KeyError:
+			self.keyDict.update({character:True})
+		try:
+			if self.keyDict[" "] is True:
+				if 'a' in self.keyDict.keys():
+					self.popAttributeWindow(sender)
+					self.keyDict = None
+				elif 's' in self.keyDict.keys():
+					self.popSearchWindow(sender)
+					self.keyDict = None
+			else:
+				self.keyDict = None
+
+		except KeyError:
+			return
+
+
 	"""
 		UI 컴포넌트 부착
 	"""
@@ -125,7 +163,7 @@ class EditGroupMenu:
 		newItem2 = dict(itemIdentifier="Rewind", label="Rewind", imageNamed=NSImageNameRefreshFreestandingTemplate, callback=None)
 		newItem3 = dict(itemIdentifier="Save", label="Save", imageNamed=NSImageNameComputer, callback=None)
 		self.newItem4 = dict(itemIdentifier="Exit", label="Exit", imageNamed=NSImageNameStopProgressFreestandingTemplate, callback=self.windowCloseCallback)
-		newItem5 = dict(itemIdentifier="Settings", label="Settings", imageNamed=NSImageNameAdvanced, callback=None) 
+		newItem5 = dict(itemIdentifier="Settings", label="Settings", imageNamed=NSImageNameAdvanced, callback=self.popSettingWindow) 
 		newItem6 = dict(itemIdentifier="Attribute", label="Attribute", imageNamed=NSImageNameFontPanel, callback=self.popAttributeWindow)
 		#newItem7 = dict(itemIdentifier="Other", label="Other", imageNamed=NSImageNameIconViewTemplate, callback=self.popSettingWindow)       
 		# add the new item to the existing toolbar
@@ -155,7 +193,7 @@ class EditGroupMenu:
 		addObserver(self, "drawBroadNibBackground", "drawBackground")
 
 
-	def popSettingWindow(self,sender):
+	def popSettingWindow(self, sender):
 		if self.w3 is None:
 			print(Message("탐색을 먼저 진행해야 합니다."))
 			return
@@ -181,7 +219,7 @@ class EditGroupMenu:
 
 		# Window for Matrix & Topology Process
 		self.w3 = toolsWindow(self)
-		self.w3.createUI(sender)
+		self.w3.createUI()
 
 	def colorContourCallback(self, sender):
 	   
@@ -215,7 +253,7 @@ class EditGroupMenu:
 
 		fill(0.7,0.3,1,0.6)			#r,g,b setting
 		if info["glyph"].layerName == self.layerName or not self.currentPen:
-			self.currentPen = BroadNibPen(None, 60, 80, 50, 30, oval)
+			self.currentPen = BroadNibPen(None, 20, 80, 50, 30, rect)
 		print(self.state)
 		for contour in contourList:
 			if contour is not None and self.state == 1:

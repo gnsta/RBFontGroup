@@ -5,13 +5,14 @@ import rbFontG.tools.tMatrix.groupTestController
 import rbWindow.editWindow as ew
 import pickle
 from jsonConverter.makeJsonFile import *
-#Test Code
+
+
 if __name__ == '__main__':
     
     BroadNibBackgroundDefaultKey = "com.asaumierdemers.BroadNibBackground"
     
     g = CurrentGlyph()
-    testPath = "/Users/sslab/Desktop/groupTest2350.ufo"
+    testPath = "/Users/sslab/Desktop/groupTest.ufo"
     testFile = OpenFont(testPath,showInterface = False)
     
     

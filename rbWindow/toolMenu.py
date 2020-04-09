@@ -18,7 +18,7 @@ import rbWindow.Controller.toolMenuController as tMC
 
 def text2Glyph(inputText, font):
 	"""
-	2020/03/23 
+	2020/03/23
 	created by H.W. Cho
 	return matching RGlyph object to inputText(str)
 
@@ -55,7 +55,7 @@ class toolsWindow:
 		self.selectedGlyphs = []
 
 
-	def createUI(self, sender):
+	def createUI(self):
 		x = 10; y = 10; w = 150; h = 22; space = 10; size = (180,300); pos = (800,300);
 
 		self.w = FloatingWindow((pos[0],pos[1], size[0],size[1]), "ToolsWindow")
