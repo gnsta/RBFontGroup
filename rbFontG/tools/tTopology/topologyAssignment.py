@@ -69,20 +69,24 @@ class checkCon:
         slist = []
         
         for i in range(0,len(self.pointList)):
-            if(minY > self.pointList[i].y):
-                minY = self.pointList[i].y
+            if(self.pointList[i].type != "offcurve"):
+                if(minX > self.pointList[i].x):
+                    minX = self.pointList[i].x
                 
         for i in range(0,len(self.pointList)):
-            if(minY == self.pointList[i].y):
-                candidatePoints.append(self.pointList[i])
+            if(self.pointList[i].type != "offcurve"):
+                if(minX == self.pointList[i].x):
+                    candidatePoints.append(self.pointList[i])
                 
         for i in range(0,len(candidatePoints)):
-            if(minX > candidatePoints[i].x):
-                minX = candidatePoints[i].x
+            if(candidatePoints[i].type != "offcurve"):
+                if(minY > candidatePoints[i].y):
+                    minY = candidatePoints[i].y
                 
         for i in range(0,len(candidatePoints)):
-            if(minX == candidatePoints[i].x):
-                startPoint = candidatePoints[i]
+            if(candidatePoints[i].type != "offcurve"):
+                if(minY == candidatePoints[i].y):
+                    startPoint = candidatePoints[i]
                 
                         
         num = -1

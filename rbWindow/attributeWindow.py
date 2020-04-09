@@ -1,9 +1,13 @@
-from vanilla import FloatingWindow, RadioGroup, Button, HUDFloatingWindow, ImageButton, TextBox
+
+import pathManager.pathSetting as extPath
+from vanilla import FloatingWindow, RadioGroup, Button, HUDFloatingWindow, ImageButton, TextBox, EditText
 from rbFontG.tools.tTopology import topologyButtonEvent as tbt
 from rbFontG.tools.tMatrix import matrixButtonEvent as mbt
 from rbFontG.tools.tMatrix.PhaseTool import *
-import pathManager.pathSetting as extPath
-import os
+from mojo.UI import *
+from jsonConverter.smartSetSearchModule import *
+from rbWindow.Controller.toolMenuController import *
+
 
 matrixMode = 0
 topologyMode = 1
@@ -15,7 +19,43 @@ class attributeWindow:
 	def __init__(self, mainWindow, mode):
 		self.mainWindow = mainWindow
 		self.mode = mode
-		self.matrix = Matrix(self.mainWindow.standardContour,self.mainWindow.widthValue)
+
+		#팝압창이 나오고 컴투어 인덱스 번호를 받음
+		self.w = HUDFloatingWindow((300,200), "Index Window")
+		self.w.textBox = TextBox((10,10,100,22),"Contour Index")
+		self.w.editText = EditText((140,10,50,22))
+		self.w.btn = Button((10,50,80,22),"Submit", callback=self.submitCallback)
+		self.w.open()
+		self.contourNumber =None
+
+		#예외가 발생하면 ui가 팝업되지 않도록
+		
+	def submitCallback(self,sender):
+
+		print("start")
+		print(self.w.editText.get())
+		print(type(self.w.editText.get()))
+		print("end")
+		self.contourNumber = int(self.w.editText.get())
+
+		try:
+			newGlyph = self.mainWindow.file[CurrentGlyphWindow().getGlyph().name]
+			print(newGlyph)
+			checkSetData = searchGroup(newGlyph,self.contourNumber,self.mainWindow.mode,self.mainWindow)
+			print(checkSetData)
+			if checkSetData[2] == 1:
+				raise NotSetExist
+
+			self.mainWindow.standardContour = newGlyph.contours[self.contourNumber]
+			self.mainWindow.groupDict = findContoursGroup(checkSetData,self.mainWindow)
+
+		except Exception as e:
+			Message("아직 그룹화가 진행되어지지 않았습니다.")
+			print("예외가 발생했습니다",e)
+			return
+
+		self.createUI()
+		
 
 	def createUI(self):
 		x = 10; y = 10; w = 100; h = 30; space = 5; size = (200,250); pos = (1200,300); minSize = (50,250);

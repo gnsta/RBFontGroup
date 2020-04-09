@@ -244,7 +244,7 @@ class EditGroupMenu(object):
 
 		# picks current contours which should be painted from current group
 		contourList = []
-
+		print(self.groupDict)
 		if self.groupDict is not None:
 			for glyph in self.groupDict.keys():
 				if targetGlyph == glyph:
