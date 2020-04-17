@@ -50,7 +50,8 @@ if __name__ == '__main__':
     
     try:
         tempFileName = testPath.split('/')[-1]
-        jsonFileName = './' + tempFileName.split('.')[0] + '.json'
+        jsonFileName = os.getcwd() + '/rbWindow/controller/' + tempFileName.split('.')[0] + '.json'
+        print(jsonFileName)
         if os.path.exists(jsonFileName):
             raise FileExist('해당 파일은 이미 존재합니다')
         for tg in testFile:
@@ -65,6 +66,4 @@ if __name__ == '__main__':
     except FileExist as e:
         print(e)
         
-        
-    
-    #menuWindow = ew.EditGroupMenu(CurrentFont(), groupDict, testFile,jsonFileName)
+    menuWindow = ew.EditGroupMenu(CurrentFont(), groupDict, testFile,jsonFileName)
