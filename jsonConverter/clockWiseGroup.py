@@ -129,7 +129,5 @@ def getClockWiseList(con):
     
     return res            
     
-
-
                 
             
