@@ -1,3 +1,4 @@
+import os
 import jsonConverter.searchModule as search
 from mojo.UI import MultiLineView, SelectGlyph
 import rbFontG.tools.tMatrix.PhaseTool
@@ -8,6 +9,7 @@ from rbFontG.tools import parseUnicodeControll as puc
 import jsonConverter.converter as convert
 from jsonConverter.smartSetSearchModule import *
 from mojo.UI import SmartSet, addSmartSet
+from jsonConverter.clockWiseGroup import *
 
 matrixMode = 0
 topologyMode = 1
@@ -45,14 +47,19 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 	set name format example
 		: ##(number)_##(syllable)_####(mode)
 	"""
-
 	contour = standardGlyph.contours[contourIndex]
 
-	standardMatrix = Matrix(contour,width)
+	standardMatrix = Matrix(contour,3)
 	#k에 대한 마진값 적용하는 부분 넣어 주워야 함
-	compareController = groupTestController(standardMatrix,0)
+	compareController = groupTestController(standardMatrix,25)
 	smartSetGlyphs = []
 	smartSet = SmartSet()
+
+	#추가부분
+	with open(jsonFileName, 'r') as jsonFile:
+	    resultDict = json.load(jsonFile)
+
+	standard = resultDict[standardGlyph.name][contourIndex]
 
 	if checkSetData[1] == 0:
 		smartSet.name = str(checkSetData[0]) + "_first_Matrix_" + "(" + str(standardGlyph.unicode) + "-" + str(contourIndex) + ")"
@@ -64,25 +71,38 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 	smartGroupDict = {}
 	smartContourList = [] 
 
-	for compareGlyph in file:
+	'''for compareGlyph in file:
 		smartCheck = 0
-		#print(checkSetData[1])
-		#print(getConfigure(compareGlyph))
 		searchContours = getConfigure(compareGlyph)[str(compareGlyph.unicode)][checkSetData[1]]
-		for i in range(0,len(compareGlyph.contours)):
+		for i in range(0,len(compareGlyph.contours)):			
 			if i in searchContours:	
 				result = compareController.conCheckGroup(compareGlyph.contours[i])
 				if result is not None:
 					smartContourList.append(i)
 					smartCheck = 1
-					#setGroup(compareGlyph,i,matrixMode,jsonFileName,checkSetData[0])
 
 		if(smartCheck == 1):
 			glyphUniName = "uni"+hex(compareGlyph.unicode)[2:].upper()
 			smartGroupDict[glyphUniName] = smartContourList
 			smartSetGlyphs.append("uni"+hex(compareGlyph.unicode)[2:].upper())
+			smartContourList = []'''
+
+	for key, value in resultDict.items():
+		smartCheck = 0
+		for i,compare in enumerate(value):
+			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
+				compareContour = file[key].contours[i]
+				result = compareController.conCheckGroup(compareContour)
+				if result is not None:
+					smartContourList.append(i)
+					smartCheck = 1
+
+		if smartCheck == 1:
+			glyphUniName = file[key].name
+			smartGroupDict[glyphUniName] = smartContourList
+			smartSetGlyphs.append(glyphUniName)
 			smartContourList = []
-			#setGroup(compareGlyph,checkSetData[1],0,jsonFileName,checkSetData[0])
+
 
 	smartSet.glyphNames = smartSetGlyphs
 	addSmartSet(smartSet)
@@ -114,6 +134,12 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 	add smart set that include smae glyph group				
 	"""
 
+	#추가부분
+	with open(jsonFileName, 'r') as jsonFile:
+		resultDict = json.load(jsonFile)
+
+	standard = resultDict[standardGlyph.name][contourIndex]
+
 	smartSetGlyphs = []
 	smartSet = SmartSet()
 	if checkSetData[1] == 0:
@@ -126,12 +152,12 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 	smartContourList = [] 
 
 
-	for compareGlyph in file:
+	'''for compareGlyph in file:
 		smartCheck = 0
 		searchContours = getConfigure(compareGlyph)[str(compareGlyph.unicode)][checkSetData[1]]
 		for i in range(0,len(compareGlyph.contours)):
 			if i in searchContours:
-				resul = topologyJudgementController(standardGlyph.contours[contourIndex],compareGlyph.contours[i],k).topologyJudgement()
+				resul = topologyJudgementController(standardGlyph.contours[contourIndex],compareGlyph.contours[i],500).topologyJudgement()
 				if(resul == True):
 					smartCheck = 1
 					smartContourList.append(i)
@@ -140,6 +166,22 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 			glyphUniName = "uni"+hex(compareGlyph.unicode)[2:].upper()
 			smartGroupDict[glyphUniName] = smartContourList
 			smartSetGlyphs.append("uni"+hex(compareGlyph.unicode)[2:].upper())
+			smartContourList = []'''
+
+	for key, value in resultDict.items():
+		smartCheck = 0
+		for i,compare in enumerate(value):
+			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
+				compareContour = file[key].contours[i]
+				result = topologyJudgementController(standardGlyph.contours[contourIndex],compareContour,500).topologyJudgement()
+				if result == True:
+					smartContourList.append(i)
+					smartCheck = 1
+
+		if smartCheck == 1:
+			glyphUniName = file[key].name
+			smartGroupDict[glyphUniName] = smartContourList
+			smartSetGlyphs.append(glyphUniName)
 			smartContourList = []
 
 	smartSet.glyphNames = smartSetGlyphs

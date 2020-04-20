@@ -5,14 +5,25 @@ import rbFontG.tools.tMatrix.groupTestController
 import rbWindow.editWindow as ew
 import pickle
 from jsonConverter.makeJsonFile import *
-#Test Code
+from jsonConverter.clockWiseGroup import *
+
+class FileExist(Exception):
+    def __init__(self,msg):
+        self.msg = msg
+        
+    def __str__(self):
+        return self.msg
+
+
 if __name__ == '__main__':
     
     BroadNibBackgroundDefaultKey = "com.asaumierdemers.BroadNibBackground"
     
     g = CurrentGlyph()
-    testPath = "/Users/sslab/Desktop/groupTest2350.ufo"
+    testPath = "/Users/font/Desktop/groupTest.ufo"
     testFile = OpenFont(testPath,showInterface = False)
+
+    
     
     
     
@@ -38,4 +49,4 @@ if __name__ == '__main__':
     tempFileName = testPath.split('/')[-1]
     jsonFileName = tempFileName.split('.')[0] + '.json'
     print(jsonFileName)
-    menuWindow = ew.EditGroupMenu(CurrentFont(), groupDict, testFile,jsonFileName)
+    menuWindow = ew.EditGroupMenu(CurrentFont(), testFile, jsonFileName)
