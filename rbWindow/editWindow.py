@@ -1,6 +1,7 @@
 from defconAppKit.windows.baseWindow import BaseWindowController
 from vanilla import EditText, FloatingWindow, CheckBox, Button, HelpButton, RadioGroup, HorizontalLine
-from mojo.UI import MultiLineView, SelectGlyph, Message, setScriptingMenuNamingShortKeyForPath, createModifier
+from mojo.UI import MultiLineView, SelectGlyph, Message, setScriptingMenuNamingShortKeyForPath, createModifier, HelpWindow
+import pathManager.pathSetting as extPath
 from mojo.events import addObserver,removeObserver
 from mojo.drawingTools import fill, oval, rect
 from mojo.extensions import getExtensionDefault, setExtensionDefault
@@ -93,10 +94,10 @@ def getMatchGroupDicByGlyph(inputGlyph, groupDict):
 
 class EditGroupMenu(object):
 
-	def __init__(self, font, file):
+	def __init__(self, font, groupDict, file,jsonFileName):
 		
 		self.font = font
-		self.groupDict = None
+		self.groupDict = groupDict
 		
 		self.defaultKey = "com.asaumierdemers.BroadNibBackground"
 		self.selectedGlyphs = []                # Apply List Label을 통해 색칠된 글리프들을 다시 무채색으로 변환하기 위한 변수
@@ -106,10 +107,17 @@ class EditGroupMenu(object):
 		self.currentPen = None
 		self.file = file
 		self.window = None		# 현재 띄워져 있는 ufo 윈도우
+
 		self.mode = None  		# 연산 방법(matrix, topology)
 		self.w3 = None
+		self.jsonFileName = jsonFileName
 		self.createUI()
-		
+		self.color = None
+		self.step = None
+		self.width = None
+		self.height = None
+		slef.shape = None
+		self.angle = None
 		self.keyDict = None
 		addObserver(self, "shortcutFunction", "keyDown")
 		
@@ -164,6 +172,7 @@ class EditGroupMenu(object):
 		self.newItem4 = dict(itemIdentifier="Exit", label="Exit", imageNamed=NSImageNameStopProgressFreestandingTemplate, callback=self.windowCloseCallback)
 		newItem5 = dict(itemIdentifier="Settings", label="Settings", imageNamed=NSImageNameAdvanced, callback=self.popSettingWindow) 
 		newItem6 = dict(itemIdentifier="Attribute", label="Attribute", imageNamed=NSImageNameFontPanel, callback=self.popAttributeWindow)
+		newItem7 = dict(itemIdentifier="Help", label="Help", imageNamed=NSImageNameInfo, callback=self.popManualWindow)
 		#newItem7 = dict(itemIdentifier="Other", label="Other", imageNamed=NSImageNameIconViewTemplate, callback=self.popSettingWindow)       
 		# add the new item to the existing toolbar
 		toolbarItems.append(newItem)
@@ -172,6 +181,7 @@ class EditGroupMenu(object):
 		toolbarItems.append(self.newItem4)
 		toolbarItems.append(newItem5)
 		toolbarItems.append(newItem6)
+		toolbarItems.append(newItem7)
 		#toolbarItems.append(newItem7)
 		# get the vanilla window object
 		vanillaWindow = self.window.window()
@@ -191,6 +201,10 @@ class EditGroupMenu(object):
 
 		addObserver(self, "drawBroadNibBackground", "drawBackground")
 
+	def popManualWindow(self,sender):
+		manual = extPath.resourcePath + "manual.html"
+		print(manual)
+		HelpWindow(htmlPath=manual)
 
 	def popSettingWindow(self, sender):
 		if self.w3 is None:
@@ -249,10 +263,14 @@ class EditGroupMenu(object):
 					for idx in self.groupDict[glyph]:
 						contourList.append(glyph.contours[idx])
 
-		fill(0.7,0.3,1,0.6)			#r,g,b setting
+		r,g,b,a = self.color
+		#print("rgb = ",r,g,b)
+
+		fill(r,g,b,a)			#r,g,b setting
 		if info["glyph"].layerName == self.layerName or not self.currentPen:
-			self.currentPen = BroadNibPen(None, 20, 80, 50, 30, rect)
+			self.currentPen = BroadNibPen(None, self.step, self.width, self.height, 0, oval)
 		print(self.state)
 		for contour in contourList:
-			if contour is not None and self.state == 1:
+			#if contour is not None and self.state == 1:
+			if contour is not None:
 				contour.draw(self.currentPen)
