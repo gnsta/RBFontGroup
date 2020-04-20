@@ -93,10 +93,10 @@ def getMatchGroupDicByGlyph(inputGlyph, groupDict):
 
 class EditGroupMenu(object):
 
-	def __init__(self, font, groupDict, file,jsonFileName):
+	def __init__(self, font, file):
 		
 		self.font = font
-		self.groupDict = groupDict
+		self.groupDict = None
 		
 		self.defaultKey = "com.asaumierdemers.BroadNibBackground"
 		self.selectedGlyphs = []                # Apply List Label을 통해 색칠된 글리프들을 다시 무채색으로 변환하기 위한 변수
@@ -108,7 +108,6 @@ class EditGroupMenu(object):
 		self.window = None		# 현재 띄워져 있는 ufo 윈도우
 		self.mode = None  		# 연산 방법(matrix, topology)
 		self.w3 = None
-		self.jsonFileName = jsonFileName
 		self.createUI()
 		
 		self.keyDict = None

@@ -39,4 +39,4 @@ if __name__ == '__main__':
     tempFileName = testPath.split('/')[-1]
     jsonFileName = tempFileName.split('.')[0] + '.json'
     print(jsonFileName)
-    menuWindow = ew.EditGroupMenu(CurrentFont(), groupDict, testFile,jsonFileName)
+    menuWindow = ew.EditGroupMenu(CurrentFont(), testFile)
