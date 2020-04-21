@@ -5,6 +5,14 @@ import rbFontG.tools.tMatrix.groupTestController
 import rbWindow.editWindow as ew
 import pickle
 from jsonConverter.makeJsonFile import *
+from jsonConverter.clockWiseGroup import *
+
+class FileExist(Exception):
+    def __init__(self,msg):
+        self.msg = msg
+        
+    def __str__(self):
+        return self.msg
 
 
 if __name__ == '__main__':
@@ -12,8 +20,10 @@ if __name__ == '__main__':
     BroadNibBackgroundDefaultKey = "com.asaumierdemers.BroadNibBackground"
     
     g = CurrentGlyph()
-    testPath = "/Users/sslab/Desktop/groupTest.ufo"
+    testPath = "/Users/font/Desktop/groupTest.ufo"
     testFile = OpenFont(testPath,showInterface = False)
+
+    
     
     
     
@@ -36,7 +46,24 @@ if __name__ == '__main__':
    
     groupDict = None
     MakeJsonController(testPath,testFile)
-    tempFileName = testPath.split('/')[-1]
-    jsonFileName = tempFileName.split('.')[0] + '.json'
-    print(jsonFileName)
+    insert = dict()
+    
+    try:
+        tempFileName = testPath.split('/')[-1]
+        jsonFileName = os.getcwd() + '/rbWindow/controller/' + tempFileName.split('.')[0] + '.json'
+        print(jsonFileName)
+        if os.path.exists(jsonFileName):
+            raise FileExist('해당 파일은 이미 존재합니다')
+        for tg in testFile:
+            tempList = list()
+            for tc in tg.contours:
+                compare = getClockWiseList(tc)
+                tempList.append(compare)
+            insert[tg.name] = tempList
+        
+        with open(jsonFileName,'w',encoding = 'utf-8') as make_file:
+            json.dump(insert,make_file,indent = '\t')
+    except FileExist as e:
+        print(e)
+        
     menuWindow = ew.EditGroupMenu(CurrentFont(), groupDict, testFile,jsonFileName)
