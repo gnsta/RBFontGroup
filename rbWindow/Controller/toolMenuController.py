@@ -10,6 +10,8 @@ import jsonConverter.converter as convert
 from jsonConverter.smartSetSearchModule import *
 from mojo.UI import SmartSet, addSmartSet
 from jsonConverter.clockWiseGroup import *
+from mojo.UI import *
+
 
 matrixMode = 0
 topologyMode = 1
@@ -60,6 +62,8 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 	    resultDict = json.load(jsonFile)
 
 	standard = resultDict[standardGlyph.name][contourIndex]
+	bar = ProgressBar('Matrix Process',len(resultDict),'Grouping...')
+	barProcess = 0
 
 	if checkSetData[1] == 0:
 		smartSet.name = str(checkSetData[0]) + "_first_Matrix_" + "(" + str(standardGlyph.unicode) + "-" + str(contourIndex) + ")"
@@ -88,6 +92,7 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 			smartContourList = []'''
 
 	for key, value in resultDict.items():
+		barProcess += 1
 		smartCheck = 0
 		for i,compare in enumerate(value):
 			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
@@ -102,6 +107,9 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 			smartGroupDict[glyphUniName] = smartContourList
 			smartSetGlyphs.append(glyphUniName)
 			smartContourList = []
+		if barProcess % 10 == 0:
+			bar.tick(barProcess)
+	bar.close()
 
 
 	smartSet.glyphNames = smartSetGlyphs
@@ -140,6 +148,9 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 
 	standard = resultDict[standardGlyph.name][contourIndex]
 
+	bar = ProgressBar('Topology Process',len(resultDict),'Grouping...')
+	barProcess = 0
+
 	smartSetGlyphs = []
 	smartSet = SmartSet()
 	if checkSetData[1] == 0:
@@ -170,6 +181,7 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 
 	for key, value in resultDict.items():
 		smartCheck = 0
+		barProcess += 1
 		for i,compare in enumerate(value):
 			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
 				compareContour = file[key].contours[i]
@@ -183,6 +195,9 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 			smartGroupDict[glyphUniName] = smartContourList
 			smartSetGlyphs.append(glyphUniName)
 			smartContourList = []
+		if barProcess % 10 == 0:
+			bar.tick(barProcess)
+	bar.close()
 
 	smartSet.glyphNames = smartSetGlyphs
 	addSmartSet(smartSet)
