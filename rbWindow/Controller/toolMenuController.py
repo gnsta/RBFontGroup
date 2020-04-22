@@ -1,3 +1,4 @@
+import os
 import jsonConverter.searchModule as search
 import rbFontG.tools.tMatrix.PhaseTool
 import rbFontG.tools.tMatrix.groupTestController
@@ -46,15 +47,13 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 	set name format example
 		: ##(number)_##(syllable)_####(mode)
 	"""
-
 	contour = standardGlyph.contours[contourIndex]
 
-	standardMatrix = Matrix(contour,width)
+	standardMatrix = Matrix(contour,3)
 	#k에 대한 마진값 적용하는 부분 넣어 주워야 함
-	compareController = groupTestController(standardMatrix,0)
+	compareController = groupTestController(standardMatrix,25)
 	smartSetGlyphs = []
 	smartSet = SmartSet()
-
 
 	#추가부분
 	with open(jsonFileName, 'r') as jsonFile:
@@ -76,16 +75,13 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 
 	'''for compareGlyph in file:
 		smartCheck = 0
-		#print(checkSetData[1])
-		#print(getConfigure(compareGlyph))
 		searchContours = getConfigure(compareGlyph)[str(compareGlyph.unicode)][checkSetData[1]]
-		for i in range(0,len(compareGlyph.contours)):
+		for i in range(0,len(compareGlyph.contours)):			
 			if i in searchContours:	
 				result = compareController.conCheckGroup(compareGlyph.contours[i])
 				if result is not None:
 					smartContourList.append(i)
 					smartCheck = 1
-					#setGroup(compareGlyph,i,matrixMode,jsonFileName,checkSetData[0])
 
 		if(smartCheck == 1):
 			glyphUniName = "uni"+hex(compareGlyph.unicode)[2:].upper()
@@ -94,6 +90,7 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 
 			smartContourList = []'''
 			
+
 	for key, value in resultDict.items():
 		barProcess += 1
 		smartCheck = 0
@@ -172,7 +169,7 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 		searchContours = getConfigure(compareGlyph)[str(compareGlyph.unicode)][checkSetData[1]]
 		for i in range(0,len(compareGlyph.contours)):
 			if i in searchContours:
-				resul = topologyJudgementController(standardGlyph.contours[contourIndex],compareGlyph.contours[i],k).topologyJudgement()
+				resul = topologyJudgementController(standardGlyph.contours[contourIndex],compareGlyph.contours[i],500).topologyJudgement()
 				if(resul == True):
 					smartCheck = 1
 					smartContourList.append(i)
@@ -181,8 +178,9 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 			glyphUniName = "uni"+hex(compareGlyph.unicode)[2:].upper()
 			smartGroupDict[glyphUniName] = smartContourList
 			smartSetGlyphs.append("uni"+hex(compareGlyph.unicode)[2:].upper())
-	'''
 	
+			smartContourList = []'''
+
 	for key, value in resultDict.items():
 		smartCheck = 0
 		barProcess += 1
@@ -199,6 +197,9 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 			smartGroupDict[glyphUniName] = smartContourList
 			smartSetGlyphs.append(glyphUniName)
 			smartContourList = []
+		if barProcess % 10 == 0:
+			bar.tick(barProcess)
+	bar.close()
 
 		if barProcess % 10 == 0:
 			bar.tick(barProcess)
