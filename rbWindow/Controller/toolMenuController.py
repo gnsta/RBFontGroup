@@ -1,5 +1,4 @@
 import jsonConverter.searchModule as search
-from mojo.UI import MultiLineView, SelectGlyph
 import rbFontG.tools.tMatrix.PhaseTool
 import rbFontG.tools.tMatrix.groupTestController
 from rbFontG.tools.tTopology import topologyJudgement as tj
@@ -7,7 +6,9 @@ from rbFontG.tools.tTopology import topologyAssignment as ta
 from rbFontG.tools import parseUnicodeControll as puc
 import jsonConverter.converter as convert
 from jsonConverter.smartSetSearchModule import *
-from mojo.UI import SmartSet, addSmartSet
+from jsonConverter.clockWiseGroup import *
+from mojo.UI import *
+
 
 matrixMode = 0
 topologyMode = 1
@@ -54,6 +55,15 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 	smartSetGlyphs = []
 	smartSet = SmartSet()
 
+
+	#추가부분
+	with open(jsonFileName, 'r') as jsonFile:
+	    resultDict = json.load(jsonFile)
+
+	standard = resultDict[standardGlyph.name][contourIndex]
+	bar = ProgressBar('Matrix Process',len(resultDict),'Grouping...')
+	barProcess = 0
+
 	if checkSetData[1] == 0:
 		smartSet.name = str(checkSetData[0]) + "_first_Matrix_" + "(" + str(standardGlyph.unicode) + "-" + str(contourIndex) + ")"
 	elif checkSetData[1] == 1:
@@ -64,7 +74,7 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 	smartGroupDict = {}
 	smartContourList = [] 
 
-	for compareGlyph in file:
+	'''for compareGlyph in file:
 		smartCheck = 0
 		#print(checkSetData[1])
 		#print(getConfigure(compareGlyph))
@@ -81,8 +91,30 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 			glyphUniName = "uni"+hex(compareGlyph.unicode)[2:].upper()
 			smartGroupDict[glyphUniName] = smartContourList
 			smartSetGlyphs.append("uni"+hex(compareGlyph.unicode)[2:].upper())
+
+			smartContourList = []'''
+			
+	for key, value in resultDict.items():
+		barProcess += 1
+		smartCheck = 0
+		for i,compare in enumerate(value):
+			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
+				compareContour = file[key].contours[i]
+				result = compareController.conCheckGroup(compareContour)
+				if result is not None:
+					smartContourList.append(i)
+					smartCheck = 1
+
+		if smartCheck == 1:
+			glyphUniName = file[key].name
+			smartGroupDict[glyphUniName] = smartContourList
+			smartSetGlyphs.append(glyphUniName)
 			smartContourList = []
-			#setGroup(compareGlyph,checkSetData[1],0,jsonFileName,checkSetData[0])
+		if barProcess % 10 == 0:
+			bar.tick(barProcess)
+
+	bar.close()
+
 
 	smartSet.glyphNames = smartSetGlyphs
 	addSmartSet(smartSet)
@@ -114,6 +146,15 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 	add smart set that include smae glyph group				
 	"""
 
+	#추가부분
+	with open(jsonFileName, 'r') as jsonFile:
+		resultDict = json.load(jsonFile)
+
+	standard = resultDict[standardGlyph.name][contourIndex]
+
+	bar = ProgressBar('Topology Process',len(resultDict),'Grouping...')
+	barProcess = 0
+
 	smartSetGlyphs = []
 	smartSet = SmartSet()
 	if checkSetData[1] == 0:
@@ -125,7 +166,7 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 	smartGroupDict = {}
 	smartContourList = [] 
 
-
+	'''
 	for compareGlyph in file:
 		smartCheck = 0
 		searchContours = getConfigure(compareGlyph)[str(compareGlyph.unicode)][checkSetData[1]]
@@ -140,7 +181,28 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 			glyphUniName = "uni"+hex(compareGlyph.unicode)[2:].upper()
 			smartGroupDict[glyphUniName] = smartContourList
 			smartSetGlyphs.append("uni"+hex(compareGlyph.unicode)[2:].upper())
+	'''
+	
+	for key, value in resultDict.items():
+		smartCheck = 0
+		barProcess += 1
+		for i,compare in enumerate(value):
+			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
+				compareContour = file[key].contours[i]
+				result = topologyJudgementController(standardGlyph.contours[contourIndex],compareContour,500).topologyJudgement()
+				if result == True:
+					smartContourList.append(i)
+					smartCheck = 1
+
+		if smartCheck == 1:
+			glyphUniName = file[key].name
+			smartGroupDict[glyphUniName] = smartContourList
+			smartSetGlyphs.append(glyphUniName)
 			smartContourList = []
+
+		if barProcess % 10 == 0:
+			bar.tick(barProcess)
+	bar.close()
 
 	smartSet.glyphNames = smartSetGlyphs
 	addSmartSet(smartSet)
