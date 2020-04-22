@@ -1,18 +1,7 @@
 import os
 import math
-import rbFontG.tools.tMatrix.PhaseTool
-import rbFontG.tools.tMatrix.groupTestController
 import rbWindow.editWindow as ew
-import pickle
-from jsonConverter.makeJsonFile import *
-from jsonConverter.clockWiseGroup import *
-
-class FileExist(Exception):
-    def __init__(self,msg):
-        self.msg = msg
-        
-    def __str__(self):
-        return self.msg
+from testCode.initialization import *
 
 
 if __name__ == '__main__':
@@ -45,25 +34,5 @@ if __name__ == '__main__':
     # print(groupList)
    
     groupDict = None
-    MakeJsonController(testPath,testFile)
-    insert = dict()
-    
-    try:
-        tempFileName = testPath.split('/')[-1]
-        jsonFileName = os.getcwd() + '/rbWindow/controller/' + tempFileName.split('.')[0] + '.json'
-        print(jsonFileName)
-        if os.path.exists(jsonFileName):
-            raise FileExist('해당 파일은 이미 존재합니다')
-        for tg in testFile:
-            tempList = list()
-            for tc in tg.contours:
-                compare = getClockWiseList(tc)
-                tempList.append(compare)
-            insert[tg.name] = tempList
-        
-        with open(jsonFileName,'w',encoding = 'utf-8') as make_file:
-            json.dump(insert,make_file,indent = '\t')
-    except FileExist as e:
-        print(e)
-        
+    jsonFileName = StartProgram(testPath,testFile)       
     menuWindow = ew.EditGroupMenu(CurrentFont(), groupDict, testFile,jsonFileName)
