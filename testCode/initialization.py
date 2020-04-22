@@ -20,7 +20,7 @@ def StartProgram(testPath,testFile):
     
     try:
         tempFileName = testPath.split('/')[-1]
-        jsonFileName = os.getcwd() + '/jsonResource/' + tempFileName.split('.')[0] + '.json'
+        jsonFileName = os.path.dirname(os.path.abspath(__file__)) + '/jsonResource/' + tempFileName.split('.')[0] + '.json'
         if os.path.exists(jsonFileName):
             raise FileExist('해당 파일은 이미 존재합니다')
         for tg in testFile:

@@ -25,7 +25,7 @@ class settingWindow(BaseWindowController):
 
     def createUI(self, sender):
 
-        x = 10; y = 10; w = -10; h = 40; space = 5; size = (200, 800); pos = (1300,400)
+        x = 10; y = 10; w = -10; h = 40; space = 5; size = (150, 600); pos = (1300,400)
         self.w = FloatingWindow((400,950), "Background Setting")
         stepValue = getExtensionDefault("%s.%s" %(BroadNibBackgroundDefaultKey, "step"), 20)
         self.w.step = SliderGroup((x, y, w, h), "Steps:", 0, 60, stepValue, callback=self.stepChanged)
@@ -41,22 +41,6 @@ class settingWindow(BaseWindowController):
         self.w.height = SliderGroup((x, y, w, h), "Height:", 0, 300, heightValue, callback=self.heightChanged)
         self.mainWindow.height = heightValue
         y+=h
-        
-        angleValue = getExtensionDefault("%s.%s" %(BroadNibBackgroundDefaultKey, "angle"), 30)
-        self.w.angle = SliderGroup((x, y, w, h), "Angle:", 0, 360, angleValue, callback=self.angleChanged)
-        self.w.angle.slider.getNSSlider().cell().setSliderType_(NSCircularSlider)
-        self.w.angle.text.setPosSize((0, 15, -0, 20))
-        self.w.angle.slider.setPosSize((60, 10, 30, 30))
-        self.w.angle.slider._nsObject.cell().setControlSize_(NSRegularControlSize)
-        self.mainWindow.angle = angleValue
-        y+=h + 20
-        
-        shapeValue = getExtensionDefault("%s.%s" %(BroadNibBackgroundDefaultKey, "shape"), 0)
-        self.w.shapetext = TextBox((x, y, -0, 20), "Shape:")
-        self.w.shape = RadioGroup((74, y, -0, 20), ["oval", "rect"], isVertical=False, callback=self.shapeChanged)
-        self.mainWindow.shape = shapeValue
-        self.w.shape.set(shapeValue)
-        y+=h + 5
 
         color = NSColor.colorWithCalibratedRed_green_blue_alpha_(1, 0, 0, .5)
         colorValue = getExtensionDefaultColor("%s.%s" %(BroadNibBackgroundDefaultKey, "color"), color)
@@ -95,18 +79,6 @@ class settingWindow(BaseWindowController):
         self.mainWindow.height = int(sender.get())
         self.updateView()
 
-    def angleChanged(self, sender):
-        setExtensionDefault("%s.%s" %(BroadNibBackgroundDefaultKey, "angle"), int(sender.get()))
-        self.mainWindow.angle = int(sender.get())
-        self.updateView()
-
-    def shapeChanged(self, sender):
-        setExtensionDefault("%s.%s" %(BroadNibBackgroundDefaultKey, "shape"), sender.get())
-        if self.w.shape.get() == 0:
-            self.mainWindow.shape = oval
-        else:
-            self.mainWindow.shape = rect
-        self.updateView()
 
     def getColor(self):
         color = self.w.color.get()

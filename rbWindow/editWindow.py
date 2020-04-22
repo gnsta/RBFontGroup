@@ -213,7 +213,6 @@ class EditGroupMenu(object):
 			print(Message("탐색을 먼저 진행해야 합니다."))
 			return
 		self.w6 = settingWindow(self)
-		self.w6.createUI(sender)
 
 	def popPreviewWindow(self, sender):
 
@@ -271,6 +270,8 @@ class EditGroupMenu(object):
 
 	def drawBroadNibBackground(self, info):
 		print("drawBackground")
+		if self.state is False:
+			return
 		# paint current group's contour
 		targetGlyph = info["glyph"].getLayer(self.layerName)
 

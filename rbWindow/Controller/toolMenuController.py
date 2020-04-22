@@ -199,10 +199,7 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 			smartContourList = []
 		if barProcess % 10 == 0:
 			bar.tick(barProcess)
-	bar.close()
-
-		if barProcess % 10 == 0:
-			bar.tick(barProcess)
+			
 	bar.close()
 
 	smartSet.glyphNames = smartSetGlyphs
