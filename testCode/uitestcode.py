@@ -1,10 +1,7 @@
 import os
 import math
-import rbFontG.tools.tMatrix.PhaseTool
-import rbFontG.tools.tMatrix.groupTestController
 import rbWindow.editWindow as ew
-import pickle
-from jsonConverter.makeJsonFile import *
+from testCode.initialization import *
 
 
 if __name__ == '__main__':
@@ -12,8 +9,10 @@ if __name__ == '__main__':
     BroadNibBackgroundDefaultKey = "com.asaumierdemers.BroadNibBackground"
     
     g = CurrentGlyph()
-    testPath = "/Users/sslab/Desktop/groupTest.ufo"
+    testPath = "/Users/font/Desktop/groupTest.ufo"
     testFile = OpenFont(testPath,showInterface = False)
+
+    
     
     
     
@@ -35,8 +34,5 @@ if __name__ == '__main__':
     # print(groupList)
    
     groupDict = None
-    MakeJsonController(testPath,testFile)
-    tempFileName = testPath.split('/')[-1]
-    jsonFileName = tempFileName.split('.')[0] + '.json'
-    print(jsonFileName)
+    jsonFileName = StartProgram(testPath,testFile)       
     menuWindow = ew.EditGroupMenu(CurrentFont(), groupDict, testFile,jsonFileName)
