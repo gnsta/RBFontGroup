@@ -76,22 +76,22 @@ def searchGroup(glyph,contourNumber,mode,mainWindow,message = False):
 	for sSet in sSets:
 		checkSetName = str(sSet.name)
 		checkSetNameList = checkSetName.split('_')
+		#print('positionName',positionName)
+		#print('searchMode', searchMode)
 		if checkSetNameList[1] != positionName or checkSetNameList[2] != searchMode:
 			continue
 		#검사를 진행을 해야함(기준 컨투어는 알고 있고 비교 글리프에 있는 컨투어는 순회를 하면서 조사하는 방식)
 		#matrix 체크에서는 같은 그룹이 아니면 None이고 topology 에서는 같은 그룹이 아니면 flase반환
-		print("checkSetNameList : ",checkSetNameList)
+		#print("checkSetNameList : ",checkSetNameList)
 		standardNameList = checkSetNameList[3].split('-')
 		standardGlyphUnicode = int(standardNameList[0][1:])
 		standardIdx = int(standardNameList[1][0:len(standardNameList)-1]) 
 		for item in sSet.glyphNames:
-			#if item != glyph.name:
-				#continue
 			if mode == 0:
 				standardGlyph = mainWindow.file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
 				#width값은 정해져 있다고 생각을 하고 진행
-				standardMatrix=Matrix(standardGlyph.contours[standardIdx],10)
-				compareController = groupTestController(standardMatrix,0)
+				standardMatrix=Matrix(standardGlyph.contours[standardIdx],3)
+				compareController = groupTestController(standardMatrix,25)
 				result = compareController.conCheckGroup(glyph[contourNumber])
 				if result is not None: 
 					searchSmartSet = sSet
@@ -108,27 +108,25 @@ def searchGroup(glyph,contourNumber,mode,mainWindow,message = False):
 		if check == 1:
 			break
 
-	print("searchSmartSet",searchSmartSet)
+	#print("searchSmartSet",searchSmartSet)
 
 	#glyphUniName =  "uni" + hex(glyph.unicode)[2:].upper()
 
 	#fileNumber = json_data[glyphUniName][str(contourNumber)]
 
+	if positionNumber == 0:
+		appendNumber = setStat["first"]
+	elif positionNumber == 1:
+		appendNumber = setStat["middle"]
+	elif positionNumber == 2:
+		appendNumber = setStat["final"]
+
 	if searchSmartSet is not None:
 		#팝업창으로 띄워주면 좋을 부분
 		if message == True:
 			print(Message("이미 그룹 연산이 진행이 되어 있으므로 그룹화 작업을 생략합니다."))
-		return [checkSetNameList[0],positionNumber,0]
+		return [appendNumber,positionNumber,0]
 	else:
-		if positionNumber == 0:
-			appendNumber = setStat["first"] + 1
-		elif positionNumber == 1:
-			appendNumber = setStat["middle"] + 1
-		elif positionNumber == 2:
-			appendNumber = setStat["final"] + 1
-
-		#json_data[glyphUniName][positionNumber] = appendNumber
-
 		return [appendNumber,positionNumber,1]
 
 def setGroup(glyph,contourNumber,mode,jsonFileName,appendNumber):
@@ -203,13 +201,14 @@ def getSmartSetStatMatrix():
 	middlel.sort()
 	finall.sort()
 
+
 	check = 0 
 	for i in range(0,len(firstl)):
 		if (i +1) != firstl[i]:
 			matrixSetStat["first"] = i
 			check = 1
 	if check == 0:
-		matrixSetStat["first"] = len(firstl)
+		matrixSetStat["first"] = len(firstl) + 1
 
 	check = 0 
 	for i in range(0,len(middlel)):
@@ -217,7 +216,7 @@ def getSmartSetStatMatrix():
 			matrixSetStat["middle"] = i
 			check = 1
 	if check == 0:
-		matrixSetStat["middle"] = len(middlel)
+		matrixSetStat["middle"] = len(middlel) + 1
 
 	check = 0 
 	for i in range(0,len(finall)):
@@ -225,7 +224,7 @@ def getSmartSetStatMatrix():
 			matrixSetStat["final"] = i
 			check = 1
 	if check == 0:
-		matrixSetStat["final"] = len(finall)
+		matrixSetStat["final"] = len(finall) + 1
 
 	return matrixSetStat
 
@@ -274,7 +273,7 @@ def getSmartSetStatTopology():
 			topologySetStat["first"] = i
 			check = 1
 	if check == 0:
-		topologySetStat["first"] = len(firstl)
+		topologySetStat["first"] = len(firstl) + 1
 
 	check = 0 
 	for i in range(0,len(middlel)):
@@ -282,7 +281,7 @@ def getSmartSetStatTopology():
 			topologySetStat["middle"] = i
 			check = 1
 	if check == 0:
-		topologySetStat["middle"] = len(middlel)
+		topologySetStat["middle"] = len(middlel) + 1
 
 	check = 0 
 	for i in range(0,len(finall)):
@@ -290,6 +289,6 @@ def getSmartSetStatTopology():
 			topologySetStat["final"] = i
 			check = 1
 	if check == 0:
-		topologySetStat["final"] = len(finall)
+		topologySetStat["final"] = len(finall) + 1
 
 	return topologySetStat
