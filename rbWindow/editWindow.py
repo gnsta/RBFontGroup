@@ -116,7 +116,7 @@ class EditGroupMenu(object):
 		self.step = None
 		self.width = None
 		self.height = None
-		slef.shape = None
+		self.shape = None
 		self.angle = None
 		self.keyDict = None
 		addObserver(self, "shortcutFunction", "keyDown")
