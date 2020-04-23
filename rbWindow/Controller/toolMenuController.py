@@ -245,8 +245,6 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, currentWindow, main
 			getMatchGroupByTopology(standardGlyph, contourIndex, k, currentWindow.font,checkSetData,mainWindow.jsonFileName)
 			currentWindow.groupDict = findContoursGroup(checkSetData, mainWindow)
 
-		print("groupDict", currentWindow.groupDict)
-
 	mainWindow.groupDict = currentWindow.groupDict
 
 def findContoursGroup(checkSetData,mainWindow):
