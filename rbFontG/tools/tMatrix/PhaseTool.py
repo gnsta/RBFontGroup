@@ -62,12 +62,17 @@ class Matrix:
             point position
         """
 
-        getMinMax = GetMaxMinPointValue(self.con)
+        #getMinMax = GetMaxMinPointValue(self.con)
     
-        maxx = getMinMax.getMaxXValue() + 10
-        minx = getMinMax.getMinXValue() - 10
-        maxy = getMinMax.getMaxYValue() + 10
-        miny = getMinMax.getMinYValue() - 10
+        #maxx = getMinMax.getMaxXValue() + 10
+        #minx = getMinMax.getMinXValue() - 10
+        #maxy = getMinMax.getMaxYValue() + 10
+        #miny = getMinMax.getMinYValue() - 10
+
+        maxx = self.con.bounds[2] + 10
+        minx = self.con.bounds[0] - 10
+        maxy = self.con.bounds[3] + 10
+        miny = self.con.bounds[1] - 10
     
         term_x = float((maxx - minx) / self.divk)
         term_y = float((maxy - miny) / self.divk)      
