@@ -9,7 +9,8 @@ import jsonConverter.converter as convert
 from jsonConverter.smartSetSearchModule import *
 from jsonConverter.clockWiseGroup import *
 from mojo.UI import *
-
+from mojo.extensions import *
+from rbWindow.ExtensionSetting.extensionValue import *
 
 matrixMode = 0
 topologyMode = 1
@@ -17,6 +18,10 @@ topologyMode = 1
 margin = 20
 width = 100
 k = 500
+
+matrix_margin = 25
+matrix_size = 3
+topology_margin = 500
 
 def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, file,checkSetData,jsonFileName):
 	"""
@@ -40,8 +45,10 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 			[setNumber, syllableNumber] (using to File naming)
 		mainWindow :: tool Menu object
 			to get font File in searchGroup function
+
 	Return : Dictionary
-		key is glyph and value is list that same contours index
+		each key is glyph and value is list that same contours index
+
 	2020/03/23
 	add smart set that include smae glyph group
 	set name format example
@@ -49,9 +56,9 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 	"""
 	contour = standardGlyph.contours[contourIndex]
 
-	standardMatrix = Matrix(contour,3)
+	standardMatrix = Matrix(contour,matrix_size)
 	#k에 대한 마진값 적용하는 부분 넣어 주워야 함
-	compareController = groupTestController(standardMatrix,25)
+	compareController = groupTestController(standardMatrix,matrix_margin)
 	smartSetGlyphs = []
 	smartSet = SmartSet()
 
@@ -138,7 +145,7 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 		mainWindow :: tool Menu object
 			to get font File in searchGroup function
 	Return : Dictionary
-		key is glyph and value is list that same contours index
+		each key is glyph and value is list that same contours index
 	2020/03/23
 	add smart set that include smae glyph group				
 	"""
@@ -187,7 +194,7 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 		for i,compare in enumerate(value):
 			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
 				compareContour = file[key].contours[i]
-				result = topologyJudgementController(standardGlyph.contours[contourIndex],compareContour,500).topologyJudgement()
+				result = topologyJudgementController(standardGlyph.contours[contourIndex],compareContour,topology_margin).topologyJudgement()
 				if result == True:
 					smartContourList.append(i)
 					smartCheck = 1
@@ -207,7 +214,7 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 	updateAllSmartSets()
 
 
-def handleSearchGlyphList(standardGlyph, contourIndex, file, currentWindow, mainWindow):
+def handleSearchGlyphList(standardGlyph, contourIndex, file, jsonFilePath):
 	"""
 		2020/03/23
 		created by H.W. Cho
@@ -215,7 +222,7 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, currentWindow, main
 		Get matching file and update currentWindow's group. If there is no matching file,
 		search process will find a new group. Update view is followed at the end of process.
 
-		Args:
+		Args::
 			standardGlyph(RGlyph), contourIndex(int) : target object which want to search.
 			file(RFont) : search area
 			currentWindow(toolMenu object)
@@ -225,38 +232,28 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, currentWindow, main
 		add smart set information
 
 	"""
-	#currentWindow.group = search.getGroupDictFile(standardGlyph, contourIndex, currentWindow.font, mainWindow.mode, currentWindow.widthValue, currentWindow.marginValue)
-	checkSetData = searchGroup(standardGlyph,contourIndex,mainWindow.mode,mainWindow,True)
+	mode = getExtensionDefault(DefaultKey+".mode")
+	checkSetData = searchGroup(standardGlyph,contourIndex,mode,file,True)
 	if checkSetData[2] == 0:
-		currentWindow.groupDict = findContoursGroup(checkSetData,mainWindow)
+		currentWindow.groupDict = findContoursGroup(checkSetData,file)
+		## setExtensionDefault(defaultKey+".groupDict", findContoursGroup(checkSetData, mainWindow))
 		print("이미 그룹화가 진행된 컨투어입니다.")
 
 	else:
-		if mainWindow.mode is matrixMode:
-			#margin = int(currentWindow.w.margin.slider.get())
-			#width = int(currentWindow.w.matrixWidth.slider.get())
-			getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, width, file, checkSetData, mainWindow.jsonFileName)
-			currentWindow.groupDict = findContoursGroup(checkSetData, mainWindow)
+		mode = getExtensionDefault(DefaultKey+".mode")
 
-		elif mainWindow.mode is topologyMode:
-			#k = int(currentWindow.w.topologyK.slider.get())
-			getMatchGroupByTopology(standardGlyph, contourIndex, k, currentWindow.font,checkSetData,mainWindow.jsonFileName)
-			currentWindow.groupDict = findContoursGroup(checkSetData, mainWindow)
-		
-		#if currentWindow.group is None:
-			#print(Message("There is no matching group.")); return;
+		if mode is matrixMode:
+			getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, width, file, checkSetData, jsonFilePath)
+			setExtensionDefault(DefaultKey+".groupDict", findContoursGroup(checkSetData, file))
 
-		#else:
-			#currentWindow.mode = mainWindow.mode
-			#saveGroupDict(currentWindow)
+		elif mode is topologyMode:
+			getMatchGroupByTopology(standardGlyph, contourIndex, k, file, checkSetData, jsonFilePath)
+			setExtensionDefault(defaultKey+".groupDict", findContoursGroup(checkSetData, file))
 
-	#updateLineView(currentWindow)
-	mainWindow.groupDict = currentWindow.groupDict
-
-def findContoursGroup(checkSetData,mainWindow):
+def findContoursGroup(checkSetData,file):
 	"""
 	find grouped contour reference by jsonFile and smartSet
-	Args :
+	Args ::
 		checkSetData:: list
 			[fileNumber,positionNumber,0]
 		mainWindow :: object
@@ -264,7 +261,7 @@ def findContoursGroup(checkSetData,mainWindow):
 		mode :: int
 		0 -> matrix , 1- > topology
 	Return :: Dictionary
-		key is glyph and value is list that same contours index
+		each key is glyph and value is list that same contours index
 	"""
 
 
@@ -273,7 +270,9 @@ def findContoursGroup(checkSetData,mainWindow):
 	res = dict()
 	positionName  = None
 
-	if mainWindow.mode == 0:
+	mode = getExtensionDefault(DefaultKey+".mode")
+
+	if mode == 0:
 		modeName = "Matrix"
 	else:
 		modeName = "Topology"
@@ -285,36 +284,33 @@ def findContoursGroup(checkSetData,mainWindow):
 	else:
 		positionName = "final"
 
-	print("checkSetData :", checkSetData)
-	print("positionName :",positionName)
-
 
 	for sset in ssets:
 		nameList = str(sset.name).split('_')
 		standardNameList = nameList[3].split('-')
 		standardGlyphUnicode = int(standardNameList[0][1:])
 		standardIdx = int(standardNameList[1][0:len(standardNameList[1])-1])
-		if (nameList[0] == str(checkSetData[0])) and (nameList[1] == positionName) and (nameList[2] == modeName):
+		if (nameList[0] == str(checkSetData[0]-1)) and (nameList[1] == positionName) and (nameList[2] == modeName):
 			groupSet = sset
 			break
 
 	for item in groupSet.glyphNames:
-		glyphList.append(mainWindow.file[str(item)])
+		glyphList.append(file[str(item)])
 
 
 	for g in glyphList:
 		searchContours = []
 		for i,comc in enumerate(g.contours):
-			if mainWindow.mode == 0:
-				standardGlyph = mainWindow.file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
-				standardMatrix=Matrix(standardGlyph.contours[standardIdx],10)
-				compareController = groupTestController(standardMatrix,0)
+			if mode == 0:
+				standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+				standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
+				compareController = groupTestController(standardMatrix,matrix_margin)
 				result = compareController.conCheckGroup(comc)
 				if result is not None:
 					searchContours.append(i)
-			elif mainWindow.mode == 1:
-				standardGlyph = mainWindow.file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
-				result = topologyJudgementController(standardGlyph.contours[standardIdx],comc,200).topologyJudgement()
+			elif mode == 1:
+				standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+				result = topologyJudgementController(standardGlyph.contours[standardIdx],comc,topology_margin).topologyJudgement()
 				if result is not False:
 					searchContours.append(i)
 		res[g] = searchContours

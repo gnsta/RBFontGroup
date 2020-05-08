@@ -6,12 +6,13 @@ import rbWindow.Controller.settingWindowController as sWC
 from AppKit import NSCircularSlider, NSColor, NSRegularControlSize
 from defconAppKit.windows.baseWindow import BaseWindowController
 from fontTools.pens.basePen import BasePen
-from mojo.extensions import getExtensionDefault, setExtensionDefault, getExtensionDefaultColor, setExtensionDefaultColor
+from mojo.extensions import *
 from mojo.events import addObserver, removeObserver
 from mojo.UI import UpdateCurrentGlyphView
 from mojo.drawingTools import *
 from vanilla import *
 from rbWindow.sliderGroup import *
+from rbWindow.ExtensionSetting.extensionValue import *
 
 COLOR_GREEN = (0,1,0,0.7)
 BroadNibBackgroundDefaultKey = "com.asaumierdemers.BroadNibBackground"
@@ -56,6 +57,10 @@ class settingWindow(BaseWindowController):
         y += h + space"""
         y += 50
         self.w.colorContourCheckBox= CheckBox((x,y,w,h), "Apply Contour Color", callback=self.colorContourCallback)
+        
+        self.w.methodRadioGroup = RadioGroup((x,y,w,h), ["Matrix", "Topology"], sizeStyle="small", callback=self.methodChangedCallback)
+        y += h + space
+
         self.w.open()
 
     def colorChanged(self, sender):
@@ -92,6 +97,10 @@ class settingWindow(BaseWindowController):
         print("after : ", self.mainWindow.selectedGlyphs)"""
     def colorContourCallback(self, sender):
         self.mainWindow.state = self.w.colorContourCheckBox.get()
+
+    def methodChangedCallback(self, sender):
+        # select matrix or topology
+        setExtensionDefault(DefaultKey+".mode", self.w.methodRadioGroup.get())
 
     def updateView(self, sender=None):
         UpdateCurrentGlyphView()

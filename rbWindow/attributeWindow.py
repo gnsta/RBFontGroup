@@ -1,13 +1,14 @@
 
 import pathManager.pathSetting as extPath
-from vanilla import FloatingWindow, RadioGroup, Button, HUDFloatingWindow, ImageButton, TextBox, EditText
+from vanilla import FloatingWindow, RadioGroup, Button, HUDFloatingWindow, ImageButton, TextBox, EditText, CheckBox
 from rbFontG.tools.tTopology import topologyButtonEvent as tbt
 from rbFontG.tools.tMatrix import matrixButtonEvent as mbt
 from rbFontG.tools.tMatrix.PhaseTool import *
 from mojo.UI import *
 from jsonConverter.smartSetSearchModule import *
 from rbWindow.Controller.toolMenuController import *
-
+from mojo.extensions import *
+from rbWindow.ExtensionSetting.extensionValue import *
 
 matrixMode = 0
 topologyMode = 1
@@ -16,9 +17,8 @@ topologyMode = 1
 
 class attributeWindow:
 
-	def __init__(self, mainWindow, mode):
+	def __init__(self, mainWindow):
 		self.mainWindow = mainWindow
-		self.mode = mode
 
 		#팝압창이 나오고 컴투어 인덱스 번호를 받음
 		self.w = HUDFloatingWindow((300,200), "Index Window")
@@ -39,15 +39,19 @@ class attributeWindow:
 		self.contourNumber = int(self.w.editText.get())
 
 		try:
+			file = getExtensionDefault(DefaultKey+".file")
 			newGlyph = self.mainWindow.file[CurrentGlyphWindow().getGlyph().name]
 			print(newGlyph)
-			checkSetData = searchGroup(newGlyph,self.contourNumber,self.mainWindow.mode,self.mainWindow)
+			mode = getExtensionDefault(DefaultKey+".mode")
+			print("mode : ", mode)
+
+			checkSetData = searchGroup(newGlyph,self.contourNumber, mode,file)
 			print(checkSetData)
 			if checkSetData[2] == 1:
 				raise NotSetExist
 
-			self.mainWindow.standardContour = newGlyph.contours[self.contourNumber]
-			self.mainWindow.groupDict = findContoursGroup(checkSetData,self.mainWindow)
+			setExtensionDefault(DefaultKey+".standardContour", newGlyph.contours[self.contourNumber])
+			setExtensionDefault(DefaultKey+".groupDict", findContoursGroup(checkSetData, self.mainWindow.file))
 
 		except Exception as e:
 			Message("아직 그룹화가 진행되어지지 않았습니다.")
@@ -58,9 +62,9 @@ class attributeWindow:
 		
 
 	def createUI(self):
-		x = 10; y = 10; w = 100; h = 30; space = 5; size = (200,250); pos = (1200,300); minSize = (50,250);
+		x = 10; y = 10; w = 100; h = 30; space = 5; self.size = (200,250); pos = (1200,300); self.minSize = (50,250);
 
-		self.w = HUDFloatingWindow((pos[0],pos[1],size[0],size[1]), "ToolsWindow", minSize=(minSize[0], minSize[1]))
+		self.w = HUDFloatingWindow((pos[0],pos[1],self.minSize[0],self.minSize[1]), "ToolsWindow", minSize=(self.minSize[0], self.minSize[1]))
 
 		#h = 50
 		#self.w.optionRadioGroup = RadioGroup((32,20,w,h), ["PenPair", "DependX", "DependY"], sizeStyle="small")
@@ -69,6 +73,7 @@ class attributeWindow:
 		h = 30
 
 		self.w.innerFillButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[0]+".png")
+		print("ImagePath = ", extPath.ImagePath+extPath.attrImgList[0]+".png")
 		self.w.innerFillText = TextBox((x+40,y,w,h), "innerFill")
 		y += h + space
 
@@ -92,7 +97,15 @@ class attributeWindow:
 		self.w.selectText = TextBox((x+40,y,w,h), "select")
 		y += h + space
 
-		if self.mode is matrixMode:
+		self.w.minimizeBox = CheckBox((x,y,80,20), "", callback=self.minimizeCallback, value=True)
+		y += h +space
+
+		mode = getExtensionDefault(DefaultKey+".mode")
+
+		if mode is matrixMode:
+			matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
+			standardContour = getExtensionDefault(DefaultKey+".standardContour")
+			setExtensionDefault(DefaultKey+".matrix", Matrix(standardContour, matrix_size))
 			self.w.innerFillButton._setCallback(self.mhandleInnerFill)
 			self.w.penPairButton._setCallback(self.mhandlePenPair)
 			self.w.dependXButton._setCallback(self.mhandleDependX)
@@ -100,7 +113,7 @@ class attributeWindow:
 			self.w.deleteButton._setCallback(None)
 			self.w.selectButton._setCallback(self.mhandleSelect)
 
-		elif self.mode is topologyMode:
+		elif mode is topologyMode:
 			self.w.innerFillButton._setCallback(self.thandleInnerFill)
 			self.w.penPairButton._setCallback(self.thandlePenPair)
 			self.w.dependXButton._setCallback(self.thandleDependX)
@@ -114,22 +127,32 @@ class attributeWindow:
 		콜백 메소드에 연결할 메소드(Matrix)
 	"""
 	def mhandleInnerFill(self, sender):
-		mbt.minnerFillAttribute(self.mainWindow.groupDict, self.matrix)
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		matrix = getExtensionDefault(DefaultKey+".matrix")
+		mbt.minnerFillAttribute(groupDict, matrix)
 
 	def mhandlePenPair(self, sender):
-		mbt.mpenPairAttribute(self.mainWindow.groupDict, self.matrix)
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		matrix = getExtensionDefault(DefaultKey+".matrix")
+		mbt.mpenPairAttribute(groupDict, matrix)
 
 	def mhandleDependX(self, sender):
-		mbt.mdependXAttribute(self.mainWindow.groupDict, self.matrix)
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		matrix = getExtensionDefault(DefaultKey+".matrix")
+		mbt.mdependXAttribute(groupDict, matrix)
 
 	def mhandleDependY(self, sender):
-		mbt.mdependYAttribute(self.mainWindow.groupDict, self.matrix)
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		matrix = getExtensionDefault(DefaultKey+".matrix")
+		mbt.mdependYAttribute(groupDict, matrix)
 
 	def mhandleDelete(self, sender):
 		pass
 
 	def mhandleSelect(self, sender):
-		mbt.mselectAttribute(self.mainWindow.groupDict, self.matrix)
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		matrix = getExtensionDefault(DefaultKey+".matrix")
+		mbt.mselectAttribute(groupDict, matrix)
 
 
 
@@ -139,19 +162,44 @@ class attributeWindow:
 		콜백 메소드에 연결할 메소드(Topology)
 	"""
 	def thandleInnerFill(self, sender):
-		tbt.innerFillAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,500)
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		standardContour = getExtensionDefault(DefaultKey+".standardContour")
+		k = getExtensionDefault(DefaultKey+".k")
+		tbt.innerFillAttribute(groupDict, standardContour, k)
 
 	def thandlePenPair(self, sender):
-		tbt.innerFillAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,500)
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		standardContour = getExtensionDefault(DefaultKey+".standardContour")
+		k = getExtensionDefault(DefaultKey+".k")
+		tbt.innerFillAttribute(groupDict, standardContour, k)
 
 	def thandleDependX(self, sender):
-		tbt.innerFillAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,500)
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		standardContour = getExtensionDefault(DefaultKey+".standardContour")
+		k = getExtensionDefault(DefaultKey+".k")
+		tbt.innerFillAttribute(groupDict, standardContour, k)
 
 	def thandleDependY(self, sender):
-		tbt.innerFillAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,500)
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		standardContour = getExtensionDefault(DefaultKey+".standardContour")
+		k = getExtensionDefault(DefaultKey+".k")
+		tbt.innerFillAttribute(groupDict, standardContour, k)
 
 	def thandleDelete(self, sender):
 		pass
 
 	def thandleSelect(self, sender):
-		tbt.innerFillAttribute(self.mainWindow.groupDict, self.mainWindow.standardContour,500)
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		standardContour = getExtensionDefault(DefaultKey+".standardContour")
+		k = getExtensionDefault(DefaultKey+".k")
+		tbt.innerFillAttribute(groupDict, standardContour, k)
+
+
+
+	def minimizeCallback(self, sender):
+		if sender.get() == True:
+			self.w.resize(self.minSize[0], self.minSize[1])
+			self.w.minimizeBox.setTitle("")
+		else:
+			self.w.resize(self.size[0], self.size[1])
+			self.w.minimizeBox.setTitle("최소화")

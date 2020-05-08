@@ -1,6 +1,8 @@
 from rbFontG.tools.tMatrix.PhaseTool import *
 from rbFontG.tools.tMatrix.groupPointMatch import *
 from jsonConverter.converter import *
+from rbWindow.ExtensionSetting.extensionValue import *
+from mojo.extensions import *
 
 """
 2020/02/24

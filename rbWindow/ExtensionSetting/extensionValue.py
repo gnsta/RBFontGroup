@@ -1,0 +1,67 @@
+# 익스텐션 초기 기본 값 설정 (프로그램 초기 구동 시에 딱 한 번만 수행되고 이후론 수행하지 않음)
+from AppKit import NSColor
+from mojo.extensions import *
+
+DefaultKey = "com.robofontTool.rbFontGroup"
+
+class ConfigExtensionSettings:
+
+	def __init__(self, registerKey):
+
+		self.registerKey = registerKey
+		self.defaults = {
+			self.registerKey + ".registered": True,
+		    
+		    self.registerKey + ".jsonFilePath": None,
+		    self.registerKey + ".file": None,
+		    
+		    self.registerKey + ".mode": 0,
+
+		    self.registerKey + ".margin": 20,
+		    self.registerKey + ".width": 100,
+		    self.registerKey + ".height": 100,
+		    self.registerKey + ".k": 500,
+
+		    self.registerKey + ".matrix_margin": 25,
+		    self.registerKey + ".matrix_size": 3,
+		    self.registerKey + ".topology_margin": 500,
+		    
+		    self.registerKey + ".groupDict": None,
+		    self.registerKey + ".smartSet": None,
+		    self.registerKey + ".standardContour": None,
+		    self.registerKey + ".standardGlyph": None,
+		    self.registerKey + ".matrix": None,
+		    
+		    self.registerKey + ".index": 0,
+		    self.registerKey + ".color": NSColor.colorWithCalibratedRed_green_blue_alpha_(1, 0, 0, .5)
+		}
+
+
+	def registerSettings(self):
+		"""
+			2020/05/06 created by Cho Hyun Woo
+			Extension에 대한 기본적인 설정값을 등록한다.
+		"""
+		'''
+		check = None
+		try:
+			check = getExtensionDefault(registerKey+".registered")
+			if check is not True:
+				raise NotRegisteredException
+		
+		except NotRegisteredException:
+			'''
+
+		registerExtensionDefaults(self.defaults)
+
+	def removeSettings(self):
+
+		"""
+			익스텐션 세팅이 제대로 동작하지 않을 때 메인 코드에 한 번 넣고 돌린 후 지우고 다시 설치하여 사용한다.
+		"""
+		removeExtensionDefault(self.registerKey)
+
+class NotRegisteredException(Exception):
+    def __init__(self):
+        super().__init__('First Started Program, Register Operated...')
+

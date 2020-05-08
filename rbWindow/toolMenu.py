@@ -15,6 +15,7 @@ import jsonConverter.searchModule as search
 import timeit#
 import jsonConverter.converter as convert
 import rbWindow.Controller.toolMenuController as tMC
+from rbWindow.ExtensionSetting.extensionValue import *
 
 def text2Glyph(inputText, font):
 	"""
@@ -41,7 +42,7 @@ class toolsWindow:
 
 	def __init__(self, mainWindow):
 
-		self.defaultKey = "com.asaumierdemers.BroadNibBackground"
+		self.defaultKey = "com.robofontTool.rbFontGroup"
 		# self.mainWindow.mode = mainWindow.w.methodRadioGroup.get()		# mode 0: matrix, 1: topology
 
 		self.file = mainWindow.file
@@ -64,9 +65,6 @@ class toolsWindow:
 		y += h + space
 
 		h = 40
-		self.w.methodRadioGroup = RadioGroup((x,y,w,h), ["Matrix", "Topology"], sizeStyle="small", callback=self.methodChangedCallback)
-		y += h + space
-
 		self.w.divider1 = HorizontalLine((x,y,w,h))
 		y += h + space
 
@@ -116,21 +114,6 @@ class toolsWindow:
 
 		self.w.open()
 
-
-	def methodChangedCallback(self, sender):
-		# select matrix or topology
-		"""
-		if self.w.methodRadioGroup.get() == 0:
-			self.w.margin.enable()
-			self.w.matrixWidth.enable()
-			self.w.topologyK.disable()
-			
-		else:
-			self.w.margin.disable()
-			self.w.matrixWidth.disable()
-			self.w.topologyK.enable()
-		"""
-		self.mainWindow.mode = self.w.methodRadioGroup.get()
 	
 	"""
 	# deprecated => preset values...
@@ -172,10 +155,10 @@ class toolsWindow:
 		and then print it on the lineView.
 		"""
 		inputText = self.w.editText.get()
-		standardGlyph = text2Glyph(inputText, self.font); self.mainWindow.standardGlyph = standardGlyph
-		contourIndex = int(self.w.contourIndex.slider.get()); self.mainWindow.standardContour = standardGlyph.contours[contourIndex]	# standardGlyph로부터 standardContour 인덱스 설정
+		standardGlyph = text2Glyph(inputText, self.font); setExtensionDefault(DefaultKey + ".standardGlyph", standardGlyph)
+		contourIndex = int(self.w.contourIndex.slider.get()); standardContour = standardGlyph.contours[contourIndex]; setExtensionDefault(DefaultKey + ".standardContour", standardContour)
 		file = self.file
+		jsonFilePath = getExtensionDefault(DefaultKey+".jsonFilePath")
 
-		
-		tMC.handleSearchGlyphList(self.mainWindow.standardGlyph, contourIndex, self.mainWindow.file, self, self.mainWindow)
+		tMC.handleSearchGlyphList(standardGlyph, contourIndex, file, jsonFilePath)
 		return
