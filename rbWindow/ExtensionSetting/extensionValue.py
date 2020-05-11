@@ -27,12 +27,16 @@ class ConfigExtensionSettings:
 		    self.registerKey + ".topology_margin": 500,
 		    
 		    self.registerKey + ".groupDict": None,
+		    self.registerKey + ".contourNumber": None,
 		    self.registerKey + ".smartSet": None,
 		    self.registerKey + ".standardContour": None,
 		    self.registerKey + ".standardGlyph": None,
 		    self.registerKey + ".matrix": None,
 		    
 		    self.registerKey + ".index": 0,
+		    self.registerKey + ".step": 30,
+		    self.registerKey + ".width": 30,
+		    self.registerKey + ".height": 10,
 		    self.registerKey + ".color": NSColor.colorWithCalibratedRed_green_blue_alpha_(1, 0, 0, .5)
 		}
 

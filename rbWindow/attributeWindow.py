@@ -18,47 +18,38 @@ topologyMode = 1
 class attributeWindow:
 
 	def __init__(self, mainWindow):
-		self.mainWindow = mainWindow
 
 		#팝압창이 나오고 컴투어 인덱스 번호를 받음
-		self.w = HUDFloatingWindow((300,200), "Index Window")
-		self.w.textBox = TextBox((10,10,100,22),"Contour Index")
-		self.w.editText = EditText((140,10,50,22))
-		self.w.btn = Button((10,50,80,22),"Submit", callback=self.submitCallback)
-		self.w.open()
-		self.contourNumber =None
-
-		#예외가 발생하면 ui가 팝업되지 않도록
+		res = self.preprocess()
+		if res is True:
+			self.createUI()
 		
-	def submitCallback(self,sender):
+	def preprocess(self):
 
-		print("start")
-		print(self.w.editText.get())
-		print(type(self.w.editText.get()))
-		print("end")
-		self.contourNumber = int(self.w.editText.get())
+		contourNumber = getExtensionDefault(DefaultKey + ".contourNumber")
 
 		try:
 			file = getExtensionDefault(DefaultKey+".file")
-			newGlyph = self.mainWindow.file[CurrentGlyphWindow().getGlyph().name]
+			newGlyph = file[CurrentGlyphWindow().getGlyph().name]
 			print(newGlyph)
 			mode = getExtensionDefault(DefaultKey+".mode")
 			print("mode : ", mode)
 
-			checkSetData = searchGroup(newGlyph,self.contourNumber, mode,file)
+			checkSetData = searchGroup(newGlyph, contourNumber, mode, file)
 			print(checkSetData)
-			if checkSetData[2] == 1:
+			if checkSetData[2] == 1 or contourNumber is None:
 				raise NotSetExist
 
-			setExtensionDefault(DefaultKey+".standardContour", newGlyph.contours[self.contourNumber])
-			setExtensionDefault(DefaultKey+".groupDict", findContoursGroup(checkSetData, self.mainWindow.file))
+			setExtensionDefault(DefaultKey+".standardContour", newGlyph.contours[contourNumber])
+			setExtensionDefault(DefaultKey+".groupDict", findContoursGroup(checkSetData, file))
 
 		except Exception as e:
+			print(contourNumber)
 			Message("아직 그룹화가 진행되어지지 않았습니다.")
 			print("예외가 발생했습니다",e)
-			return
+			return False
 
-		self.createUI()
+		return True
 		
 
 	def createUI(self):

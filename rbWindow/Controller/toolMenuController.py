@@ -235,8 +235,8 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, jsonFilePath):
 	mode = getExtensionDefault(DefaultKey+".mode")
 	checkSetData = searchGroup(standardGlyph,contourIndex,mode,file,True)
 	if checkSetData[2] == 0:
-		currentWindow.groupDict = findContoursGroup(checkSetData,file)
-		## setExtensionDefault(defaultKey+".groupDict", findContoursGroup(checkSetData, mainWindow))
+		groupDict = findContoursGroup(checkSetData,file)
+		setExtensionDefault(DefaultKey + ".groupDict", groupDict)
 		print("이미 그룹화가 진행된 컨투어입니다.")
 
 	else:
@@ -244,11 +244,13 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, jsonFilePath):
 
 		if mode is matrixMode:
 			getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, width, file, checkSetData, jsonFilePath)
-			setExtensionDefault(DefaultKey+".groupDict", findContoursGroup(checkSetData, file))
+			groupDict = findContoursGroup(checkSetData, file)
+			setExtensionDefault(DefaultKey+".groupDict", groupDict)
 
 		elif mode is topologyMode:
 			getMatchGroupByTopology(standardGlyph, contourIndex, k, file, checkSetData, jsonFilePath)
-			setExtensionDefault(defaultKey+".groupDict", findContoursGroup(checkSetData, file))
+			groupDict = findContoursGroup(checkSetData, file)
+			setExtensionDefault(defaultKey+".groupDict", groupDict)
 
 def findContoursGroup(checkSetData,file):
 	"""
@@ -269,6 +271,7 @@ def findContoursGroup(checkSetData,file):
 	glyphList = list()
 	res = dict()
 	positionName  = None
+	groupSet = None
 
 	mode = getExtensionDefault(DefaultKey+".mode")
 

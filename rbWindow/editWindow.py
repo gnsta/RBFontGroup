@@ -167,8 +167,9 @@ class EditGroupMenu(object):
 	def popAttributeWindow(self, sender):
 
 		# Window for Assign & Remove Attribute
-		mode = getExtensionDefault(DefaultKey+".mode")
-		if mode is None:
+		mode = getExtensionDefault(DefaultKey + ".mode")
+		contourNumber = getExtensionDefault(DefaultKey + ".contourNumber")
+		if mode is None or contourNumber is None:
 			print(Message("먼저 속성을 부여할 그룹을 찾아야 합니다."))
 			return
 		self.w4 = attributeWindow(self)
@@ -206,16 +207,21 @@ class EditGroupMenu(object):
 	
 
 	def drawBroadNibBackground(self, info):
-		if self.state is not 1:
-			return
+
 		# paint current group's contour
 		targetGlyph = info["glyph"].getLayer(self.layerName)
-
 		# picks current contours which should be painted from current group
 		contourList = []
 
 		try :
+			file = getExtensionDefault(DefaultKey + ".file")
 			targetIdxList = getExtensionDefault(DefaultKey+".groupDict")[targetGlyph]
+			setExtensionDefault(DefaultKey + ".contourNumber", targetIdxList[0])
+
+			# 칠할 필요가 없다면 해당 컨투어 번호만 세팅하고 종료
+			if self.state is not 1:
+				return
+
 			r,g,b,a = self.color
 			fill(r,g,b,a)
 
@@ -225,5 +231,7 @@ class EditGroupMenu(object):
 			for idx in targetIdxList:
 				targetGlyph.contours[idx].draw(self.currentPen)
 
-		except Exception:
+
+		except Exception as e:
+			setExtensionDefault(DefaultKey + ".contourNumber", None)
 			return
