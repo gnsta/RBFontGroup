@@ -234,6 +234,7 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, jsonFilePath):
 	"""
 	mode = getExtensionDefault(DefaultKey+".mode")
 	checkSetData = searchGroup(standardGlyph,contourIndex,mode,file,True)
+
 	if checkSetData[2] == 0:
 		groupDict = findContoursGroup(checkSetData,file)
 		setExtensionDefault(DefaultKey + ".groupDict", groupDict)
@@ -252,7 +253,8 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, jsonFilePath):
 			groupDict = findContoursGroup(checkSetData, file)
 			setExtensionDefault(defaultKey+".groupDict", groupDict)
 
-def findContoursGroup(checkSetData,file):
+def findContoursGroup(checkSetData,mainWindow):
+
 	"""
 	find grouped contour reference by jsonFile and smartSet
 	Args ::
@@ -304,15 +306,19 @@ def findContoursGroup(checkSetData,file):
 	for g in glyphList:
 		searchContours = []
 		for i,comc in enumerate(g.contours):
+
 			if mode == 0:
 				standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
 				standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
 				compareController = groupTestController(standardMatrix,matrix_margin)
 				result = compareController.conCheckGroup(comc)
+				
 				if result is not None:
 					searchContours.append(i)
+
 			elif mode == 1:
 				standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+
 				result = topologyJudgementController(standardGlyph.contours[standardIdx],comc,topology_margin).topologyJudgement()
 				if result is not False:
 					searchContours.append(i)
