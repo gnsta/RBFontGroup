@@ -213,25 +213,25 @@ class EditGroupMenu(object):
 		# picks current contours which should be painted from current group
 		contourList = []
 
-		try :
-			file = getExtensionDefault(DefaultKey + ".file")
-			targetIdxList = getExtensionDefault(DefaultKey+".groupDict")[targetGlyph]
-			setExtensionDefault(DefaultKey + ".contourNumber", targetIdxList[0])
+		#try :
+		file = getExtensionDefault(DefaultKey + ".file")
+		targetIdxList = getExtensionDefault(DefaultKey+".groupDict")[targetGlyph]
+		setExtensionDefault(DefaultKey + ".contourNumber", targetIdxList[0])
 
-			# 칠할 필요가 없다면 해당 컨투어 번호만 세팅하고 종료
-			if self.state is not 1:
-				return
-
-			r,g,b,a = self.color
-			fill(r,g,b,a)
-
-			if info["glyph"].layerName == self.layerName or not self.currentPen:
-				self.currentPen = BroadNibPen(None, self.step, self.width, self.height, 0, oval)
-
-			for idx in targetIdxList:
-				targetGlyph.contours[idx].draw(self.currentPen)
-
-
-		except Exception as e:
-			setExtensionDefault(DefaultKey + ".contourNumber", None)
+		# 칠할 필요가 없다면 해당 컨투어 번호만 세팅하고 종료
+		if self.state is not 1:
 			return
+
+		r,g,b,a = self.color
+		fill(r,g,b,a)
+
+		if info["glyph"].layerName == self.layerName or not self.currentPen:
+			self.currentPen = BroadNibPen(None, self.step, self.width, self.height, 0, oval)
+
+		for idx in targetIdxList:
+			targetGlyph.contours[idx].draw(self.currentPen)
+
+
+		"""except Exception as e:
+									setExtensionDefault(DefaultKey + ".contourNumber", None)
+									return"""

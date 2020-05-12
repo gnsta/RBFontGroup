@@ -234,6 +234,7 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, jsonFilePath):
 	"""
 	mode = getExtensionDefault(DefaultKey+".mode")
 	checkSetData = searchGroup(standardGlyph,contourIndex,mode,file,True)
+	
 
 	if checkSetData[2] == 0:
 		groupDict = findContoursGroup(checkSetData,file)
@@ -253,7 +254,12 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, jsonFilePath):
 			groupDict = findContoursGroup(checkSetData, file)
 			setExtensionDefault(defaultKey+".groupDict", groupDict)
 
-def findContoursGroup(checkSetData,mainWindow):
+	print("Current GroupDict : ",groupDict)
+	print("Extension GroupDict : ",getExtensionDefault(DefaultKey+".groupDict"))
+	print("ChecksetData : ",checkSetData)
+
+
+def findContoursGroup(checkSetData,file):
 
 	"""
 	find grouped contour reference by jsonFile and smartSet

@@ -37,7 +37,7 @@ class attributeWindow:
 
 			checkSetData = searchGroup(newGlyph, contourNumber, mode, file)
 			print(checkSetData)
-			if checkSetData[2] == 1 or contourNumber is None:
+			if contourNumber is None:
 				raise NotSetExist
 
 			setExtensionDefault(DefaultKey+".standardContour", newGlyph.contours[contourNumber])
