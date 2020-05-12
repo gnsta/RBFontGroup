@@ -137,15 +137,3 @@ class groupPointMatchController:
 	def mdeleteAttr(self,attribute):
 		insertPoint = self.matchPoint()
 		at.del_attr(insertPoint,attribute)		
-
-
-
-
-
-
-
-
-
-
-
-

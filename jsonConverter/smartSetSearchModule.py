@@ -14,7 +14,11 @@ create By Kim heesup
 
 baseDir = "/Users/font/Desktop/GroupDict/"
 
-def searchGroup(glyph,contourNumber,mode,file,message = False):
+matrix_margin = 25
+matrix_size = 3
+topology_margin = 500
+
+def searchGroup(glyph,contourNumber,mode,mainWindow,message = False):
 	"""
 	check that contour group is created
 	if exist return file number else return None
@@ -77,8 +81,7 @@ def searchGroup(glyph,contourNumber,mode,file,message = False):
 		checkSetName = str(sSet.name)
 		checkSetNameList = checkSetName.split('_')
 		#print('positionName',positionName)
-		print("mode : ",mode)
-		print('searchMode', searchMode)
+		#print('searchMode', searchMode)
 		if checkSetNameList[1] != positionName or checkSetNameList[2] != searchMode:
 			continue
 		#검사를 진행을 해야함(기준 컨투어는 알고 있고 비교 글리프에 있는 컨투어는 순회를 하면서 조사하는 방식)
@@ -89,18 +92,18 @@ def searchGroup(glyph,contourNumber,mode,file,message = False):
 		standardIdx = int(standardNameList[1][0:len(standardNameList)-1]) 
 		for item in sSet.glyphNames:
 			if mode == 0:
-				standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+				standardGlyph = mainWindow.file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
 				#width값은 정해져 있다고 생각을 하고 진행
-				standardMatrix=Matrix(standardGlyph.contours[standardIdx],3)
-				compareController = groupTestController(standardMatrix,25)
+				standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
+				compareController = groupTestController(standardMatrix,matrix_margin)
 				result = compareController.conCheckGroup(glyph[contourNumber])
 				if result is not None: 
 					searchSmartSet = sSet
 					check = 1
 					break
 			elif mode == 1:
-				standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
-				result = topologyJudgementController(standardGlyph.contours[standardIdx],glyph[contourNumber],500).topologyJudgement()
+				standardGlyph = mainWindow.file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+				result = topologyJudgementController(standardGlyph.contours[standardIdx],glyph[contourNumber],topology_margin).topologyJudgement()
 				if result is not False: 
 					searchSmartSet = sSet
 					check = 1
@@ -291,5 +294,5 @@ def getSmartSetStatTopology():
 			check = 1
 	if check == 0:
 		topologySetStat["final"] = len(finall) + 1
-
+		
 	return topologySetStat

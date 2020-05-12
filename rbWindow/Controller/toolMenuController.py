@@ -12,6 +12,7 @@ from mojo.UI import *
 from mojo.extensions import *
 from rbWindow.ExtensionSetting.extensionValue import *
 
+
 matrixMode = 0
 topologyMode = 1
 
@@ -23,7 +24,8 @@ matrix_margin = 25
 matrix_size = 3
 topology_margin = 500
 
-def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, file,checkSetData,jsonFileName):
+def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, file,checkSetData,jsonFileName1,jsonFileName2):
+
 	"""
 	2020/03/35 
 	modify by Kim heesup
@@ -63,8 +65,11 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 	smartSet = SmartSet()
 
 	#추가부분
-	with open(jsonFileName, 'r') as jsonFile:
-	    resultDict = json.load(jsonFile)
+	with open(jsonFileName1, 'r') as jsonFile1:
+	    resultDict = json.load(jsonFile1)
+
+	with open(jsonFileName2, 'r') as jsonFile2:
+		configDict = json.load(jsonFile2)
 
 	standard = resultDict[standardGlyph.name][contourIndex]
 	bar = ProgressBar('Matrix Process',len(resultDict),'Grouping...')
@@ -102,6 +107,10 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 		barProcess += 1
 		smartCheck = 0
 		for i,compare in enumerate(value):
+
+			if i not in configDict[key][checkSetData[1]]:#초, 중, 종 분리 로직
+				continue
+
 			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
 				compareContour = file[key].contours[i]
 				result = compareController.conCheckGroup(compareContour)
@@ -126,7 +135,8 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 
 
 
-def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,jsonFileName):
+def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,jsonFileName1,jsonFileName2):
+
 	"""
 	2020/03/25
 	modify by Kim heesup
@@ -151,8 +161,11 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 	"""
 
 	#추가부분
-	with open(jsonFileName, 'r') as jsonFile:
-		resultDict = json.load(jsonFile)
+	with open(jsonFileName1, 'r') as jsonFile1:
+		resultDict = json.load(jsonFile1)
+
+	with open(jsonFileName2, 'r') as jsonFile2:
+		configDict = json.load(jsonFile2)
 
 	standard = resultDict[standardGlyph.name][contourIndex]
 
@@ -192,6 +205,10 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 		smartCheck = 0
 		barProcess += 1
 		for i,compare in enumerate(value):
+
+			if i not in configDict[key][checkSetData[1]]:#초, 중, 종 분리 로직
+				continue
+
 			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
 				compareContour = file[key].contours[i]
 				result = topologyJudgementController(standardGlyph.contours[contourIndex],compareContour,topology_margin).topologyJudgement()
@@ -214,7 +231,9 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 	updateAllSmartSets()
 
 
+
 def handleSearchGlyphList(standardGlyph, contourIndex, file, jsonFilePath):
+
 	"""
 		2020/03/23
 		created by H.W. Cho
@@ -279,11 +298,13 @@ def findContoursGroup(checkSetData,file):
 	glyphList = list()
 	res = dict()
 	positionName  = None
+
 	groupSet = None
 
 	mode = getExtensionDefault(DefaultKey+".mode")
 
 	if mode == 0:
+
 		modeName = "Matrix"
 	else:
 		modeName = "Topology"
@@ -309,6 +330,7 @@ def findContoursGroup(checkSetData,file):
 		glyphList.append(file[str(item)])
 
 
+
 	for g in glyphList:
 		searchContours = []
 		for i,comc in enumerate(g.contours):
@@ -324,7 +346,6 @@ def findContoursGroup(checkSetData,file):
 
 			elif mode == 1:
 				standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
-
 				result = topologyJudgementController(standardGlyph.contours[standardIdx],comc,topology_margin).topologyJudgement()
 				if result is not False:
 					searchContours.append(i)

@@ -55,7 +55,3 @@ if __name__ == '__main__':
     plt.xlabel('weight')
     plt.ylabel('height')
     plt.show()
-    
-    
-	
-

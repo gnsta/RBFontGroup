@@ -35,26 +35,27 @@ def getConfigureVersion2(RGlyph):
         if chars[2] == None:
             if chars[0] in first_one:
                 if chars[1] in middle_one:
-                    print('case1')
+
+                    #print('case1')
                     num = case1(RGlyph, c, chars)
                 elif chars[1] in middle_two:
-                    print('case2')
+                    #print('case2')
                     num = case2(RGlyph, c, chars)
                 elif chars[1] in middle_four:
-                    print('case6')
+                    #print('case6')
                     num = case6(RGlyph, c, chars)
             elif chars[0] in first_two:
                 if chars[1] in middle_one:
-                    print('case3')
+                    #print('case3')
                     num = case3(RGlyph, c, chars)
                 elif chars[1] in middle_two:
-                    print('case4')
+                    #print('case4')
                     num = case4(RGlyph, c, chars)
                 elif chars[1] in middle_three:
-                    print('case7')
+                    #print('case7')
                     num = case7(RGlyph, c, chars)
                 elif chars[1] in middle_four:
-                    print('case8')
+                    #print('case8')
                     num = case8(RGlyph, c, chars)
 
         elif chars[2] != None:

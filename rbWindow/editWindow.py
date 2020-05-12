@@ -17,6 +17,7 @@ from AppKit import *
 from rbWindow.ExtensionSetting.extensionValue import *
 
 
+
 def getMatchGroupDic(inputText, groupDict):
 	"""
 		2020/03/12
@@ -99,6 +100,7 @@ class EditGroupMenu(object):
 		# self.groupDict = groupDict
 		
 		self.defaultKey = "com.robofontTool.rbFontGroup"
+
 		self.selectedGlyphs = []                # Apply List Label을 통해 색칠된 글리프들을 다시 무채색으로 변환하기 위한 변수
 		self.markColor = 0.3, 0.4, 0.7, 0.7
 		self.state = False
@@ -113,6 +115,7 @@ class EditGroupMenu(object):
 		self.mode = None  		# 연산 방법(matrix, topology)
 		self.w3 = None
 		self.jsonFileName = jsonFileName
+
 		self.createUI()
 		self.color = None
 		self.step = None
@@ -121,6 +124,7 @@ class EditGroupMenu(object):
 		self.shape = None
 		self.angle = None
 		self.keyDict = None
+
 
 	"""
 		UI 컴포넌트 부착
@@ -145,11 +149,13 @@ class EditGroupMenu(object):
 		for i in range(len(self.newToolbarItems)):
 			toolbarItems.append(self.newToolbarItems[i])
 
+
 		#toolbarItems.append(newItem7)
 		# get the vanilla window object
 		vanillaWindow = self.window.window()
 		# set the new toolbaritems in the window
 		self.window.toolbar = vanillaWindow.addToolbar(toolbarIdentifier="myCustomToolbar", toolbarItems=toolbarItems, addStandardItems=False)
+
 		x = 10; y = 10; w = 280; h = 22; space = 5; size = (800, 600)
 
 		addObserver(self, "drawBroadNibBackground", "drawBackground")
@@ -183,7 +189,6 @@ class EditGroupMenu(object):
 		# Window for Matrix & Topology Process
 		self.w3 = toolsWindow(self)
 		self.w3.createUI()
-	    
 
 	def windowCloseCallback(self, sender):
 	    
@@ -216,25 +221,25 @@ class EditGroupMenu(object):
 		# picks current contours which should be painted from current group
 		contourList = []
 
-		#try :
-		file = getExtensionDefault(DefaultKey + ".file")
-		targetIdxList = getExtensionDefault(DefaultKey+".groupDict")[targetGlyph]
-		setExtensionDefault(DefaultKey + ".contourNumber", targetIdxList[0])
+		try :
+			file = getExtensionDefault(DefaultKey + ".file")
+			targetIdxList = getExtensionDefault(DefaultKey+".groupDict")[targetGlyph]
+			setExtensionDefault(DefaultKey + ".contourNumber", targetIdxList[0])
 
-		# 칠할 필요가 없다면 해당 컨투어 번호만 세팅하고 종료
-		if self.state is not 1:
+			# 칠할 필요가 없다면 해당 컨투어 번호만 세팅하고 종료
+			if self.state is not 1:
+				return
+
+			r,g,b,a = self.color
+			fill(r,g,b,a)
+
+			if info["glyph"].layerName == self.layerName or not self.currentPen:
+				self.currentPen = BroadNibPen(None, self.step, self.width, self.height, 0, oval)
+
+			for idx in targetIdxList:
+				targetGlyph.contours[idx].draw(self.currentPen)
+
+
+		except Exception as e:
+			setExtensionDefault(DefaultKey + ".contourNumber", None)
 			return
-
-		r,g,b,a = self.color
-		fill(r,g,b,a)
-
-		if info["glyph"].layerName == self.layerName or not self.currentPen:
-			self.currentPen = BroadNibPen(None, self.step, self.width, self.height, 0, oval)
-
-		for idx in targetIdxList:
-			targetGlyph.contours[idx].draw(self.currentPen)
-
-
-		"""except Exception as e:
-									setExtensionDefault(DefaultKey + ".contourNumber", None)
-									return"""

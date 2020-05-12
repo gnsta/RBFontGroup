@@ -10,6 +10,7 @@ from rbWindow.Controller.toolMenuController import *
 from mojo.extensions import *
 from rbWindow.ExtensionSetting.extensionValue import *
 
+
 matrixMode = 0
 topologyMode = 1
 
@@ -64,7 +65,6 @@ class attributeWindow:
 		h = 30
 
 		self.w.innerFillButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[0]+".png")
-		print("ImagePath = ", extPath.ImagePath+extPath.attrImgList[0]+".png")
 		self.w.innerFillText = TextBox((x+40,y,w,h), "innerFill")
 		y += h + space
 
@@ -88,6 +88,7 @@ class attributeWindow:
 		self.w.selectText = TextBox((x+40,y,w,h), "select")
 		y += h + space
 
+
 		self.w.minimizeBox = CheckBox((x,y,80,20), "", callback=self.minimizeCallback, value=True)
 		y += h +space
 
@@ -104,6 +105,7 @@ class attributeWindow:
 			self.w.deleteButton._setCallback(None)
 			self.w.selectButton._setCallback(self.mhandleSelect)
 
+
 		elif mode is topologyMode:
 			self.w.innerFillButton._setCallback(self.thandleInnerFill)
 			self.w.penPairButton._setCallback(self.thandlePenPair)
@@ -118,6 +120,7 @@ class attributeWindow:
 		콜백 메소드에 연결할 메소드(Matrix)
 	"""
 	def mhandleInnerFill(self, sender):
+
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		matrix = getExtensionDefault(DefaultKey+".matrix")
 		mbt.minnerFillAttribute(groupDict, matrix)
@@ -137,6 +140,7 @@ class attributeWindow:
 		matrix = getExtensionDefault(DefaultKey+".matrix")
 		mbt.mdependYAttribute(groupDict, matrix)
 
+
 	def mhandleDelete(self, sender):
 		pass
 
@@ -149,10 +153,12 @@ class attributeWindow:
 
 
 
+
 	"""
 		콜백 메소드에 연결할 메소드(Topology)
 	"""
 	def thandleInnerFill(self, sender):
+
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		standardContour = getExtensionDefault(DefaultKey+".standardContour")
 		k = getExtensionDefault(DefaultKey+".k")
@@ -176,10 +182,12 @@ class attributeWindow:
 		k = getExtensionDefault(DefaultKey+".k")
 		tbt.innerFillAttribute(groupDict, standardContour, k)
 
+
 	def thandleDelete(self, sender):
 		pass
 
 	def thandleSelect(self, sender):
+
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		standardContour = getExtensionDefault(DefaultKey+".standardContour")
 		k = getExtensionDefault(DefaultKey+".k")
@@ -194,3 +202,4 @@ class attributeWindow:
 		else:
 			self.w.resize(self.size[0], self.size[1])
 			self.w.minimizeBox.setTitle("최소화")
+

@@ -1,6 +1,7 @@
 import mojo.extensions
 
 toolName = "roboTool"
+
 fontToolBundle = mojo.extensions.ExtensionBundle(toolName)
 baseDir = fontToolBundle.resourcesPath() + "/GroupDict/"
 saveFilePath = baseDir

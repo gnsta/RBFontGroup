@@ -17,6 +17,7 @@ import jsonConverter.converter as convert
 import rbWindow.Controller.toolMenuController as tMC
 from rbWindow.ExtensionSetting.extensionValue import *
 
+
 def text2Glyph(inputText, font):
 	"""
 	2020/03/23
@@ -43,6 +44,7 @@ class toolsWindow:
 	def __init__(self, mainWindow):
 
 		self.defaultKey = "com.robofontTool.rbFontGroup"
+
 		# self.mainWindow.mode = mainWindow.w.methodRadioGroup.get()		# mode 0: matrix, 1: topology
 
 		self.file = mainWindow.file
@@ -65,6 +67,7 @@ class toolsWindow:
 		y += h + space
 
 		h = 40
+
 		self.w.divider1 = HorizontalLine((x,y,w,h))
 		y += h + space
 
@@ -161,4 +164,5 @@ class toolsWindow:
 		jsonFilePath = getExtensionDefault(DefaultKey+".jsonFilePath")
 
 		tMC.handleSearchGlyphList(standardGlyph, contourIndex, file, jsonFilePath)
+
 		return
