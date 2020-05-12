@@ -18,5 +18,5 @@ testFile = OpenFont(testPath,showInterface = False)
 jsonFileName = StartProgram(testPath,testFile)
 setExtensionDefault(DefaultKey + ".file", CurrentFont())
 setExtensionDefault(DefaultKey + ".jsonFilePath", jsonFileName)
-menuWindow = ew.EditGroupMenu(CurrentFont(), testFile,jsonFileName)
+menuWindow = ew.EditGroupMenu(CurrentFont(), testFile,jsonFileName[0], jsonFileName[1])
 
