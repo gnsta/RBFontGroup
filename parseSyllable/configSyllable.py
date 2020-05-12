@@ -1,17 +1,51 @@
 from rbFontG.tools.parseUnicodeControll import *
 from parseSyllable.configVersion1 import *
 from parseSyllable.configVersion2 import *
+from parseSyllable.configVersion3 import *
 
 def getConfigure(RGlyph):
 
-	unicodeObj = parseUnicodeController(RGlyph.unicode)
-	uniCodeIdx = unicodeObj.parseUnicode()
+	resultList = list()
+	resultDict = dict()
 
-	configValue = None
+	middle_one = ['ㅏ','ㅑ','ㅓ','ㅕ','ㅣ','ㅐ']
+	middle_two = ['ㅔ','ㅖ','ㅒ']
+	middle_three = ['ㅗ','ㅛ','ㅜ','ㅠ','ㅡ']
+	middle_four = ['ㅘ','ㅚ','ㅟ', 'ㅢ','ㅙ']
+	middle_five = ['ㅝ']
+	middle_six = ['ㅞ']
 
-	if uniCodeIdx[1] in parseUnicodeController.vowel_horizontal:
-		configValue = getConfigureVersion1(RGlyph)
+	puc = parseUnicodeController(RGlyph.unicode)
+	chars = puc.getChars()
+
+
+	if chars[2] is None:
+		if chars[1] in middle_one:
+			resultList = case1(RGlyph)
+		elif chars[1] in middle_two:
+			resultList = case3(RGlyph)
+		elif chars[1] in middle_three:
+			resultList = case5(RGlyph)
+		elif chars[1] in middle_four:
+			resultList = case7(RGlyph)
+		elif chars[1] in middle_five:
+			resultList = case9(RGlyph)
+		elif chars[1] in middle_six:
+			resultList = case11(RGlyph)
 	else:
-		configValue = getConfigureVersion2(RGlyph)
+		if chars[1] in middle_one:
+			resultList = case2(RGlyph)
+		elif chars[1] in middle_two:
+			resultList = case4(RGlyph)
+		elif chars[1] in middle_three:
+			resultList = case5(RGlyph)
+		elif chars[1] in middle_four:
+			resultList = case8(RGlyph)
+		elif chars[1] in middle_five:
+			resultList = case10(RGlyph)
+		elif chars[1] in middle_six:
+			resultList = case12(RGlyph)
 
-	return configValue
+	resultDict[str(RGlyph.unicode)] = resultList
+
+	return resultDict
