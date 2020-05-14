@@ -7,7 +7,6 @@ from rbFontG.tools.tMatrix.PhaseTool import *
 from mojo.UI import *
 from jsonConverter.smartSetSearchModule import *
 from rbWindow.Controller.toolMenuController import *
-from mojo.extensions import *
 from rbWindow.ExtensionSetting.extensionValue import *
 
 
@@ -18,8 +17,7 @@ topologyMode = 1
 
 class attributeWindow:
 
-	def __init__(self, mainWindow):
-
+	def __init__(self):
 		#팝압창이 나오고 컴투어 인덱스 번호를 받음
 		res = self.preprocess()
 		if res is True:
@@ -29,27 +27,28 @@ class attributeWindow:
 
 		contourNumber = getExtensionDefault(DefaultKey + ".contourNumber")
 
-		try:
-			file = getExtensionDefault(DefaultKey+".file")
-			newGlyph = file[CurrentGlyphWindow().getGlyph().name]
-			print(newGlyph)
-			mode = getExtensionDefault(DefaultKey+".mode")
-			print("mode : ", mode)
+		#try:
+		file = getExtensionDefault(DefaultKey+".file")
+		newGlyph = file[CurrentGlyphWindow().getGlyph().name]
 
-			checkSetData = searchGroup(newGlyph, contourNumber, mode, file)
-			print(checkSetData)
-			if contourNumber is None:
-				raise NotSetExist
+		print(newGlyph)
+		mode = getExtensionDefault(DefaultKey+".mode")
+		print("mode : ", mode)
+		print(newGlyph,",",contourNumber,",",file)
+		checkSetData = searchGroup(newGlyph, contourNumber, mode, file)
+		print("checkSetData in attributeW : ",checkSetData)
+		if contourNumber is None:
+			raise NotSetExist
 
-			setExtensionDefault(DefaultKey+".standardContour", newGlyph.contours[contourNumber])
-			setExtensionDefault(DefaultKey+".groupDict", findContoursGroup(checkSetData, file))
-
+		setExtensionDefault(DefaultKey+".standardContour", newGlyph.contours[contourNumber])
+		setExtensionDefault(DefaultKey+".groupDict", findContoursGroup(checkSetData, file, mode))
+		'''
 		except Exception as e:
 			print(contourNumber)
 			Message("아직 그룹화가 진행되어지지 않았습니다.")
 			print("예외가 발생했습니다",e)
 			return False
-
+		'''
 		return True
 		
 
@@ -65,6 +64,7 @@ class attributeWindow:
 		h = 30
 
 		self.w.innerFillButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[0]+".png")
+		print("ImagePath = ", extPath.ImagePath+extPath.attrImgList[0]+".png")
 		self.w.innerFillText = TextBox((x+40,y,w,h), "innerFill")
 		y += h + space
 
@@ -88,7 +88,6 @@ class attributeWindow:
 		self.w.selectText = TextBox((x+40,y,w,h), "select")
 		y += h + space
 
-
 		self.w.minimizeBox = CheckBox((x,y,80,20), "", callback=self.minimizeCallback, value=True)
 		y += h +space
 
@@ -105,7 +104,6 @@ class attributeWindow:
 			self.w.deleteButton._setCallback(None)
 			self.w.selectButton._setCallback(self.mhandleSelect)
 
-
 		elif mode is topologyMode:
 			self.w.innerFillButton._setCallback(self.thandleInnerFill)
 			self.w.penPairButton._setCallback(self.thandlePenPair)
@@ -116,11 +114,13 @@ class attributeWindow:
 
 		self.w.open()
 
+
+
+
 	"""
 		콜백 메소드에 연결할 메소드(Matrix)
 	"""
 	def mhandleInnerFill(self, sender):
-
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		matrix = getExtensionDefault(DefaultKey+".matrix")
 		mbt.minnerFillAttribute(groupDict, matrix)
@@ -140,15 +140,14 @@ class attributeWindow:
 		matrix = getExtensionDefault(DefaultKey+".matrix")
 		mbt.mdependYAttribute(groupDict, matrix)
 
-
 	def mhandleDelete(self, sender):
 		pass
 
 	def mhandleSelect(self, sender):
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		print(groupDict)
 		matrix = getExtensionDefault(DefaultKey+".matrix")
 		mbt.mselectAttribute(groupDict, matrix)
-
 
 
 
@@ -158,7 +157,6 @@ class attributeWindow:
 		콜백 메소드에 연결할 메소드(Topology)
 	"""
 	def thandleInnerFill(self, sender):
-
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		standardContour = getExtensionDefault(DefaultKey+".standardContour")
 		k = getExtensionDefault(DefaultKey+".k")
@@ -182,12 +180,10 @@ class attributeWindow:
 		k = getExtensionDefault(DefaultKey+".k")
 		tbt.innerFillAttribute(groupDict, standardContour, k)
 
-
 	def thandleDelete(self, sender):
 		pass
 
 	def thandleSelect(self, sender):
-
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		standardContour = getExtensionDefault(DefaultKey+".standardContour")
 		k = getExtensionDefault(DefaultKey+".k")
@@ -202,4 +198,3 @@ class attributeWindow:
 		else:
 			self.w.resize(self.size[0], self.size[1])
 			self.w.minimizeBox.setTitle("최소화")
-

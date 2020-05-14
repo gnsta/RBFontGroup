@@ -149,7 +149,7 @@ def case3(glyph):
         temp_object = PositionState(glyph.contours[i],i)
         point_list.append(temp_object)
     
-    result = sorted(point_list, key = lambda PositionState: PositionState.bounds[2])
+    result = sorted(point_list, key = lambda PositionState: PositionState.con.bounds[2])
     
     middle.append(result[-1].conNumber)
     middle.append(result[-2].conNumber)

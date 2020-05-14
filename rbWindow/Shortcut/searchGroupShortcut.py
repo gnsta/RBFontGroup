@@ -18,10 +18,15 @@ def searchGroupProcess():
 		return
 
 	contourIndex = list(selectedDict.keys())[0]
-	file = getExtensionDefault(DefaultKey + ".file")
-	jsonFilePath = getExtensionDefault(DefaultKey + ".jsonFilePath")
-
-	handleSearchGlyphList(standardGlyph, contourIndex, file, jsonFilePath)
+	file = getExtensionDefault(DefaultKey+".file")
+	jsonFilePath = getExtensionDefault(DefaultKey+".jsonFilePath")
+	mode = getExtensionDefault(DefaultKey+".mode")
+	jsonFileName1 = getExtensionDefault(DefaultKey+".jsonFileName1")
+	jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
+	font = getExtensionDefault(DefaultKey+".font")
+	groupDict = getExtensionDefault(DefaultKey+".groupDict")
+	
+	handleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1, jsonFileName2, font, groupDict)
 
 	for contour in standardGlyph.contours:
 		contour.selected = False

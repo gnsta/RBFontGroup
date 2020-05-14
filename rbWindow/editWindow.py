@@ -94,13 +94,12 @@ def getMatchGroupDicByGlyph(inputGlyph, groupDict):
 
 class EditGroupMenu(object):
 
-	def __init__(self, font, file,jsonFileName1, jsonFileName2):
+	def __init__(self, font, groupDict, file,jsonFileName1,jsonFileName2):
 		
 		self.font = font
-		# self.groupDict = groupDict
+		self.groupDict = groupDict
 		
-		self.defaultKey = "com.robofontTool.rbFontGroup"
-
+		self.defaultKey = "com.asaumierdemers.BroadNibBackground"
 		self.selectedGlyphs = []                # Apply List Label을 통해 색칠된 글리프들을 다시 무채색으로 변환하기 위한 변수
 		self.markColor = 0.3, 0.4, 0.7, 0.7
 		self.state = False
@@ -109,13 +108,10 @@ class EditGroupMenu(object):
 		self.file = file
 		self.window = None		# 현재 띄워져 있는 ufo 윈도우
 
-		self.jsonFileName1 = jsonFileName1
-		self.jsonFileName2 = jsonFileName2
-		
 		self.mode = None  		# 연산 방법(matrix, topology)
 		self.w3 = None
-		self.jsonFileName = jsonFileName
-
+		self.jsonFileName1 = jsonFileName1
+		self.jsonFileName2 = jsonFileName2
 		self.createUI()
 		self.color = None
 		self.step = None
@@ -124,6 +120,7 @@ class EditGroupMenu(object):
 		self.shape = None
 		self.angle = None
 		self.keyDict = None
+
 
 
 	"""
@@ -144,8 +141,9 @@ class EditGroupMenu(object):
 		newItem5 = dict(itemIdentifier="Settings", label="Settings", imageNamed=NSImageNameAdvanced, callback=self.popSettingWindow); self.newToolbarItems.append(newItem5);
 		newItem6 = dict(itemIdentifier="Attribute", label="Attribute", imageNamed=NSImageNameFontPanel, callback=self.popAttributeWindow); self.newToolbarItems.append(newItem6);
 		newItem7 = dict(itemIdentifier="Help", label="Help", imageNamed=NSImageNameInfo, callback=self.popManualWindow); self.newToolbarItems.append(newItem7);
-
+		#newItem7 = dict(itemIdentifier="Other", label="Other", imageNamed=NSImageNameIconViewTemplate, callback=self.popSettingWindow)       
 		# add the new item to the existing toolbar
+
 		for i in range(len(self.newToolbarItems)):
 			toolbarItems.append(self.newToolbarItems[i])
 
@@ -155,8 +153,17 @@ class EditGroupMenu(object):
 		vanillaWindow = self.window.window()
 		# set the new toolbaritems in the window
 		self.window.toolbar = vanillaWindow.addToolbar(toolbarIdentifier="myCustomToolbar", toolbarItems=toolbarItems, addStandardItems=False)
-
+		# done
 		x = 10; y = 10; w = 280; h = 22; space = 5; size = (800, 600)
+
+		"""		
+		self.w.addGroupListButton = Button((x,y,w,h), "Add Group", callback=self.addGroupListCallback)
+		y += h + space
+		"""
+
+
+		#self.w.excludeGlyphButton = Button((x,y,w,h), "Exclude Selected Glyph", callback=self.excludGlyph)
+		#y += h + space
 
 		addObserver(self, "drawBroadNibBackground", "drawBackground")
 
@@ -181,14 +188,15 @@ class EditGroupMenu(object):
 		if mode is None or contourNumber is None:
 			print(Message("먼저 속성을 부여할 그룹을 찾아야 합니다."))
 			return
-		self.w4 = attributeWindow(self)
+		self.w4 = attributeWindow()
 
 
 	def popSearchWindow(self, sender):
 
 		# Window for Matrix & Topology Process
-		self.w3 = toolsWindow(self)
+		self.w3 = toolsWindow()
 		self.w3.createUI()
+	    
 
 	def windowCloseCallback(self, sender):
 	    
@@ -215,7 +223,7 @@ class EditGroupMenu(object):
 	
 
 	def drawBroadNibBackground(self, info):
-
+		
 		# paint current group's contour
 		targetGlyph = info["glyph"].getLayer(self.layerName)
 		# picks current contours which should be painted from current group

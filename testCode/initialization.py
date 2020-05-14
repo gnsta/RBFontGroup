@@ -16,7 +16,6 @@ class FileExist(Exception):
 def StartProgram(testPath,testFile):
     MakeJsonController(testPath,testFile)
     insert = dict()
-
     barProcess = 0
 
     jsonFileName1 = None
@@ -34,7 +33,6 @@ def StartProgram(testPath,testFile):
     try:
         jsonFileName1 = os.path.dirname(os.path.abspath(__file__)) + '/jsonResource/' + tempFileName.split('.')[0] + '.json'
         if os.path.exists(jsonFileName1):
-
             raise FileExist('해당 파일은 이미 존재합니다')
         for tg in testFile:
             barProcess += 1
@@ -45,7 +43,6 @@ def StartProgram(testPath,testFile):
             insert[tg.name] = tempList
             if barProcess % 10 == 0:
                 bar.tick(barProcess)     
-
         with open(jsonFileName1,'w',encoding = 'utf-8') as make_file:
             json.dump(insert,make_file,indent = '\t')
     except FileExist as e:

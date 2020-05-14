@@ -6,17 +6,16 @@ import rbWindow.Controller.settingWindowController as sWC
 from AppKit import NSCircularSlider, NSColor, NSRegularControlSize
 from defconAppKit.windows.baseWindow import BaseWindowController
 from fontTools.pens.basePen import BasePen
-
-from mojo.extensions import *
-
+from mojo.extensions import getExtensionDefault, setExtensionDefault, getExtensionDefaultColor, setExtensionDefaultColor
 from mojo.events import addObserver, removeObserver
 from mojo.UI import UpdateCurrentGlyphView
 from mojo.drawingTools import *
 from vanilla import *
 from rbWindow.sliderGroup import *
-
 from rbWindow.ExtensionSetting.extensionValue import *
 
+COLOR_GREEN = (0,1,0,0.7)
+BroadNibBackgroundDefaultKey = "com.asaumierdemers.BroadNibBackground"
 
 class settingWindow(BaseWindowController):
 
@@ -29,13 +28,12 @@ class settingWindow(BaseWindowController):
 
         x = 10; y = 10; w = -10; h = 40; space = 5; size = (150, 600); pos = (1300,400)
         self.w = FloatingWindow((400,950), "Background Setting")
-
         stepValue = getExtensionDefault(DefaultKey + ".step")
+        print("stepValue : ",stepValue)
         self.w.step = SliderGroup((x, y, w, h), "Steps:", 0, 60, stepValue, callback=self.stepChanged)
         self.mainWindow.step = stepValue
         y+=h
         
-
         widthValue = getExtensionDefault("%s.%s" %(DefaultKey, ".width"), 50)
         self.w.width = SliderGroup((x, y, w, h), "Width:", 0, 300, widthValue, callback=self.widthChanged)
         self.mainWindow.width = widthValue
@@ -47,7 +45,6 @@ class settingWindow(BaseWindowController):
         y+=h
 
         color = NSColor.colorWithCalibratedRed_green_blue_alpha_(1, 0, 0, .5)
-
         colorValue = getExtensionDefaultColor("%s.%s" %(DefaultKey, ".color"), color)
         self.w.colortext = TextBox((x, y, -0, 20), "Color:")
         self.w.color = ColorWell((70, y-5, w, 30), callback=self.colorChanged, color=colorValue)
@@ -59,7 +56,6 @@ class settingWindow(BaseWindowController):
         """
         self.w.checkGlyphListCheckBox = CheckBox((x,y,w,h), "Apply List Label", callback=self.checkGlyphListCallback)
         y += h + space"""
-
         y += 30
         self.w.colorContourCheckBox= CheckBox((x,y,w,h), "Apply Contour Color", callback=self.colorContourCallback)
         y += h + 20
@@ -75,21 +71,17 @@ class settingWindow(BaseWindowController):
         self.updateView()
 
     def stepChanged(self, sender):
-
         setExtensionDefault("%s.%s" %(DefaultKey, ".step"), int(sender.get()))
-
         self.mainWindow.step = int(sender.get())
         print("self.mainWindow.window.step = ",self.mainWindow.step)
         self.updateView()
 
     def widthChanged(self, sender):
-
         setExtensionDefault("%s.%s" %(DefaultKey, ".width"), int(sender.get()))
         self.mainWindow.width = int(sender.get())
         self.updateView()
 
     def heightChanged(self, sender):
-
         setExtensionDefault("%s.%s" %(DefaultKey, ".height"), int(sender.get()))
         self.mainWindow.height = int(sender.get())
         self.updateView()
@@ -114,3 +106,4 @@ class settingWindow(BaseWindowController):
 
     def updateView(self, sender=None):
         UpdateCurrentGlyphView()
+

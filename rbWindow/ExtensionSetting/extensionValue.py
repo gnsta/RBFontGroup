@@ -4,7 +4,7 @@ from mojo.extensions import *
 
 DefaultKey = "com.robofontTool.rbFontGroup"
 
-class ConfigExtensionSettings:
+class ConfigExtensionSetting:
 
 	def __init__(self, registerKey):
 
@@ -12,7 +12,10 @@ class ConfigExtensionSettings:
 		self.defaults = {
 			self.registerKey + ".registered": True,
 		    
+		    self.registerKey + ".font": None,
 		    self.registerKey + ".jsonFilePath": None,
+		    self.registerKey + ".jsonFileName1": None,
+		    self.registerKey + ".jsonFileName2": None,
 		    self.registerKey + ".file": None,
 		    
 		    self.registerKey + ".mode": 0,
@@ -22,7 +25,7 @@ class ConfigExtensionSettings:
 		    self.registerKey + ".height": 100,
 		    self.registerKey + ".k": 500,
 
-		    self.registerKey + ".matrix_margin": 25,
+		    self.registerKey + ".matrix_margin": 20,
 		    self.registerKey + ".matrix_size": 3,
 		    self.registerKey + ".topology_margin": 500,
 		    

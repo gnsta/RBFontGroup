@@ -8,14 +8,15 @@ from jsonConverter.makeJsonFile import *
 from testCode.initialization import *
 from rbWindow.ExtensionSetting.extensionValue import *
 
-
-config = ConfigExtensionSettings(DefaultKey)
-config.removeSettings()
-config.registerSettings()
+configPreset = ConfigExtensionSetting(DefaultKey)
+configPreset.registerSettings()
 
 testPath = "/Users/sslab/Desktop/groupTest.ufo"
 testFile = OpenFont(testPath,showInterface = False)
-jsonFileName = StartProgram(testPath,testFile)
+groupDict = None
+FileNameList = StartProgram(testPath,testFile)
 setExtensionDefault(DefaultKey + ".file", CurrentFont())
-setExtensionDefault(DefaultKey + ".jsonFilePath", jsonFileName)
-menuWindow = ew.EditGroupMenu(CurrentFont(), testFile,jsonFileName[0], jsonFileName[1])
+setExtensionDefault(DefaultKey + ".font", CurrentFont())
+setExtensionDefault(DefaultKey + ".jsonFileName1", FileNameList[0])
+setExtensionDefault(DefaultKey + ".jsonFileName2", FileNameList[1])
+menuWindow = ew.EditGroupMenu(CurrentFont(), groupDict, testFile,FileNameList[0],FileNameList[1])

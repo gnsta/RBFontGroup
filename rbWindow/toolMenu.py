@@ -17,7 +17,6 @@ import jsonConverter.converter as convert
 import rbWindow.Controller.toolMenuController as tMC
 from rbWindow.ExtensionSetting.extensionValue import *
 
-
 def text2Glyph(inputText, font):
 	"""
 	2020/03/23
@@ -30,6 +29,7 @@ def text2Glyph(inputText, font):
 
 	Return : glyph(RGlyph) or None
 	"""	
+
 	for glyph in font:
 		if str(ord(inputText)) == str(glyph.unicode):
 			return glyph
@@ -41,22 +41,9 @@ def text2Glyph(inputText, font):
 	
 class toolsWindow:
 
-	def __init__(self, mainWindow):
+	def __init__(self):
 
-		self.defaultKey = "com.robofontTool.rbFontGroup"
-
-		# self.mainWindow.mode = mainWindow.w.methodRadioGroup.get()		# mode 0: matrix, 1: topology
-
-		self.file = mainWindow.file
-		self.groupDict = None
-
-		self.font = mainWindow.font
-		self.mainWindow = mainWindow
-		self.marginValue = 0
-		self.widthValue = 0
-		self.mainWindow.widthValue = 0
-		self.selectedGlyphs = []
-
+		self.createUI()
 
 	def createUI(self):
 		x = 10; y = 10; w = 150; h = 22; space = 10; size = (180,300); pos = (800,300);
@@ -67,7 +54,6 @@ class toolsWindow:
 		y += h + space
 
 		h = 40
-
 		self.w.divider1 = HorizontalLine((x,y,w,h))
 		y += h + space
 
@@ -107,7 +93,7 @@ class toolsWindow:
 		y += h + space
 
 		h = 50
-		indexValue = getExtensionDefault("%s.%s" %(self.defaultKey, "index"), 0)
+		indexValue = getExtensionDefault("%s.%s" %(DefaultKey, "index"), 0)
 		self.w.contourIndex = SliderGroup((x,y,w,h), "ContourIndex:", 0, 50, indexValue, callback=self.indexChanged)
 		y += h + space
 
@@ -144,7 +130,7 @@ class toolsWindow:
 
 	def indexChanged(self, sender):
 
-		setExtensionDefault("%s.%s" %(self.defaultKey, "index"), int(sender.get()))
+		setExtensionDefault("%s.%s" %(DefaultKey, "index"), int(sender.get()))
 		self.w.contourIndex.updateView()
 
 	def searchGlyphListCallback(self, sender):
@@ -157,12 +143,19 @@ class toolsWindow:
 
 		and then print it on the lineView.
 		"""
-		inputText = self.w.editText.get()
-		standardGlyph = text2Glyph(inputText, self.font); setExtensionDefault(DefaultKey + ".standardGlyph", standardGlyph)
-		contourIndex = int(self.w.contourIndex.slider.get()); standardContour = standardGlyph.contours[contourIndex]; setExtensionDefault(DefaultKey + ".standardContour", standardContour)
-		file = self.file
+		file = getExtensionDefault(DefaultKey+".file")
 		jsonFilePath = getExtensionDefault(DefaultKey+".jsonFilePath")
+		mode = getExtensionDefault(DefaultKey+".mode")
+		jsonFileName1 = getExtensionDefault(DefaultKey+".jsonFileName1")
+		jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
+		font = getExtensionDefault(DefaultKey+".font")
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 
-		tMC.handleSearchGlyphList(standardGlyph, contourIndex, file, jsonFilePath)
+		inputText = self.w.editText.get()
+		standardGlyph = text2Glyph(inputText, font); setExtensionDefault(DefaultKey + ".standardGlyph", standardGlyph)
+		contourIndex = int(self.w.contourIndex.slider.get()); standardContour = standardGlyph.contours[contourIndex]; setExtensionDefault(DefaultKey + ".standardContour", standardContour)
 
+
+
+		tMC.handleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1, jsonFileName2, font, groupDict)
 		return

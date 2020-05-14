@@ -12,13 +12,13 @@ from rbFontG.tools.tTopology.topologyAssignment import *
 create By Kim heesup
 """
 
-baseDir = "/Users/font/Desktop/GroupDict/"
+baseDir = "/Users/sslab/Desktop/GroupDict/"
 
-matrix_margin = 25
+matrix_margin = 20
 matrix_size = 3
 topology_margin = 500
 
-def searchGroup(glyph,contourNumber,mode,mainWindow,message = False):
+def searchGroup(glyph,contourNumber,mode,file,message = False):
 	"""
 	check that contour group is created
 	if exist return file number else return None
@@ -31,8 +31,7 @@ def searchGroup(glyph,contourNumber,mode,mainWindow,message = False):
 		
 		jsonFileName :: Stirng
 			file name that include data about contour group name
-		mainWindow :: tool Menu object
-			to get font File
+		file :: font File
 	Return :: List
 		contain fileNumber and syllable and last data is checkdata(if 0 -> grouped , 1 -> not grouped)
 		수정부분 : json 파일로 찾지 말고 set 이용하여 해결
@@ -91,18 +90,25 @@ def searchGroup(glyph,contourNumber,mode,mainWindow,message = False):
 		standardGlyphUnicode = int(standardNameList[0][1:])
 		standardIdx = int(standardNameList[1][0:len(standardNameList)-1]) 
 		for item in sSet.glyphNames:
+			if item != glyph.name:
+				continue
+			print("item Name!!!! : ", item)
+			print("glyph name!!! : ", glyph)
 			if mode == 0:
-				standardGlyph = mainWindow.file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+				standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
 				#width값은 정해져 있다고 생각을 하고 진행
 				standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
 				compareController = groupTestController(standardMatrix,matrix_margin)
 				result = compareController.conCheckGroup(glyph[contourNumber])
+				print("result : ",result)
+
 				if result is not None: 
 					searchSmartSet = sSet
 					check = 1
+					message = True
 					break
 			elif mode == 1:
-				standardGlyph = mainWindow.file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+				standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
 				result = topologyJudgementController(standardGlyph.contours[standardIdx],glyph[contourNumber],topology_margin).topologyJudgement()
 				if result is not False: 
 					searchSmartSet = sSet
@@ -128,10 +134,13 @@ def searchGroup(glyph,contourNumber,mode,mainWindow,message = False):
 	if searchSmartSet is not None:
 		#팝업창으로 띄워주면 좋을 부분
 		if message == True:
+			appendNumber = str(searchSmartSet.name).split('_')[0]
 			print(Message("이미 그룹 연산이 진행이 되어 있으므로 그룹화 작업을 생략합니다."))
-		return [appendNumber,positionNumber,0]
+		return [int(appendNumber),positionNumber,0]
 	else:
 		return [appendNumber,positionNumber,1]
+
+	print("return None")
 
 def setGroup(glyph,contourNumber,mode,jsonFileName,appendNumber):
 	"""
@@ -294,5 +303,5 @@ def getSmartSetStatTopology():
 			check = 1
 	if check == 0:
 		topologySetStat["final"] = len(finall) + 1
-		
+
 	return topologySetStat
