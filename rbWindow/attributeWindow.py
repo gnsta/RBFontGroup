@@ -8,6 +8,7 @@ from mojo.UI import *
 from jsonConverter.smartSetSearchModule import *
 from rbWindow.Controller.toolMenuController import *
 from rbWindow.ExtensionSetting.extensionValue import *
+from fontParts.world import *
 
 
 matrixMode = 0
@@ -116,36 +117,93 @@ class attributeWindow:
 
 
 
+	def updateAttributeComponent(self):
+		"""
+			2020/05/14 created by Cho H.W.
+
+			사용자의 조작에 의해 찾아놓은 groupDict가 아닌 다른 요소에 대해 속성을 부여하는 과정에서
+			필요한 인자들을(ex. matrix, groupDict, standardGlyph, ...) 갱신하기 위한 보조함수
+
+			선택된 컨투어가 기존의 groupDict 내에 포함된 요소라면 갱신하지 않고 메소드가 종료됩니다.
+		"""
+		count = 0
+		selectedContour = None
+		currentGlyph = CurrentGlyph()
+		prevGlyph = getExtensionDefault(DefaultKey+".standardGlyph")
+		prevContour = getExtensionDefault(DefaultKey+".standardContour")
+		prevGroupDict = getExtensionDefault(DefaultKey+".groupDict")
+		mode = getExtensionDefault(DefaultKey+".mode")
+
+		for contour in currentGlyph:
+			if len(contour.selection) > 0:
+				count += 1
+				selectedContour = contour
+
+		if count != 1:
+			Message("하나의 컨투어를 선택해주십시오.")
+			return False
+
+
+		else: 
+			# 현재 선택된 컨투어가 그룹딕셔너리에 있나 확인하기
+			if selectedContour != prevContour:
+				try:
+					contourList = prevGroupDict[currentGlyph] 
+
+					for contourIdx in contourList:
+
+						if selectedContour.index == contourIdx:
+		
+							setExtensionDefault(DefaultKey+".standardContour", selectedContour)
+							setExtensionDefault(DefaultKey+".standardGlyph", currentGlyph)
+							if mode is matrixMode:
+			
+								matrix = Matrix(selectedContour, matrix_size); 
+								setExtensionDefault(DefaultKey+".matrix", matrix)
+							setExtensionDefault(DefaultKey+".contourNumber", selectedContour.index)
+							return True
+
+				except KeyError as e:
+					Message("현재 찾은 그룹과 다른 그룹입니다. 탐색을 먼저 진행해주세요")
+					return False
+
+			else:
+				return True
 
 	"""
 		콜백 메소드에 연결할 메소드(Matrix)
 	"""
 	def mhandleInnerFill(self, sender):
+		self.updateAttributeComponent()
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		matrix = getExtensionDefault(DefaultKey+".matrix")
 		mbt.minnerFillAttribute(groupDict, matrix)
 
 	def mhandlePenPair(self, sender):
+		self.updateAttributeComponent()
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		matrix = getExtensionDefault(DefaultKey+".matrix")
 		mbt.mpenPairAttribute(groupDict, matrix)
 
 	def mhandleDependX(self, sender):
+		self.updateAttributeComponent()
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		matrix = getExtensionDefault(DefaultKey+".matrix")
 		mbt.mdependXAttribute(groupDict, matrix)
 
 	def mhandleDependY(self, sender):
+		self.updateAttributeComponent()
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		matrix = getExtensionDefault(DefaultKey+".matrix")
 		mbt.mdependYAttribute(groupDict, matrix)
 
 	def mhandleDelete(self, sender):
+		self.updateAttributeComponent()
 		pass
 
 	def mhandleSelect(self, sender):
+		self.updateAttributeComponent()
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-		print(groupDict)
 		matrix = getExtensionDefault(DefaultKey+".matrix")
 		mbt.mselectAttribute(groupDict, matrix)
 
@@ -157,24 +215,28 @@ class attributeWindow:
 		콜백 메소드에 연결할 메소드(Topology)
 	"""
 	def thandleInnerFill(self, sender):
+		self.updateAttributeComponent()
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		standardContour = getExtensionDefault(DefaultKey+".standardContour")
 		k = getExtensionDefault(DefaultKey+".k")
 		tbt.innerFillAttribute(groupDict, standardContour, k)
 
 	def thandlePenPair(self, sender):
+		self.updateAttributeComponent()
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		standardContour = getExtensionDefault(DefaultKey+".standardContour")
 		k = getExtensionDefault(DefaultKey+".k")
 		tbt.innerFillAttribute(groupDict, standardContour, k)
 
 	def thandleDependX(self, sender):
+		self.updateAttributeComponent()
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		standardContour = getExtensionDefault(DefaultKey+".standardContour")
 		k = getExtensionDefault(DefaultKey+".k")
 		tbt.innerFillAttribute(groupDict, standardContour, k)
 
 	def thandleDependY(self, sender):
+		self.updateAttributeComponent()
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		standardContour = getExtensionDefault(DefaultKey+".standardContour")
 		k = getExtensionDefault(DefaultKey+".k")
@@ -184,6 +246,7 @@ class attributeWindow:
 		pass
 
 	def thandleSelect(self, sender):
+		self.updateAttributeComponent()
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		standardContour = getExtensionDefault(DefaultKey+".standardContour")
 		k = getExtensionDefault(DefaultKey+".k")

@@ -195,7 +195,6 @@ class EditGroupMenu(object):
 
 		# Window for Matrix & Topology Process
 		self.w3 = toolsWindow()
-		self.w3.createUI()
 	    
 
 	def windowCloseCallback(self, sender):
