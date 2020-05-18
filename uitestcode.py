@@ -11,11 +11,12 @@ from rbWindow.ExtensionSetting.extensionValue import *
 configPreset = ConfigExtensionSetting(DefaultKey)
 configPreset.registerSettings()
 
-<<<<<<< HEAD
+#김희섭
 testPath = "/Users/font/Desktop/groupTest.ufo"
-=======
-testPath = "/Users/sslab/Desktop/groupTest.ufo"
->>>>>>> origin/master
+
+#조현우
+#testPath = "/Users/sslab/Desktop/groupTest.ufo"
+
 testFile = OpenFont(testPath,showInterface = False)
 groupDict = None
 FileNameList = StartProgram(testPath,testFile)
