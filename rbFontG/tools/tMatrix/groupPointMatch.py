@@ -3,19 +3,41 @@ import math
 from rbFontG.tools.tMatrix.PhaseTool import *
 from fwig.tools import attributetools as at
 
+def calcDirection(con,point):
+	"""
+	make compare point data's direction
+	[up,down,left,right]
+	"""
+
+	dr = [10,-10,0,0]
+	dc = [0,0,-10,10]
+
+	#standard direction
+	checkCdirection = [0,0,0,0]
+	r = point.y
+	c = point.x
+	for i in range(0,4):
+		nr = r + dr[i]
+		nc = c + dc[i]
+		if con.pointInside((nc,nr)):
+			checkCdirection[i] = 1
+
+	return checkCdirection
+
 
 class matrixRelocatePoint:
 	"""
 	2020/02/24
 	create by kim heesup
 	"""
-	def __init__(self,point,rx,ry):
+	def __init__(self,point,rx,ry,direction):
 		"""
 		contain RPoint, relocated x position, relocate y position
 		"""
 		self.point = point
 		self.rx = rx
 		self.ry = ry
+		self.direction = direction
 
 class groupPointMatchController:
 	def __init__(self,matrix,point,con):
@@ -73,17 +95,35 @@ class groupPointMatchController:
 		checkMatrix = Matrix(self.con,self.matrix.getdivk())
 		getCompareMaxMin = GetMaxMinPointValue(checkMatrix.con)
 
-		#print("self.con.points : ",self.con.points)
+
+		#additional mechanism
+		dr = [10,-10,0,0]
+		dc = [0,0,-10,10]
+
+		#standard direction
+		checkSdirection = [0,0,0,0]
+		r = self.point.y
+		c = self.point.x
+		print("r : ",r)
+		print("c : ", c)
+		for i in range(0,4):
+			nr = r + dr[i]
+			nc = c + dc[i]
+			print("i : ", i)
+			print("nr : ", nr)
+			print("nc : ",nc)
+			if self.matrix.con.pointInside((nc,nr)):
+				checkSdirection[i] = 1
+
+
+
 
 		for p in self.con.points:
 			if(p.type != 'offcurve'):
 				checkPart = checkMatrix.getPointPart(p)
-				#print("checkPart : ", checkPart)
-				#print("pointPart : ",pointPart)
 				if((pointPart[0] == checkPart[0]) and (pointPart[1] == checkPart[1])):
 					originpl.append(p)
 
-		#print("originpl : ", originpl)
 
 
 		#locate contour exactly matrix's contour
@@ -105,7 +145,8 @@ class groupPointMatchController:
 		for p in originpl:
 			rx = p.x - termX
 			ry = p.y - termY
-			relocatepl.append(matrixRelocatePoint(p,rx,ry))
+			checkCdirection = calcDirection(self.con,p)
+			relocatepl.append(matrixRelocatePoint(p,rx,ry,checkCdirection))
 
 
 
@@ -113,27 +154,20 @@ class groupPointMatchController:
 		minDist = 10000000000
 		indx = -1
 
-		#print("!!")
-		#print("relocatepl : ", relocatepl)
-		#print("indx : ", indx)
 
 		for	i,o in enumerate(relocatepl):
-			#print("i :" , i)
-			#print("o : ", o)
+			if (o.direction[0] != checkSdirection[0]) or (o.direction[1] != checkSdirection[1]) or (o.direction[2] != checkSdirection[2]) or (o.direction[3] != checkSdirection[3]):
+				continue
 
+			print("비교 컨투어" , self.con)
+			print("비교 점", o.point)
+			print("기준 direction", checkSdirection)
+			print("비교 direction", o.direction)
 			dist = math.sqrt(math.pow(self.point.x - o.rx,2) + math.pow(self.point.y - o.ry,2))
 			if(minDist > dist):
 				indx = i
 				minDist = dist
 
-		#print("relocatepl : ", relocatepl)
-		#print("indx : ", indx)
-
-		#print("self.matrix.con : ", self.matrix.con)
-
-		#for i in range(0,len(relocatepl)):
-			#print("i : ", i)
-			#print("relocatepl : ", relocatepl[i])
 		if indx != -1:
 			return relocatepl[indx].point
 		else:
