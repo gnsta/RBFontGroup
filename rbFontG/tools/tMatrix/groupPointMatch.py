@@ -104,14 +104,9 @@ class groupPointMatchController:
 		checkSdirection = [0,0,0,0]
 		r = self.point.y
 		c = self.point.x
-		print("r : ",r)
-		print("c : ", c)
 		for i in range(0,4):
 			nr = r + dr[i]
 			nc = c + dc[i]
-			print("i : ", i)
-			print("nr : ", nr)
-			print("nc : ",nc)
 			if self.matrix.con.pointInside((nc,nr)):
 				checkSdirection[i] = 1
 
