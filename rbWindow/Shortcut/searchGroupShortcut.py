@@ -8,6 +8,7 @@ def searchGroupProcess():
 
 	#try:
 	standardGlyph = CurrentGlyph()
+	setExtensionDefault(DefaultKey+".standardGlyph", standardGlyph)
 	for contour in standardGlyph.contours:
 		for point in contour.bPoints:
 			if point.selected is True:

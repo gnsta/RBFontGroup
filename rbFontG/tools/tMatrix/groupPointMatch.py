@@ -97,6 +97,7 @@ class groupPointMatchController:
 		#checkMiny = getCompareMaxMin.getMaxYValue()
 		checkMiny = self.con.bounds[1]
 
+
 		termX = checkMinx - standardMinx
 		termY = checkMiny - standardMiny
 
@@ -111,6 +112,7 @@ class groupPointMatchController:
 		#get point that get minimum distance
 		minDist = 10000000000
 		indx = -1
+
 		#print("!!")
 		#print("relocatepl : ", relocatepl)
 		#print("indx : ", indx)
@@ -118,6 +120,7 @@ class groupPointMatchController:
 		for	i,o in enumerate(relocatepl):
 			#print("i :" , i)
 			#print("o : ", o)
+
 			dist = math.sqrt(math.pow(self.point.x - o.rx,2) + math.pow(self.point.y - o.ry,2))
 			if(minDist > dist):
 				indx = i
@@ -169,6 +172,7 @@ class groupPointMatchController:
 		insertPoint = self.matchPoint()
 		if insertPoint is not None:
 			at.del_attr(insertPoint,attribute)		
+
 
 
 
