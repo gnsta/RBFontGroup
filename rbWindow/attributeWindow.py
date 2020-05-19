@@ -19,38 +19,9 @@ topologyMode = 1
 class attributeWindow:
 
 	def __init__(self):
-		#팝압창이 나오고 컴투어 인덱스 번호를 받음
-		#res = self.preprocess()
-		#if res is True:
-		self.createUI()
 		
-	def preprocess(self):
-
-		contourNumber = getExtensionDefault(DefaultKey + ".contourNumber")
-
-		#try:
-		file = getExtensionDefault(DefaultKey+".file")
-		newGlyph = file[CurrentGlyphWindow().getGlyph().name]
-
-		print(newGlyph)
-		mode = getExtensionDefault(DefaultKey+".mode")
-		print("mode : ", mode)
-		print(newGlyph,",",contourNumber,",",file)
-		checkSetData = searchGroup(newGlyph, contourNumber, mode, file)
-		print("checkSetData in attributeW : ",checkSetData)
-		if contourNumber is None:
-			raise NotSetExist
-
-		setExtensionDefault(DefaultKey+".standardContour", newGlyph.contours[contourNumber])
-		setExtensionDefault(DefaultKey+".groupDict", findContoursGroup(checkSetData, file, mode))
-		'''
-		except Exception as e:
-			print(contourNumber)
-			Message("아직 그룹화가 진행되어지지 않았습니다.")
-			print("예외가 발생했습니다",e)
-			return False
-		'''
-		return True
+		self.createUI()
+	
 		
 
 	def createUI(self):
@@ -131,11 +102,11 @@ class attributeWindow:
 				print(prevContour, ", prevContour"); print(selectedContour, ", selectedContour"); print(prevGroupDict, ", prevGroupDict")
 				try:
 					contourList = prevGroupDict[currentGlyph] 
-
+					
 					for contourIdx in contourList:
 
 						if selectedContour.index == contourIdx:
-		
+							res = True
 							setExtensionDefault(DefaultKey+".standardContour", selectedContour)
 							setExtensionDefault(DefaultKey+".standardGlyph", currentGlyph)
 							if mode is matrixMode:
@@ -144,6 +115,9 @@ class attributeWindow:
 								setExtensionDefault(DefaultKey+".matrix", matrix)
 							setExtensionDefault(DefaultKey+".contourNumber", selectedContour.index)
 							return True
+
+					# 같은 글리프라도 컨투어가 같은 그룹딕셔너리가 아니라면 익셉션을 raise한다.
+					raise Exception
 
 				except Exception as e:
 					print("에러 발생")
