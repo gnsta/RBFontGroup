@@ -9,7 +9,7 @@ from jsonConverter.smartSetSearchModule import *
 from rbWindow.Controller.toolMenuController import *
 from rbWindow.ExtensionSetting.extensionValue import *
 from fontParts.world import *
-
+from fontParts.fontshell.contour import *
 
 matrixMode = 0
 topologyMode = 1
@@ -20,9 +20,9 @@ class attributeWindow:
 
 	def __init__(self):
 		#팝압창이 나오고 컴투어 인덱스 번호를 받음
-		res = self.preprocess()
-		if res is True:
-			self.createUI()
+		#res = self.preprocess()
+		#if res is True:
+		self.createUI()
 		
 	def preprocess(self):
 
@@ -64,28 +64,28 @@ class attributeWindow:
 		
 		h = 30
 
-		self.w.innerFillButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[0]+".png")
+		self.w.innerFillButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[0]+".png", callback=self.handleInnerFill)
 		print("ImagePath = ", extPath.ImagePath+extPath.attrImgList[0]+".png")
 		self.w.innerFillText = TextBox((x+40,y,w,h), "innerFill")
 		y += h + space
 
-		self.w.penPairButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[1]+".png")
+		self.w.penPairButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[1]+".png", callback=self.handlePenPair)
 		self.w.PenPairText = TextBox((x+40,y,w,h), "penPair")
 		y += h + space
 
-		self.w.dependXButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[2]+".png")
+		self.w.dependXButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[2]+".png", callback=self.handleDependX)
 		self.w.dependXText = TextBox((x+40,y,w,h), "dependX")
 		y += h + space
 
-		self.w.dependYButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[3]+".png")
+		self.w.dependYButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[3]+".png", callback=self.handleDependY)
 		self.w.dependYText = TextBox((x+40,y,w,h), "depndY")
 		y += h + space
 
-		self.w.deleteButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[4]+".png")
+		self.w.deleteButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[4]+".png", callback=self.handleDelete)
 		self.w.deleteText = TextBox((x+40,y,w,h), "delete")
 		y += h + space
 
-		self.w.selectButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[5]+".png")
+		self.w.selectButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[5]+".png", callback=self.handleSelect)
 		self.w.selectText = TextBox((x+40,y,w,h), "select")
 		y += h + space
 
@@ -93,25 +93,6 @@ class attributeWindow:
 		y += h +space
 
 		mode = getExtensionDefault(DefaultKey+".mode")
-
-		if mode is matrixMode:
-			matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
-			standardContour = getExtensionDefault(DefaultKey+".standardContour")
-			setExtensionDefault(DefaultKey+".matrix", Matrix(standardContour, matrix_size))
-			self.w.innerFillButton._setCallback(self.mhandleInnerFill)
-			self.w.penPairButton._setCallback(self.mhandlePenPair)
-			self.w.dependXButton._setCallback(self.mhandleDependX)
-			self.w.dependYButton._setCallback(self.mhandleDependY)
-			self.w.deleteButton._setCallback(None)
-			self.w.selectButton._setCallback(self.mhandleSelect)
-
-		elif mode is topologyMode:
-			self.w.innerFillButton._setCallback(self.thandleInnerFill)
-			self.w.penPairButton._setCallback(self.thandlePenPair)
-			self.w.dependXButton._setCallback(self.thandleDependX)
-			self.w.dependYButton._setCallback(self.thandleDependY)
-			self.w.deleteButton._setCallback(None)
-			self.w.selectButton._setCallback(self.thandleSelect)
 
 		self.w.open()
 
@@ -147,6 +128,7 @@ class attributeWindow:
 		else: 
 			# 현재 선택된 컨투어가 그룹딕셔너리에 있나 확인하기
 			if selectedContour != prevContour:
+				print(prevContour, ", prevContour"); print(selectedContour, ", selectedContour"); print(prevGroupDict, ", prevGroupDict")
 				try:
 					contourList = prevGroupDict[currentGlyph] 
 
@@ -163,98 +145,185 @@ class attributeWindow:
 							setExtensionDefault(DefaultKey+".contourNumber", selectedContour.index)
 							return True
 
-				except KeyError as e:
-					Message("현재 찾은 그룹과 다른 그룹입니다. 탐색을 먼저 진행해주세요")
-					return False
+				except Exception as e:
+					print("에러 발생")
+					result = self.updateSmartSetChanged(selectedContour)
+					
+					if result is False:
+						Message("해당되는 그룹 결과가 존재하지 않습니다. 탐색을 먼저 진행해주세요.")
+					
+					else:
+						Message("해당되는 그룹이 존재합니다. 관련 정보를 갱신하였습니다.")
+						
+					return result
 
 			else:
 				return True
 
+	def updateSmartSetChanged(self, selectedContour):
+		"""
+			이전 standardContour와 현재 선택된 standardContour의 smartSet이 다른 경우,
+			이미 찾아놓은 smartSet이 존재하는 경우에 한하여 속성 부여에 필요한 인자들을 갱신합니다.
+			(updateAttributeComponent의 보조함수)
+
+			갱신되는 인자 : (contourNumber, standardContour, standardGlyph, groupDict)
+
+			@param : 
+				selectedContour(RContour) : 현재 속성을 부여하려는 point의 parent (RContour)
+			
+			@return :
+				True : 갱신된 컨투어에 해당되는 스마트 셋이 존재하는 경우
+				False : 갱신된 컨투어에 해당되는 스마트 셋이 존재하지 않는 경우 
+		"""
+		contourNumber = selectedContour.index;
+		glyph = selectedContour.getParent();
+		mode = getExtensionDefault(DefaultKey + ".mode")
+		file = getExtensionDefault(DefaultKey + ".file")
+		checkSetData = searchGroup(glyph, contourNumber, mode, file)
+
+		if checkSetData[2] == 0:
+			print("checkSetData[2] == 0 (이미 만들어진 그룹)")
+			
+			if mode is matrixMode:
+
+				matrix = Matrix(selectedContour, matrix_size); 
+				setExtensionDefault(DefaultKey+".matrix", matrix)
+			
+			groupDict = findContoursGroup(checkSetData, file, mode)
+			setExtensionDefault(DefaultKey+".groupDict", groupDict)
+			setExtensionDefault(DefaultKey+".contourNumber", contourNumber)
+			setExtensionDefault(DefaultKey+".standardContour", selectedContour)
+			setExtensionDefault(DefaultKey+".standardGlyph", glyph)
+			return True
+		
+		else:
+			print("checkSetData[2] != 0 or None")
+			return False
+
+
 	"""
-		콜백 메소드에 연결할 메소드(Matrix)
+		콜백 메소드에 연결할 메소드
 	"""
-	def mhandleInnerFill(self, sender):
-		self.updateAttributeComponent()
-		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-		matrix = getExtensionDefault(DefaultKey+".matrix")
-		mbt.minnerFillAttribute(groupDict, matrix)
+	def handleDependX(self, sender):
+		if self.updateAttributeComponent() is False:
+			return
+		
+		mode = getExtensionDefault(DefaultKey+".mode")
+		
+		if mode is matrixMode:
+			groupDict = getExtensionDefault(DefaultKey+".groupDict")
+			matrix = getExtensionDefault(DefaultKey+".matrix")
+			mbt.mdependXAttribute(groupDict, matrix)
 
-	def mhandlePenPair(self, sender):
-		self.updateAttributeComponent()
+		elif mode is topologyMode:
+			groupDict = getExtensionDefault(DefaultKey+".groupDict")
+			standardContour = getExtensionDefault(DefaultKey+".standardContour")
+			k = getExtensionDefault(DefaultKey+".k")
+			tbt.dependXAttribute(groupDict, standardContour, k)
+				
+		else:
+			Message("모드 에러")
 
-		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-		matrix = getExtensionDefault(DefaultKey+".matrix")
-		mbt.mpenPairAttribute(groupDict, matrix)
+	def handleDependY(self, sender):
+		if self.updateAttributeComponent() is False:
+			return
+		
+		mode = getExtensionDefault(DefaultKey+".mode")
+		
+		if mode is matrixMode:
+			groupDict = getExtensionDefault(DefaultKey+".groupDict")
+			matrix = getExtensionDefault(DefaultKey+".matrix")
+			mbt.mdependYAttribute(groupDict, matrix)
 
-	def mhandleDependX(self, sender):
-		self.updateAttributeComponent()
-		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-		matrix = getExtensionDefault(DefaultKey+".matrix")
-		mbt.mdependXAttribute(groupDict, matrix)
+		elif mode is topologyMode:
+			groupDict = getExtensionDefault(DefaultKey+".groupDict")
+			standardContour = getExtensionDefault(DefaultKey+".standardContour")
+			k = getExtensionDefault(DefaultKey+".k")
+			tbt.mdependYAttribute(groupDict, standardContour, k)
+				
+		else:
+			Message("모드 에러")
 
-	def mhandleDependY(self, sender):
-		self.updateAttributeComponent()
-		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-		matrix = getExtensionDefault(DefaultKey+".matrix")
-		mbt.mdependYAttribute(groupDict, matrix)
+	def handlePenPair(self, sender):
+		if self.updateAttributeComponent() is False:
+			return
+		
+		mode = getExtensionDefault(DefaultKey+".mode")
+		
+		if mode is matrixMode:
+			groupDict = getExtensionDefault(DefaultKey+".groupDict")
+			matrix = getExtensionDefault(DefaultKey+".matrix")
+			mbt.mpenPairAttribute(groupDict, matrix)
 
-	def mhandleDelete(self, sender):
-		self.updateAttributeComponent()
-		pass
+		elif mode is topologyMode:
+			groupDict = getExtensionDefault(DefaultKey+".groupDict")
+			standardContour = getExtensionDefault(DefaultKey+".standardContour")
+			k = getExtensionDefault(DefaultKey+".k")
+			tbt.penPairAttribute(groupDict, standardContour, k)
+				
+		else:
+			Message("모드 에러")
 
-	def mhandleSelect(self, sender):
-		self.updateAttributeComponent()
-		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-		matrix = getExtensionDefault(DefaultKey+".matrix")
-		mbt.mselectAttribute(groupDict, matrix)
+	def handleInnerFill(self, sender):
+		if self.updateAttributeComponent() is False:
+			return
+		
+		mode = getExtensionDefault(DefaultKey+".mode")
+		
+		if mode is matrixMode:
+			groupDict = getExtensionDefault(DefaultKey+".groupDict")
+			matrix = getExtensionDefault(DefaultKey+".matrix")
+			mbt.minnerFillAttribute(groupDict, matrix)
 
+		elif mode is topologyMode:
+			groupDict = getExtensionDefault(DefaultKey+".groupDict")
+			standardContour = getExtensionDefault(DefaultKey+".standardContour")
+			k = getExtensionDefault(DefaultKey+".k")
+			tbt.innerFillAttribute(groupDict, standardContour, k)
+				
+		else:
+			Message("모드 에러")
 
+	def handleSelect(self, sender):
+		if self.updateAttributeComponent() is False:
+			return
+		
+		mode = getExtensionDefault(DefaultKey+".mode")
+		
+		if mode is matrixMode:
+			groupDict = getExtensionDefault(DefaultKey+".groupDict")
+			matrix = getExtensionDefault(DefaultKey+".matrix")
+			mbt.mselectAttribute(groupDict, matrix)
 
+		elif mode is topologyMode:
+			groupDict = getExtensionDefault(DefaultKey+".groupDict")
+			standardContour = getExtensionDefault(DefaultKey+".standardContour")
+			k = getExtensionDefault(DefaultKey+".k")
+			tbt.selectAttribute(groupDict, standardContour, k)
+				
+		else:
+			Message("모드 에러")
 
+	def handleDelete(self, sender):
+		if self.updateAttributeComponent() is False:
+			return
+		
+		mode = getExtensionDefault(DefaultKey+".mode")
+		
+		if mode is matrixMode:
+			groupDict = getExtensionDefault(DefaultKey+".groupDict")
+			matrix = getExtensionDefault(DefaultKey+".matrix")
+			pass
 
-	"""
-		콜백 메소드에 연결할 메소드(Topology)
-	"""
-	def thandleInnerFill(self, sender):
-		self.updateAttributeComponent()
-		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-		standardContour = getExtensionDefault(DefaultKey+".standardContour")
-		k = getExtensionDefault(DefaultKey+".k")
-		tbt.innerFillAttribute(groupDict, standardContour, k)
-
-	def thandlePenPair(self, sender):
-		self.updateAttributeComponent()
-		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-		standardContour = getExtensionDefault(DefaultKey+".standardContour")
-		k = getExtensionDefault(DefaultKey+".k")
-		tbt.innerFillAttribute(groupDict, standardContour, k)
-
-	def thandleDependX(self, sender):
-		self.updateAttributeComponent()
-		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-		standardContour = getExtensionDefault(DefaultKey+".standardContour")
-		k = getExtensionDefault(DefaultKey+".k")
-		tbt.innerFillAttribute(groupDict, standardContour, k)
-
-	def thandleDependY(self, sender):
-		self.updateAttributeComponent()
-		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-		standardContour = getExtensionDefault(DefaultKey+".standardContour")
-		k = getExtensionDefault(DefaultKey+".k")
-		tbt.innerFillAttribute(groupDict, standardContour, k)
-
-	def thandleDelete(self, sender):
-		pass
-
-	def thandleSelect(self, sender):
-		self.updateAttributeComponent()
-		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-		standardContour = getExtensionDefault(DefaultKey+".standardContour")
-		k = getExtensionDefault(DefaultKey+".k")
-		tbt.innerFillAttribute(groupDict, standardContour, k)
-
-
-
+		elif mode is topologyMode:
+			groupDict = getExtensionDefault(DefaultKey+".groupDict")
+			standardContour = getExtensionDefault(DefaultKey+".standardContour")
+			k = getExtensionDefault(DefaultKey+".k")
+			pass
+				
+		else:
+			Message("모드 에러")
+			
 	def minimizeCallback(self, sender):
 		if sender.get() == True:
 			self.w.resize(self.minSize[0], self.minSize[1])

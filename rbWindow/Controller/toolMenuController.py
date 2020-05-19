@@ -24,8 +24,6 @@ matrix_margin = 20
 matrix_size = 3
 topology_margin = 500
 
-clockWiseMargin = 1
-
 def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, file,checkSetData,jsonFileName1,jsonFileName2):
 	"""
 	2020/03/35 
@@ -110,14 +108,7 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 		for i,compare in enumerate(value):
 			if i not in configDict[key][checkSetData[1]]:#초, 중, 종 분리 로직
 				continue
-
-			standardReverseUP = abs(standard['reverse'] + clockWiseMargin)
-			standardReverseDOWN = abs(standard['reverse'] - clockWiseMargin)
-			standardForwordUP = abs(standard['forword'] + clockWiseMargin)
-			standardForwordDOWN = abs(standard['forword'] - clockWiseMargin)
-
-
-			if (compare['reverse'] >= standardReverseDOWN) and (compare['reverse'] <= standardReverseUP) and (compare['forword'] >= standardForwordDOWN) and (compare['forword'] <= standardReverseUP):
+			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
 				compareContour = file[key].contours[i]
 				result = compareController.conCheckGroup(compareContour)
 				if result is not None:
