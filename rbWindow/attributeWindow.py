@@ -28,6 +28,10 @@ class attributeWindow:
 		x = 10; y = 10; w = 100; h = 30; space = 5; self.size = (200,250); pos = (1200,300); self.minSize = (50,250);
 
 		self.w = HUDFloatingWindow((pos[0],pos[1],self.minSize[0],self.minSize[1]), "ToolsWindow", minSize=(self.minSize[0], self.minSize[1]))
+
+		#h = 50
+		#self.w.optionRadioGroup = RadioGroup((32,20,w,h), ["PenPair", "DependX", "DependY"], sizeStyle="small")
+		#y += h + space + 15
 		
 		h = 30
 
@@ -150,6 +154,14 @@ class attributeWindow:
 		mode = getExtensionDefault(DefaultKey + ".mode")
 		file = getExtensionDefault(DefaultKey + ".file")
 		checkSetData = searchGroup(glyph, contourNumber, mode, file)
+		smartSetIndex = self.getMatchingSmartSet(checkSetData, glyph, contourNumber)
+		print(smartSetIndex, ",smartSetIndex")
+		smartSetIndexList = list()
+		smartSetIndexList.append(smartSetIndex+1) # 0번째는 All Glyphs이므로
+
+		#selectSmartSets는 인자로 list가 온다
+		if smartSetIndex is not None:
+			selectSmartSets(smartSetIndexList)
 
 		if checkSetData[2] == 0:
 			print("checkSetData[2] == 0 (이미 만들어진 그룹)")
@@ -171,6 +183,83 @@ class attributeWindow:
 			return False
 
 
+	def getMatchingSmartSet(self, checkSetData, glyph, contourNumber):
+		"""
+			현재 속성을 부여하려고 시도한 그룹 딕셔너리가 바뀌는 경우 교체하기 위한 메소드
+		"""
+		sSets = getSmartSets()
+		check = 0
+		mode = getExtensionDefault(DefaultKey + ".mode")
+		glyphConfigure = getConfigure(glyph)
+		positionNumber = None
+		searchSmartSet = None
+		matrix_margin = getExtensionDefault(DefaultKey + ".matrix_margin")
+		topology_margin = getExtensionDefault(DefaultKey + ".topology_margin")
+		matrix_size = getExtensionDefault(DefaultKey + ".matrix_size")
+		file = getExtensionDefault(DefaultKey + ".file")
+		
+		if mode is matrixMode:
+			searchMode = "Matrix"
+		elif mode is topologyMode:
+			searchMode = "Topology"
+		else:
+			return None
+
+
+		#해당 컨투어가 초성인지 중성인지 종성인지 확인을 해 보아햐함
+		#!!
+		for i in range(0,len(glyphConfigure[str(glyph.unicode)])):
+			for j in range(0,len(glyphConfigure[str(glyph.unicode)][i])):
+				if contourNumber == glyphConfigure[str(glyph.unicode)][i][j]:
+					check = 1
+					positionNumber = i
+					break
+
+			if check == 1:
+				break
+
+		syllable = ["first", "middle", "final"]
+		positionName = syllable[positionNumber]
+		check = 0
+		
+		index = -1
+		for sSet in sSets:
+			index += 1
+			checkSetName = str(sSet.name)
+			checkSetNameList = checkSetName.split('_')
+
+			if checkSetNameList[1] != positionName or checkSetNameList[2] != searchMode:
+				continue
+
+			standardNameList = checkSetNameList[3].split('-')
+			standardGlyphUnicode = int(standardNameList[0][1:])
+			standardIdx = int(standardNameList[1][0:len(standardNameList)-1]) 
+			
+			for item in sSet.glyphNames:
+				if item != glyph.name:
+					continue
+
+				if mode == 0:
+					standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+
+					standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
+					compareController = groupTestController(standardMatrix,matrix_margin)
+					result = compareController.conCheckGroup(glyph[contourNumber])
+	
+
+					if result is not None: 
+						return index
+
+
+				elif mode == 1:
+					standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+					result = topologyJudgementController(standardGlyph.contours[standardIdx],glyph[contourNumber],topology_margin).topologyJudgement()
+
+					if result is not False: 
+						return index
+
+		return None
+		
 	"""
 		콜백 메소드에 연결할 메소드
 	"""
