@@ -357,6 +357,9 @@ class attributeWindow:
 				
 		else:
 			Message("모드 에러")
+			return
+
+		CurrentFont().update()###
 
 	def handleSelect(self, sender):
 		if updateAttributeComponent() is False:
