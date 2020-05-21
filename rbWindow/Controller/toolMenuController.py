@@ -11,6 +11,7 @@ from jsonConverter.clockWiseGroup import *
 from parseSyllable.configSyllable import *
 from mojo.UI import *
 from rbWindow.ExtensionSetting.extensionValue import *
+from rbWindow.Controller.smartSetFocus import *
 
 
 matrixMode = 0
@@ -263,6 +264,10 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1
 			groupDict = findContoursGroup(checkSetData, file, mode)
 			setExtensionDefault(DefaultKey + ".groupDict", groupDict)
 
+	#현재 스마트셋 포커싱
+	smartSetIndex = getMatchingSmartSet(checkSetData, standardGlyph, contourIndex)
+	
+	updateSmartSetIndex(smartSetIndex)
 	
 def findContoursGroup(checkSetData, file, mode):
 	"""

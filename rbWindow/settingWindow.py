@@ -26,8 +26,8 @@ class settingWindow(BaseWindowController):
 
     def createUI(self, sender):
 
-        x = 10; y = 10; w = -10; h = 40; space = 5; size = (150, 600); pos = (1300,400)
-        self.w = FloatingWindow((400,950), "Background Setting")
+        x = 10; y = 10; w = -10; h = 40; space = 5; size = (100, 300); pos = (800,400)
+        self.w = HUDFloatingWindow((250,600), "Background Setting")
         stepValue = getExtensionDefault(DefaultKey + ".step")
         print("stepValue : ",stepValue)
         self.w.step = SliderGroup((x, y, w, h), "Steps:", 0, 60, stepValue, callback=self.stepChanged)

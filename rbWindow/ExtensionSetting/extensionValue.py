@@ -36,6 +36,8 @@ class ConfigExtensionSetting:
 		    self.registerKey + ".standardGlyph": None,
 		    self.registerKey + ".matrix": None,
 		    
+		    self.registerKey + ".smartSetIndex": None,
+		    
 		    self.registerKey + ".index": 0,
 		    self.registerKey + ".step": 30,
 		    self.registerKey + ".width": 30,

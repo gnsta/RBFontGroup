@@ -7,6 +7,7 @@ from rbFontG.tools.tMatrix.PhaseTool import *
 from mojo.UI import *
 from jsonConverter.smartSetSearchModule import *
 from rbWindow.Controller.toolMenuController import *
+from rbWindow.Controller.smartSetFocus import *
 from rbWindow.ExtensionSetting.extensionValue import *
 from fontParts.world import *
 from fontParts.fontshell.contour import *
@@ -78,6 +79,7 @@ class attributeWindow:
 
 			선택된 컨투어가 기존의 groupDict 내에 포함된 요소라면 갱신하지 않고 메소드가 종료됩니다.
 		"""
+
 		count = 0
 		selectedContour = None
 		currentGlyph = CurrentGlyph()
@@ -85,49 +87,64 @@ class attributeWindow:
 		prevContour = getExtensionDefault(DefaultKey+".standardContour")
 		prevGroupDict = getExtensionDefault(DefaultKey+".groupDict")
 		mode = getExtensionDefault(DefaultKey+".mode")
+		file = getExtensionDefault(DefaultKey+".file")
 
+		#현재 선택된 컨투어 알아내기
 		for contour in currentGlyph:
 			if len(contour.selection) > 0:
 				count += 1
 				selectedContour = contour
 
+		#하나의 컨투어만을 선택했는지 필터링
 		if count != 1:
 			Message("하나의 컨투어를 선택해주십시오.")
 			return False
 
 
 		else: 
+
 			# 현재 선택된 컨투어가 그룹딕셔너리에 있나 확인하기
 			if selectedContour != prevContour:
-				print(prevContour, ", prevContour"); print(selectedContour, ", selectedContour"); print(prevGroupDict, ", prevGroupDict")
+				
 				try:
 					contourList = prevGroupDict[currentGlyph] 
 					
 					for contourIdx in contourList:
 
+						#현재 선택된 컨투어를 이전 그룹 딕셔너리에서 찾았다면 standard Contour, Glyph, contourNumber 갱신
 						if selectedContour.index == contourIdx:
 							res = True
 							setExtensionDefault(DefaultKey+".standardContour", selectedContour)
 							setExtensionDefault(DefaultKey+".standardGlyph", currentGlyph)
+							setExtensionDefault(DefaultKey+".contourNumber", selectedContour.index)	
+
+							#매트릭스 관련 설정값 갱신
 							if mode is matrixMode:
-			
 								matrix = Matrix(selectedContour, matrix_size); 
 								setExtensionDefault(DefaultKey+".matrix", matrix)
-							setExtensionDefault(DefaultKey+".contourNumber", selectedContour.index)
+
+
+
+							#현재 스마트셋 포커싱
+							checkSetData = searchGroup(currentGlyph, selectedContour.index, mode, file)
+							index = getMatchingSmartSet(checkSetData, currentGlyph, selectedContour.index)
+							
+							if index is not None : 
+								smartSetIndexList = list()
+								smartSetIndexList.append(index)
+								selectSmartSets(smartSetIndexList)
+
 							return True
 
 					# 같은 글리프라도 컨투어가 같은 그룹딕셔너리가 아니라면 익셉션을 raise한다.
 					raise Exception
 
+				# 다른 스마트 셋에 있거나 아직 탐색이 완료되지 않은 경우 처리
 				except Exception as e:
-					print("에러 발생")
-					result = self.updateSmartSetChanged(selectedContour)
+					result = updateSmartSetChanged(selectedContour)
 					
 					if result is False:
 						Message("해당되는 그룹 결과가 존재하지 않습니다. 탐색을 먼저 진행해주세요.")
-					
-					else:
-						Message("해당되는 그룹이 존재합니다. 관련 정보를 갱신하였습니다.")
 						
 					return result
 
@@ -154,17 +171,16 @@ class attributeWindow:
 		mode = getExtensionDefault(DefaultKey + ".mode")
 		file = getExtensionDefault(DefaultKey + ".file")
 		checkSetData = searchGroup(glyph, contourNumber, mode, file)
-		smartSetIndex = self.getMatchingSmartSet(checkSetData, glyph, contourNumber)
-		print(smartSetIndex, ",smartSetIndex")
+		smartSetIndex = getMatchingSmartSet(checkSetData, glyph, contourNumber)
 		smartSetIndexList = list()
 		smartSetIndexList.append(smartSetIndex+1) # 0번째는 All Glyphs이므로
+
 
 		#selectSmartSets는 인자로 list가 온다
 		if smartSetIndex is not None:
 			selectSmartSets(smartSetIndexList)
 
 		if checkSetData[2] == 0:
-			print("checkSetData[2] == 0 (이미 만들어진 그룹)")
 			
 			if mode is matrixMode:
 
@@ -179,7 +195,6 @@ class attributeWindow:
 			return True
 		
 		else:
-			print("checkSetData[2] != 0 or None")
 			return False
 
 
@@ -264,7 +279,7 @@ class attributeWindow:
 		콜백 메소드에 연결할 메소드
 	"""
 	def handleDependX(self, sender):
-		if self.updateAttributeComponent() is False:
+		if updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
@@ -284,7 +299,7 @@ class attributeWindow:
 			Message("모드 에러")
 
 	def handleDependY(self, sender):
-		if self.updateAttributeComponent() is False:
+		if updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
@@ -304,7 +319,7 @@ class attributeWindow:
 			Message("모드 에러")
 
 	def handlePenPair(self, sender):
-		if self.updateAttributeComponent() is False:
+		if updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
@@ -324,7 +339,7 @@ class attributeWindow:
 			Message("모드 에러")
 
 	def handleInnerFill(self, sender):
-		if self.updateAttributeComponent() is False:
+		if updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
@@ -344,7 +359,7 @@ class attributeWindow:
 			Message("모드 에러")
 
 	def handleSelect(self, sender):
-		if self.updateAttributeComponent() is False:
+		if updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
@@ -364,7 +379,7 @@ class attributeWindow:
 			Message("모드 에러")
 
 	def handleDelete(self, sender):
-		if self.updateAttributeComponent() is False:
+		if updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")

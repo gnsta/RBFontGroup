@@ -8,6 +8,7 @@ from jsonConverter.makeJsonFile import *
 from testCode.initialization import *
 from rbWindow.ExtensionSetting.extensionValue import *
 
+print("uiTEST started")
 configPreset = ConfigExtensionSetting(DefaultKey)
 configPreset.registerSettings()
 
