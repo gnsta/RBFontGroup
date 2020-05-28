@@ -1,12 +1,17 @@
 # 익스텐션 초기 기본 값 설정 (프로그램 초기 구동 시에 딱 한 번만 수행되고 이후론 수행하지 않음)
 from AppKit import NSColor
 from mojo.extensions import *
+from rbWindow.Controller import linkedStack
+from rbWindow.Controller.linkedStack import *
 
 DefaultKey = "com.robofontTool.rbFontGroup"
+rewindBufferSize = 50
 
 class ConfigExtensionSetting:
 
 	def __init__(self, registerKey):
+
+		bufferStack = Stack(rewindBufferSize)
 
 		self.registerKey = registerKey
 		self.defaults = {
@@ -35,6 +40,9 @@ class ConfigExtensionSetting:
 		    self.registerKey + ".standardContour": None,
 		    self.registerKey + ".standardGlyph": None,
 		    self.registerKey + ".matrix": None,
+		    
+		    self.registerKey + ".smartSetIndex": None,
+		    self.registerKey + ".restoreStack": bufferStack,
 		    
 		    self.registerKey + ".index": 0,
 		    self.registerKey + ".step": 30,

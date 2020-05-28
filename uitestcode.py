@@ -8,14 +8,11 @@ from jsonConverter.makeJsonFile import *
 from testCode.initialization import *
 from rbWindow.ExtensionSetting.extensionValue import *
 
+print("uiTEST started")
 configPreset = ConfigExtensionSetting(DefaultKey)
 configPreset.registerSettings()
 
-<<<<<<< HEAD
-testPath = "/Users/font/Desktop/groupTest.ufo"
-=======
 testPath = "/Users/sslab/Desktop/groupTest.ufo"
->>>>>>> origin/master
 testFile = OpenFont(testPath,showInterface = False)
 groupDict = None
 FileNameList = StartProgram(testPath,testFile)

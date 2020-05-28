@@ -73,30 +73,19 @@ class groupPointMatchController:
 		checkMatrix = Matrix(self.con,self.matrix.getdivk())
 		getCompareMaxMin = GetMaxMinPointValue(checkMatrix.con)
 
-		#print("self.con.points : ",self.con.points)
-
 		for p in self.con.points:
 			if(p.type != 'offcurve'):
 				checkPart = checkMatrix.getPointPart(p)
-				#print("checkPart : ", checkPart)
-				#print("pointPart : ",pointPart)
 				if((pointPart[0] == checkPart[0]) and (pointPart[1] == checkPart[1])):
 					originpl.append(p)
 
-		#print("originpl : ", originpl)
-
 
 		#locate contour exactly matrix's contour
-		#standardMinx = getStandardMaxMin.getMinXValue()
-		standardMinx = self.matrix.con.bounds[0]
-		#standardMiny = getStandardMaxMin.getMaxYValue()
-		standardMiny = self.matrix.con.bounds[1]
+		standardMinx = getStandardMaxMin.getMinXValue()
+		standardMiny = getStandardMaxMin.getMaxYValue()
 
-		#checkMinx = getCompareMaxMin.getMinXValue()
-		checkMinx = self.con.bounds[0]
-		#checkMiny = getCompareMaxMin.getMaxYValue()
-		checkMiny = self.con.bounds[1]
-
+		checkMinx = getCompareMaxMin.getMinXValue()
+		checkMiny = getCompareMaxMin.getMaxYValue()
 
 		termX = checkMinx - standardMinx
 		termY = checkMiny - standardMiny
@@ -113,66 +102,41 @@ class groupPointMatchController:
 		minDist = 10000000000
 		indx = -1
 
-		#print("!!")
-		#print("relocatepl : ", relocatepl)
-		#print("indx : ", indx)
-
 		for	i,o in enumerate(relocatepl):
-			#print("i :" , i)
-			#print("o : ", o)
-
 			dist = math.sqrt(math.pow(self.point.x - o.rx,2) + math.pow(self.point.y - o.ry,2))
 			if(minDist > dist):
 				indx = i
 				minDist = dist
 
-		#print("relocatepl : ", relocatepl)
-		#print("indx : ", indx)
-
-		#print("self.matrix.con : ", self.matrix.con)
-
-		#for i in range(0,len(relocatepl)):
-			#print("i : ", i)
-			#print("relocatepl : ", relocatepl[i])
-		if indx != -1:
-			return relocatepl[indx].point
-		else:
-			return None
+		return relocatepl[indx].point
 
 	def mgiveSelected(self):
 		insertPoint = self.matchPoint()
-		if insertPoint is not None:
-			insertPoint.selected = True
+		insertPoint.selected = True
 
 	def mgiveAttrPenPair(self):
 		insertPoint = self.matchPoint()
-		if insertPoint is not None:
-			temp = at.get_attr(self.point,'penPair')
-			at.add_attr(insertPoint,'penPair',temp)
+		temp = at.get_attr(self.point,'penPair')
+		at.add_attr(insertPoint,'penPair',temp)
 
 	def mgiveDependX(self):
 		insertPoint = self.matchPoint()
-		if insertPoint is not None:
-			temp = at.get_attr(self.point,'dependX')
-			at.add_attr(insertPoint,'dependX',temp)
+		temp = at.get_attr(self.point,'dependX')
+		at.add_attr(insertPoint,'dependX',temp)
 
 	def mgiveDependY(self):
 		insertPoint = self.matchPoint()
-		if insertPoint is not None:
-			temp = at.get_attr(self.point,'dependY')
-			at.add_attr(insertPoint,'dependY',temp)
+		temp = at.get_attr(self.point,'dependY')
+		at.add_attr(insertPoint,'dependY',temp)
 
 	def mgiveInnerFill(self):
 		insertPoint = self.matchPoint()
-		if insertPoint is not None:
-			temp = at.get_attr(self.point,'innerFill')
-			at.add_attr(insertPoint,'innerFill',temp)
+		temp = at.get_attr(self.point,'innerFill')
+		at.add_attr(insertPoint,'innerFill',temp)
 
 	def mdeleteAttr(self,attribute):
 		insertPoint = self.matchPoint()
-		if insertPoint is not None:
-			at.del_attr(insertPoint,attribute)		
-
+		at.del_attr(insertPoint,attribute)		
 
 
 

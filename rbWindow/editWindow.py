@@ -15,6 +15,8 @@ from rbWindow.settingWindow import settingWindow
 from mojo.UI import CurrentFontWindow
 from AppKit import *
 from rbWindow.ExtensionSetting.extensionValue import *
+from rbWindow.Controller import linkedStack
+from fontParts.world import CurrentFont
 
 
 
@@ -107,9 +109,13 @@ class EditGroupMenu(object):
 		self.currentPen = None
 		self.file = file
 		self.window = None		# 현재 띄워져 있는 ufo 윈도우
-
+		
+		self.w = list()
+		for i in range(6):
+			self.w.append(None)
+		
 		self.mode = None  		# 연산 방법(matrix, topology)
-		self.w3 = None
+
 		self.jsonFileName1 = jsonFileName1
 		self.jsonFileName2 = jsonFileName2
 		self.createUI()
@@ -135,7 +141,7 @@ class EditGroupMenu(object):
 		print("dir(toolbarItems) = ", dir(toolbarItems))
 		self.newToolbarItems = list()
 		newItem1 = dict(itemIdentifier="Search", label="Search", imageNamed=NSImageNameRevealFreestandingTemplate, callback=self.popSearchWindow); self.newToolbarItems.append(newItem1);
-		newItem2 = dict(itemIdentifier="Rewind", label="Rewind", imageNamed=NSImageNameRefreshFreestandingTemplate, callback=None); self.newToolbarItems.append(newItem2);
+		newItem2 = dict(itemIdentifier="Rewind", label="Rewind", imageNamed=NSImageNameRefreshFreestandingTemplate, callback=self.restoreAttribute); self.newToolbarItems.append(newItem2);
 		newItem3 = dict(itemIdentifier="Save", label="Save", imageNamed=NSImageNameComputer, callback=None); self.newToolbarItems.append(newItem3);
 		newItem4 = dict(itemIdentifier="Exit", label="Exit", imageNamed=NSImageNameStopProgressFreestandingTemplate, callback=self.windowCloseCallback); self.newToolbarItems.append(newItem4);
 		newItem5 = dict(itemIdentifier="Settings", label="Settings", imageNamed=NSImageNameAdvanced, callback=self.popSettingWindow); self.newToolbarItems.append(newItem5);
@@ -173,12 +179,12 @@ class EditGroupMenu(object):
 		HelpWindow(htmlPath=manual)
 
 	def popSettingWindow(self, sender):
-		self.w6 = settingWindow(self)
+		self.w[5] = settingWindow(self)
 
 	def popPreviewWindow(self, sender):
 
-		self.w5 = previewWindow(self)
-		self.w5.createUI(sender)
+		self.w[4] = previewWindow(self)
+		self.w[4].createUI(sender)
 		
 	def popAttributeWindow(self, sender):
 
@@ -188,19 +194,19 @@ class EditGroupMenu(object):
 		if mode is None or contourNumber is None:
 			print(Message("먼저 속성을 부여할 그룹을 찾아야 합니다."))
 			return
-		self.w4 = attributeWindow()
+		self.w[3] = attributeWindow()
 
 
 	def popSearchWindow(self, sender):
 
 		# Window for Matrix & Topology Process
-		self.w3 = toolsWindow()
+		self.w[3] = toolsWindow()
 	    
 
 	def windowCloseCallback(self, sender):
 	    
 	    try:
-	        for glyph in self.w3.selectedGlyphs:
+	        for glyph in self.w[2].selectedGlyphs:
 	            glyph.markColor = None
 	    except AttributeError:
 	    	pass
@@ -218,8 +224,27 @@ class EditGroupMenu(object):
 
 	    self.window.setToolbar()
 
+	    for i in range(len(self.w)):
+	    	if self.w[i] is not None:
+	    		self.w[i].w.close()
+
 	    del self
-	
+
+	def restoreAttribute(self, sender):
+
+		restoreStack = getExtensionDefault(DefaultKey + ".restoreStack")
+
+		if restoreStack is None or restoreStack.isEmpty() is True:
+			Message("더 이상 되돌릴 수 없습니다.")
+			return
+
+		top = restoreStack.pop()
+		for element in top:
+			print("value : ",element)
+			element[0].name = element[1]
+
+		CurrentFont().update()
+		CurrentFont().save()
 
 	def drawBroadNibBackground(self, info):
 		

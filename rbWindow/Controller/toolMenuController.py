@@ -11,7 +11,8 @@ from jsonConverter.clockWiseGroup import *
 from parseSyllable.configSyllable import *
 from mojo.UI import *
 from rbWindow.ExtensionSetting.extensionValue import *
-
+from rbWindow.Controller import smartSetFocus as sSF
+from mojo.extensions import *
 
 matrixMode = 0
 topologyMode = 1
@@ -23,8 +24,6 @@ k = 500
 matrix_margin = 20
 matrix_size = 3
 topology_margin = 500
-
-clockWiseMargin = 1
 
 def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, file,checkSetData,jsonFileName1,jsonFileName2):
 	"""
@@ -110,14 +109,7 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 		for i,compare in enumerate(value):
 			if i not in configDict[key][checkSetData[1]]:#초, 중, 종 분리 로직
 				continue
-
-			standardReverseUP = abs(standard['reverse'] + clockWiseMargin)
-			standardReverseDOWN = abs(standard['reverse'] - clockWiseMargin)
-			standardForwordUP = abs(standard['forword'] + clockWiseMargin)
-			standardForwordDOWN = abs(standard['forword'] - clockWiseMargin)
-
-
-			if (compare['reverse'] >= standardReverseDOWN) and (compare['reverse'] <= standardReverseUP) and (compare['forword'] >= standardForwordDOWN) and (compare['forword'] <= standardReverseUP):
+			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
 				compareContour = file[key].contours[i]
 				result = compareController.conCheckGroup(compareContour)
 				if result is not None:
@@ -272,6 +264,10 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1
 			groupDict = findContoursGroup(checkSetData, file, mode)
 			setExtensionDefault(DefaultKey + ".groupDict", groupDict)
 
+	#현재 스마트셋 포커싱
+	smartSetIndex = sSF.getMatchingSmartSet(checkSetData, standardGlyph, contourIndex)
+	
+	sSF.updateSmartSetIndex(smartSetIndex)
 	
 def findContoursGroup(checkSetData, file, mode):
 	"""
