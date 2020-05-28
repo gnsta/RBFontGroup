@@ -1,4 +1,3 @@
-
 import pathManager.pathSetting as extPath
 from vanilla import FloatingWindow, RadioGroup, Button, HUDFloatingWindow, ImageButton, TextBox, EditText, CheckBox
 from rbFontG.tools.tTopology import topologyButtonEvent as tbt
@@ -339,13 +338,14 @@ class attributeWindow:
 			Message("모드 에러")
 
 	def handleInnerFill(self, sender):
+
 		if updateAttributeComponent() is False:
 			return
-		
+
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		mode = getExtensionDefault(DefaultKey+".mode")
 		
 		if mode is matrixMode:
-			groupDict = getExtensionDefault(DefaultKey+".groupDict")
 			matrix = getExtensionDefault(DefaultKey+".matrix")
 			mbt.minnerFillAttribute(groupDict, matrix)
 
@@ -359,32 +359,40 @@ class attributeWindow:
 			Message("모드 에러")
 			return
 
-		CurrentFont().update()###
+		CurrentFont().update()	#로보폰트 업데이트
+		CurrentFont().save() 	#XML 업데이트
 
 	def handleSelect(self, sender):
 		if updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
-		
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+
+		#현재 상태 저장
+		for glyph in groupDict.keys():
+			glyph.prepareUndo()
+
 		if mode is matrixMode:
-			groupDict = getExtensionDefault(DefaultKey+".groupDict")
 			matrix = getExtensionDefault(DefaultKey+".matrix")
 			mbt.mselectAttribute(groupDict, matrix)
 
 		elif mode is topologyMode:
-			groupDict = getExtensionDefault(DefaultKey+".groupDict")
 			standardContour = getExtensionDefault(DefaultKey+".standardContour")
 			k = getExtensionDefault(DefaultKey+".k")
 			tbt.selectAttribute(groupDict, standardContour, k)
 				
 		else:
 			Message("모드 에러")
+			return
+
+		for glyph in groupDict.keys():
+			glyph.performUndo()
 
 	def handleDelete(self, sender):
 		if updateAttributeComponent() is False:
 			return
-		
+
 		mode = getExtensionDefault(DefaultKey+".mode")
 		
 		if mode is matrixMode:
@@ -400,6 +408,8 @@ class attributeWindow:
 				
 		else:
 			Message("모드 에러")
+
+
 			
 	def minimizeCallback(self, sender):
 		if sender.get() == True:

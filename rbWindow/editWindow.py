@@ -15,6 +15,8 @@ from rbWindow.settingWindow import settingWindow
 from mojo.UI import CurrentFontWindow
 from AppKit import *
 from rbWindow.ExtensionSetting.extensionValue import *
+from rbWindow.Controller import linkedStack
+from fontParts.world import CurrentFont
 
 
 
@@ -139,7 +141,7 @@ class EditGroupMenu(object):
 		print("dir(toolbarItems) = ", dir(toolbarItems))
 		self.newToolbarItems = list()
 		newItem1 = dict(itemIdentifier="Search", label="Search", imageNamed=NSImageNameRevealFreestandingTemplate, callback=self.popSearchWindow); self.newToolbarItems.append(newItem1);
-		newItem2 = dict(itemIdentifier="Rewind", label="Rewind", imageNamed=NSImageNameRefreshFreestandingTemplate, callback=None); self.newToolbarItems.append(newItem2);
+		newItem2 = dict(itemIdentifier="Rewind", label="Rewind", imageNamed=NSImageNameRefreshFreestandingTemplate, callback=self.restoreAttribute); self.newToolbarItems.append(newItem2);
 		newItem3 = dict(itemIdentifier="Save", label="Save", imageNamed=NSImageNameComputer, callback=None); self.newToolbarItems.append(newItem3);
 		newItem4 = dict(itemIdentifier="Exit", label="Exit", imageNamed=NSImageNameStopProgressFreestandingTemplate, callback=self.windowCloseCallback); self.newToolbarItems.append(newItem4);
 		newItem5 = dict(itemIdentifier="Settings", label="Settings", imageNamed=NSImageNameAdvanced, callback=self.popSettingWindow); self.newToolbarItems.append(newItem5);
@@ -227,7 +229,22 @@ class EditGroupMenu(object):
 	    		self.w[i].w.close()
 
 	    del self
-	
+
+	def restoreAttribute(self, sender):
+
+		restoreStack = getExtensionDefault(DefaultKey + ".restoreStack")
+
+		if restoreStack is None or restoreStack.isEmpty() is True:
+			Message("더 이상 되돌릴 수 없습니다.")
+			return
+
+		top = restoreStack.pop()
+		for element in top:
+			print("value : ",element)
+			element[0].name = element[1]
+
+		CurrentFont().update()
+		CurrentFont().save()
 
 	def drawBroadNibBackground(self, info):
 		
