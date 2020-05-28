@@ -41,6 +41,7 @@ class ConfigExtensionSetting:
 		    self.registerKey + ".standardGlyph": None,
 		    self.registerKey + ".matrix": None,
 		    
+		    self.registerKey + ".syllableJudgementController": None,
 		    self.registerKey + ".smartSetIndex": None,
 		    self.registerKey + ".restoreStack": bufferStack,
 		    

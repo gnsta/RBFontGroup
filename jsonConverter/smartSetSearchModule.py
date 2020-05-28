@@ -6,6 +6,7 @@ from rbFontG.tools.tMatrix.PhaseTool import *
 from rbFontG.tools.tMatrix.groupTestController import *
 from rbFontG.tools.tTopology.topologyJudgement import *
 from rbFontG.tools.tTopology.topologyAssignment import *
+from rbWindow.ExtensionSetting.extensionValue import *
 
 """
 2020/03/25
@@ -37,7 +38,11 @@ def searchGroup(glyph,contourNumber,mode,file,message = False):
 		수정부분 : json 파일로 찾지 말고 set 이용하여 해결
 	"""
 
-	glyphConfigure = getConfigure(glyph)
+	#glyphConfigure = getConfigure(glyph)
+	syllableJudgementController = getExtensionDefault(DefaultKey + ".syllableJudgementController")
+	glyphConfigure = syllableJudgementController.GetSyllable(glyph)
+	print('glyphConfigure : ', glyphConfigure)
+
 
 	check = 0
 	positionNumber = None
