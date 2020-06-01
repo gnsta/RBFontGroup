@@ -15,7 +15,7 @@ def getConfigure(RGlyph):
 	middle_five = ['ㅝ']
 	middle_six = ['ㅞ']
 
-	print("RGlyph : ", RGlyph)
+	#print("RGlyph : ", RGlyph)
 	puc = parseUnicodeController(RGlyph.unicode)
 	chars = puc.getChars()
 

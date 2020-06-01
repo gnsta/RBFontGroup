@@ -33,9 +33,10 @@ def mselectAttribute(groupDict,standardMatrix):
 
 
     for i in range(0,len(controllerList)):
-        tmp = list()
-        tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
-        prevPointList.append(tmp)
+        if controllerList[i].matchPoint() is not None:
+            tmp = list()
+            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
+            prevPointList.append(tmp)
         controllerList[i].mgiveSelected()
 
     restoreStack.push(prevPointList)
@@ -65,9 +66,10 @@ def mpenPairAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        tmp = list()
-        tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
-        prevPointList.append(tmp)
+        if controllerList[i].matchPoint() is not None:
+            tmp = list()
+            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
+            prevPointList.append(tmp)
         controllerList[i].mgiveAttrPenPair()
 
     restoreStack.push(prevPointList)
@@ -96,9 +98,10 @@ def mdependXAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        tmp = list()
-        tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
-        prevPointList.append(tmp)
+        if controllerList[i].matchPoint() is not None:
+            tmp = list()
+            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
+            prevPointList.append(tmp)
         controllerList[i].mgiveDependX()
 
     restoreStack.push(prevPointList)
@@ -127,9 +130,10 @@ def mdependYAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        tmp = list()
-        tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
-        prevPointList.append(tmp)
+        if controllerList[i].matchPoint() is not None:
+            tmp = list()
+            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
+            prevPointList.append(tmp)
         controllerList[i].mgiveDependY()
 
     restoreStack.push(prevPointList)
@@ -158,9 +162,10 @@ def minnerFillAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        tmp = list()
-        tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
-        prevPointList.append(tmp)
+        if controllerList[i].matchPoint() is not None:
+            tmp = list()
+            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
+            prevPointList.append(tmp)
         controllerList[i].mgiveInnerFill()
 
     restoreStack.push(prevPointList)
@@ -188,9 +193,10 @@ def mdeleteAttribute(groupDict,standardMatrix,attribute):
                 controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        tmp = list()
-        tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
-        prevPointList.append(tmp)
+        if controllerList[i].matchPoint() is not None:
+            tmp = list()
+            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
+            prevPointList.append(tmp)
         controllerList[i].mdeleteAttr(attribute)
 
     restoreStack.push(prevPointList)

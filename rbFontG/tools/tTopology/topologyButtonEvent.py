@@ -1,7 +1,10 @@
 from rbFontG.tools.tTopology.topologyJudgement import *
 from rbFontG.tools.tTopology.topologyAssignment import *
 from jsonConverter.converter import *
-
+from mojo.extensions import *
+from mojo.roboFont import CurrentGlyph
+from rbWindow.ExtensionSetting import extensionValue
+from rbWindow.ExtensionSetting.extensionValue import *
 """
 2020/02/20
 Created by heesup Kim
@@ -25,6 +28,14 @@ def selectAttribute(groupDict,standardContour,num):
 	"""
 	controllerList = []
 	contoursList = []
+	prevPointList = list()
+	restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
+
+	g = CurrentGlyph()
+	for point in g.selectedPoints:
+		tmp = list()
+		tmp.append(point); tmp.append(point.name)
+		prevPointList.append(tmp)
 
 	#create topologyJudgementController object
 	for k in groupDict.keys():
@@ -36,7 +47,19 @@ def selectAttribute(groupDict,standardContour,num):
 			controllerList.append(topologyJudgementController(standardContour,contoursList[i],num))
 
 	for i in range(0, len(controllerList)):
+		if controllerList[i].cCheckCon is not None:
+			for j in range(0, len(controllerList[i].sCheckCon.tpPointList)):
+
+				# restoreStack에 필요한 데이터를 넣는 과정
+				if(controllerList[i].sCheckCon.tpPointList[j].point.selected == True):
+					tmp = list()
+					tmp.append(controllerList[i].cCheckCon.tpPointList[j].point); tmp.append(controllerList[i].cCheckCon.tpPointList[j].point.name)
+					prevPointList.append(tmp)
+
 		controllerList[i].giveSelected()
+
+	restoreStack.push(prevPointList)
+	setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
 
 def penPairAttribute(groupDict,standardContour,num):
 	"""
@@ -53,6 +76,14 @@ def penPairAttribute(groupDict,standardContour,num):
 	"""
 	controllerList = []
 	contoursList = []
+	prevPointList = list()
+	restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
+
+	g = CurrentGlyph()
+	for point in g.selectedPoints:
+		tmp = list()
+		tmp.append(point); tmp.append(point.name)
+		prevPointList.append(tmp)
 
 	#create topologyJudgementController object
 	for k in groupDict.keys():
@@ -64,7 +95,19 @@ def penPairAttribute(groupDict,standardContour,num):
 			controllerList.append(topologyJudgementController(standardContour,contoursList[i],num))
 
 	for i in range(0, len(controllerList)):
+		if controllerList[i].cCheckCon is not None:
+			for j in range(0, len(controllerList[i].sCheckCon.tpPointList)):
+
+				# restoreStack에 필요한 데이터를 넣는 과정
+				if(controllerList[i].sCheckCon.tpPointList[j].point.selected == True):
+					tmp = list()
+					tmp.append(controllerList[i].cCheckCon.tpPointList[j].point); tmp.append(controllerList[i].cCheckCon.tpPointList[j].point.name)
+					prevPointList.append(tmp)
+
 		controllerList[i].giveAttrPenPair()
+
+	restoreStack.push(prevPointList)
+	setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
 
 def dependXAttribute(groupDict,standardContour,num):
 	"""
@@ -81,6 +124,14 @@ def dependXAttribute(groupDict,standardContour,num):
 	"""
 	controllerList = []
 	contoursList = []
+	prevPointList = list()
+	restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
+
+	g = CurrentGlyph()
+	for point in g.selectedPoints:
+		tmp = list()
+		tmp.append(point); tmp.append(point.name)
+		prevPointList.append(tmp)
 
 	#create topologyJudgementController object
 	for k in groupDict.keys():
@@ -92,7 +143,19 @@ def dependXAttribute(groupDict,standardContour,num):
 			controllerList.append(topologyJudgementController(standardContour,contoursList[i],num))
 
 	for i in range(0, len(controllerList)):
+		if controllerList[i].cCheckCon is not None:
+			for j in range(0, len(controllerList[i].sCheckCon.tpPointList)):
+
+				# restoreStack에 필요한 데이터를 넣는 과정
+				if(controllerList[i].sCheckCon.tpPointList[j].point.selected == True):
+					tmp = list()
+					tmp.append(controllerList[i].cCheckCon.tpPointList[j].point); tmp.append(controllerList[i].cCheckCon.tpPointList[j].point.name)
+					prevPointList.append(tmp)
+
 		controllerList[i].giveDependX()
+
+	restoreStack.push(prevPointList)
+	setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
 
 def dependYAttribute(groupDict,standardContour,num):
 	"""
@@ -109,6 +172,14 @@ def dependYAttribute(groupDict,standardContour,num):
 	"""
 	controllerList = []
 	contoursList = []
+	prevPointList = list()
+	restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
+
+	g = CurrentGlyph()
+	for point in g.selectedPoints:
+		tmp = list()
+		tmp.append(point); tmp.append(point.name)
+		prevPointList.append(tmp)
 
 	#create topologyJudgementController object
 	for k in groupDict.keys():
@@ -120,7 +191,19 @@ def dependYAttribute(groupDict,standardContour,num):
 			controllerList.append(topologyJudgementController(standardContour,contoursList[i],num))
 
 	for i in range(0, len(controllerList)):
+		if controllerList[i].cCheckCon is not None:
+			for j in range(0, len(controllerList[i].sCheckCon.tpPointList)):
+
+				# restoreStack에 필요한 데이터를 넣는 과정
+				if(controllerList[i].sCheckCon.tpPointList[j].point.selected == True):
+					tmp = list()
+					tmp.append(controllerList[i].cCheckCon.tpPointList[j].point); tmp.append(controllerList[i].cCheckCon.tpPointList[j].point.name)
+					prevPointList.append(tmp)
+
 		controllerList[i].giveDependY()
+
+	restoreStack.push(prevPointList)
+	setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
 
 def innerFillAttribute(groupDict,standardContour,num):
 	"""
@@ -137,6 +220,14 @@ def innerFillAttribute(groupDict,standardContour,num):
 	"""
 	controllerList = []
 	contoursList = []
+	prevPointList = list()
+	restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
+
+	g = CurrentGlyph()
+	for point in g.selectedPoints:
+		tmp = list()
+		tmp.append(point); tmp.append(point.name)
+		prevPointList.append(tmp)
 
 	#create topologyJudgementController object
 	for k in groupDict.keys():
@@ -148,7 +239,19 @@ def innerFillAttribute(groupDict,standardContour,num):
 			controllerList.append(topologyJudgementController(standardContour,contoursList[i],num))
 
 	for i in range(0, len(controllerList)):
+		if controllerList[i].cCheckCon is not None:
+			for j in range(0, len(controllerList[i].sCheckCon.tpPointList)):
+
+				# restoreStack에 필요한 데이터를 넣는 과정
+				if(controllerList[i].sCheckCon.tpPointList[j].point.selected == True):
+					tmp = list()
+					tmp.append(controllerList[i].cCheckCon.tpPointList[j].point); tmp.append(controllerList[i].cCheckCon.tpPointList[j].point.name)
+					prevPointList.append(tmp)
+
 		controllerList[i].giveInnerFill()
+
+	restoreStack.push(prevPointList)
+	setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
 
 def deleteAttribute(groupDict,standardContour,attribute,num):
 	"""
@@ -167,6 +270,14 @@ def deleteAttribute(groupDict,standardContour,attribute,num):
 	"""
 	controllerList = []
 	contoursList = []
+	prevPointList = list()
+	restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
+
+	g = CurrentGlyph()
+	for point in g.selectedPoints:
+		tmp = list()
+		tmp.append(point); tmp.append(point.name)
+		prevPointList.append(tmp)
 
 	#create topologyJudgementController object
 	for k in groupDict.keys():
@@ -177,4 +288,16 @@ def deleteAttribute(groupDict,standardContour,attribute,num):
 		controllerList.append(topologyJudgementController(standardContour,contoursList[i],num))
 
 	for i in range(0, len(controllerList)):
-		controllerList[i].deleteAttr(attribute)				
+		if controllerList[i].cCheckCon is not None:
+			for j in range(0, len(controllerList[i].sCheckCon.tpPointList)):
+
+				# restoreStack에 필요한 데이터를 넣는 과정
+				if(controllerList[i].sCheckCon.tpPointList[j].point.selected == True):
+					tmp = list()
+					tmp.append(controllerList[i].cCheckCon.tpPointList[j].point); tmp.append(controllerList[i].cCheckCon.tpPointList[j].point.name)
+					prevPointList.append(tmp)
+
+		controllerList[i].deleteAttr(attribute)	
+
+	restoreStack.push(prevPointList)
+	setExtensionDefault(DefaultKey+".restoreStack", restoreStack)			
