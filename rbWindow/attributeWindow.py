@@ -1,8 +1,8 @@
 import pathManager.pathSetting as extPath
 from vanilla import FloatingWindow, RadioGroup, Button, HUDFloatingWindow, ImageButton, TextBox, EditText, CheckBox
-from rbFontG.tools.tTopology import topologyButtonEvent as tbt
-from rbFontG.tools.tMatrix import matrixButtonEvent as mbt
-from rbFontG.tools.tMatrix.PhaseTool import *
+from groupingTool.tTopology import topologyButtonEvent as tbt
+from groupingTool.tMatrix import matrixButtonEvent as mbt
+from groupingTool.tMatrix.PhaseTool import *
 from mojo.UI import *
 from jsonConverter.smartSetSearchModule import *
 from rbWindow.Controller.toolMenuController import *

@@ -1,9 +1,9 @@
 from mojo.UI import *
 from rbWindow.ExtensionSetting.extensionValue import *
 from parseSyllable.configSyllable import *
-from rbFontG.tools.tMatrix.PhaseTool import *
-from rbFontG.tools.tMatrix.groupTestController import *
-from rbFontG.tools.tTopology.topologyJudgement import *
+from groupingTool.tMatrix.PhaseTool import *
+from groupingTool.tMatrix.groupTestController import *
+from groupingTool.tTopology.topologyJudgement import *
 from jsonConverter.smartSetSearchModule import *
 from fontParts.world import CurrentGlyph
 import sys

@@ -6,11 +6,11 @@ from mojo.drawingTools import fill, oval
 from mojo.extensions import getExtensionDefault, setExtensionDefault
 from rbWindow.contourPen import BroadNibPen
 from rbWindow.sliderGroup import SliderGroup
-import rbFontG.tools.tMatrix.PhaseTool
-import rbFontG.tools.tMatrix.groupTestController
-from rbFontG.tools.tTopology import topologyJudgement as tj
-from rbFontG.tools.tTopology import topologyAssignment as ta
-from rbFontG.tools import parseUnicodeControll as puc
+import groupingTool.tMatrix.PhaseTool
+import groupingTool.tMatrix.groupTestController
+from groupingTool.tTopology import topologyJudgement as tj
+from groupingTool.tTopology import topologyAssignment as ta
+from groupingTool import parseUnicodeControll as puc
 import jsonConverter.searchModule as search
 import timeit#
 import jsonConverter.converter as convert

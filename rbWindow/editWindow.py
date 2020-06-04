@@ -7,7 +7,6 @@ from mojo.drawingTools import fill, oval, rect
 from mojo.extensions import getExtensionDefault, setExtensionDefault
 from rbWindow.contourPen import BroadNibPen
 from rbWindow.sliderGroup import SliderGroup
-#from rbWindow.addGroupWindow import AddGroupWindow
 from rbWindow.toolMenu import toolsWindow
 from rbWindow.attributeWindow import attributeWindow
 from rbWindow.previewWindow import previewWindow
