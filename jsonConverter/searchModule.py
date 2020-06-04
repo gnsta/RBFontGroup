@@ -1,5 +1,5 @@
 import os
-from rbFontG.tools.parseUnicodeControll import *
+from groupingTool.parseUnicodeControll import *
 import jsonConverter.converter as convert
 from parseSyllable.configSyllable import *
 import pathManager.pathSetting as extPath
