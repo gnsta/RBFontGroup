@@ -1,7 +1,7 @@
 from rbWindow.editWindow import *
 from rbWindow.converter import *
-import rbFontG.tools.tMatrix.PhaseTool
-import rbFontG.tools.tMatrix.groupTestController
+import groupingTool.tMatrix.PhaseTool
+import groupingTool.tMatrix.groupTestController
 import rbWindow.editWindow as ew
 import json
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 import os
 import math
-import rbFontG.tools.tMatrix.PhaseTool
-import rbFontG.tools.tMatrix.groupTestController
+import groupingTool.tMatrix.PhaseTool
+import groupingTool.tMatrix.groupTestController
 import rbWindow.editWindow as ew
 import pickle
 #Test Code
