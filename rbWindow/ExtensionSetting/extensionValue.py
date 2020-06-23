@@ -1,9 +1,10 @@
 # 익스텐션 초기 기본 값 설정 (프로그램 초기 구동 시에 딱 한 번만 수행되고 이후론 수행하지 않음)
 from AppKit import NSColor
 from mojo.extensions import *
-from rbWindow.Controller import linkedStack
+#from rbWindow.Controller import linkedStack
 from rbWindow.Controller.linkedStack import *
 from fontParts.world import CurrentFont
+from rbWindow.Controller.CircularQueue import *
 
 DefaultKey = "com.robofontTool.rbFontGroup"
 rewindBufferSize = 50
@@ -12,7 +13,7 @@ class ConfigExtensionSetting:
 
 	def __init__(self, registerKey):
 
-		bufferStack = Stack(rewindBufferSize)
+		bufferStack = CircularQueue(rewindBufferSize)
 
 		self.registerKey = registerKey
 		self.defaults = {
@@ -46,11 +47,13 @@ class ConfigExtensionSetting:
 		    self.registerKey + ".syllableJudgementController": None,
 		    self.registerKey + ".smartSetIndex": None,
 		    self.registerKey + ".restoreStack": bufferStack,
-		    
+		    self.registerKey + ".isInitialAppend": True,		# 원형 큐 자료 운영을 위해 필요한 변수(원형 큐가 빈 상태에서 넣는 경우)
+
+		    self.registerKey + ".state": False,		    
 		    self.registerKey + ".index": 0,
-		    self.registerKey + ".step": 30,
-		    self.registerKey + ".width": 30,
-		    self.registerKey + ".height": 10,
+		    self.registerKey + ".step": 45,
+		    self.registerKey + ".width": 50,
+		    self.registerKey + ".height": 50,
 		    self.registerKey + ".color": NSColor.colorWithCalibratedRed_green_blue_alpha_(1, 0, 0, .5)
 		}
 

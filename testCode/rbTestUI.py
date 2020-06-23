@@ -1,7 +1,7 @@
 import os
 import math
-import groupingTool.tMatrix.PhaseTool
-import groupingTool.tMatrix.groupTestController
+import rbFontG.tools.tMatrix.PhaseTool
+import rbFontG.tools.tMatrix.groupTestController
 import rbWindow.editWindow as ew
 import pickle
 #Test Code
@@ -11,7 +11,7 @@ if __name__ == '__main__':
     
     #g = CurrentGlyph()
     
-    testPath = "/Users/font/Desktop/myungjo/groupTest.ufo"
+    testPath = "/Users/sslab/Desktop/myungjo/groupTest.ufo"
     testFile = OpenFont(testPath,showInterface = False)
     
     

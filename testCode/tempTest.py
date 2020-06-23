@@ -1,17 +1,17 @@
 from rbWindow.editWindow import *
 from rbWindow.converter import *
-import groupingTool.tMatrix.PhaseTool
-import groupingTool.tMatrix.groupTestController
+import rbFontG.tools.tMatrix.PhaseTool
+import rbFontG.tools.tMatrix.groupTestController
 import rbWindow.editWindow as ew
 import json
 if __name__ == '__main__':
     
     g = CurrentGlyph()
     
-    testPath = "/Users/font/Desktop/myungjo/groupTest.ufo"
+    testPath = "/Users/sslab/Desktop/myungjo/groupTest.ufo"
     testFile = OpenFont(testPath,showInterface = False)
     
-    jsonPath = "/Users/font/Desktop/myJSON.json"
+    jsonPath = "/Users/sslab/Desktop/myJSON.json"
     
     c = g.contours[0]
     

@@ -1,4 +1,4 @@
-from groupingTool.parseUnicodeControll import *
+from rbFontG.tools.parseUnicodeControll import *
 from rbWindow.contourPen import BroadNibPen
 from defconAppKit.windows.baseWindow import BaseWindowController
 from mojo.events import addObserver

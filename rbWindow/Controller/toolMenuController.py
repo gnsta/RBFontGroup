@@ -1,10 +1,10 @@
 import os
 import jsonConverter.searchModule as search
-import groupingTool.tMatrix.PhaseTool
-import groupingTool.tMatrix.groupTestController
-from groupingTool.tTopology import topologyJudgement as tj
-from groupingTool.tTopology import topologyAssignment as ta
-from groupingTool import parseUnicodeControll as puc
+import rbFontG.tools.tMatrix.PhaseTool
+import rbFontG.tools.tMatrix.groupTestController
+from rbFontG.tools.tTopology import topologyJudgement as tj
+from rbFontG.tools.tTopology import topologyAssignment as ta
+from rbFontG.tools import parseUnicodeControll as puc
 import jsonConverter.converter as convert
 from jsonConverter.smartSetSearchModule import *
 from jsonConverter.clockWiseGroup import *
@@ -25,40 +25,34 @@ matrix_margin = 20
 matrix_size = 3
 topology_margin = 500
 
-"""
-2020/03/35 
-modify by Kim Heesup Kim
-"""
-
 def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, file,checkSetData,jsonFileName1,jsonFileName2):
 	"""
-	UI와 그룹 방법을 연결시켜주는 함수 (Matrix 방법)
+	2020/03/35 
+	modify by Kim heesup
+	To get group contours Based on standard Glyph's contour by Matrix
 	Args :
 		standardGlyph :: RGlyph 
-			기준 컨투어
+			glyph include standard contour
 		contourIndex ::  int
-			컨투어의 번호
+			standard contour index that is included on standardGlyph
 		margin :: int
-			matrix로 반별시 오차 범위 허용 값(0 ~ 100)
-			숫자가 높을수록 허용 범위가 넓어짐
-			(20정도가 적당)
+			error range whther or not the compare contour is same group with standard contour
 		width :: int
-			매트릭스의 가로 구획 수
+			value of divide the x-axis
 		height :: int
-			매트릭스의 세로 구획 수
-		file  :: RFont
-			조사를 진행하고 있는 폰트 파일
+			value of divede the y-axis
+		file  :: OpenFont
+			File to investigate
 		checkSetData :: List
-			스마트셋 이름을 관리하기 위하여 필요한 checkSetData
-			smartSetSearchModule 파일을 이용하여 구함
-			[setNumber, syllableNumber]
-		jsonFileName1 :: String
-			시계방향, 반시계방향 정보를 담고 있는 json파일 이름(1차 필터링 결과)
-		jsonFileName2 :: String
-			음절 분리가 되어 있는 json파일 이름을 반환
+			[setNumber, syllableNumber] (using to File naming)
+		mainWindow :: tool Menu object
+			to get font File in searchGroup function
+
+	Return : Dictionary
+		each key is glyph and value is list that same contours index
 
 	2020/03/23
-	스마트셋 이름 규칙을 정리함
+	add smart set that include smae glyph group
 	set name format example
 		: ##(number)_##(syllable)_####(mode)
 	"""
@@ -90,6 +84,23 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, fi
 
 	smartGroupDict = {}
 	smartContourList = [] 
+
+	'''for compareGlyph in file:
+		smartCheck = 0
+		searchContours = getConfigure(compareGlyph)[str(compareGlyph.unicode)][checkSetData[1]]
+		for i in range(0,len(compareGlyph.contours)):			
+			if i in searchContours:	
+				result = compareController.conCheckGroup(compareGlyph.contours[i])
+				if result is not None:
+					smartContourList.append(i)
+					smartCheck = 1
+
+		if(smartCheck == 1):
+			glyphUniName = "uni"+hex(compareGlyph.unicode)[2:].upper()
+			smartGroupDict[glyphUniName] = smartContourList
+			smartSetGlyphs.append("uni"+hex(compareGlyph.unicode)[2:].upper())
+
+			smartContourList = []'''
 			
 
 	for key, value in resultDict.items():
@@ -129,27 +140,22 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 	modify by Kim heesup
 	To get group contours Based on standard Glyph's contour by topology
 	Args :
-		standardGlyph :: RGlyph 
-			기준 컨투어
+		standardGlyph : RGlyph 
+			glyph include standard contour
 		contourIndex ::  int
-			컨투어의 번호
+			standard contour index that is included on standardGlyph
 		k : int
-			topology의 margin값 설정
-		file  :: RFont
-			조사를 진행하고 있는 폰트 파일
+			value of divide the x-axis and y-axis to consider None point
+		file  : OpenFont
+			File to investigate
 		checkSetData :: List
-			스마트셋 이름을 관리하기 위하여 필요한 checkSetData
-			smartSetSearchModule 파일을 이용하여 구함
-			[setNumber, syllableNumber]
-		jsonFileName1 :: String
-			시계방향, 반시계방향 정보를 담고 있는 json파일 이름(1차 필터링 결과)
-		jsonFileName2 :: String
-			음절 분리가 되어 있는 json파일 이름을 반환
-
+			[setNumber, syllableNumber] (using to File naming)
+		mainWindow :: tool Menu object
+			to get font File in searchGroup function
+	Return : Dictionary
+		each key is glyph and value is list that same contours index
 	2020/03/23
-	스마트셋 이름 규칙을 정리함
-	set name format example
-		: ##(number)_##(syllable)_####(mode)				
+	add smart set that include smae glyph group				
 	"""
 
 	#추가부분
@@ -175,6 +181,23 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,js
 	smartGroupDict = {}
 	smartContourList = [] 
 
+	'''
+	for compareGlyph in file:
+		smartCheck = 0
+		searchContours = getConfigure(compareGlyph)[str(compareGlyph.unicode)][checkSetData[1]]
+		for i in range(0,len(compareGlyph.contours)):
+			if i in searchContours:
+				resul = topologyJudgementController(standardGlyph.contours[contourIndex],compareGlyph.contours[i],500).topologyJudgement()
+				if(resul == True):
+					smartCheck = 1
+					smartContourList.append(i)
+
+		if(smartCheck == 1):
+			glyphUniName = "uni"+hex(compareGlyph.unicode)[2:].upper()
+			smartGroupDict[glyphUniName] = smartContourList
+			smartSetGlyphs.append("uni"+hex(compareGlyph.unicode)[2:].upper())
+	
+			smartContourList = []'''
 
 	for key, value in resultDict.items():
 		smartCheck = 0
@@ -248,20 +271,16 @@ def handleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1
 	
 def findContoursGroup(checkSetData, file, mode):
 	"""
-	json파일과 스마트 셋을 참고하여 이미 그룹화가 진행된 컨투어를 찾아냄
-	Args :
-		checkSetData :: List
-			스마트셋 이름을 관리하기 위하여 필요한 checkSetData
-			smartSetSearchModule 파일을 이용하여 구함
-			[setNumber, syllableNumber]
+	find grouped contour reference by jsonFile and smartSet
+	Args ::
+		checkSetData:: list
+			[fileNumber,positionNumber,0]
 		mainWindow :: object
 			editWindow object
 		mode :: int
 		0 -> matrix , 1- > topology
-	Returns :: Dictionary
-		각각의 키는 같은 그룸의 컨투어를 포함하는 글리프, 값은 해당 컨투어의 번호를 저장 :: Dictionary
-			key :: RGlyph
-			value :: list
+	Return :: Dictionary
+		each key is glyph and value is list that same contours index
 	"""
 
 
@@ -293,6 +312,9 @@ def findContoursGroup(checkSetData, file, mode):
 			groupSet = sset
 			break
 
+	#print("groupSet : ",groupSet)
+	#print("checkSet : ",checkSetData)
+	#print("nameList : ",nameList)
 
 	for item in groupSet.glyphNames:
 		glyphList.append(file[str(item)])

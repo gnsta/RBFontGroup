@@ -1,8 +1,8 @@
 import numpy as np
 import json
-from groupingTool.tMatrix import PhaseTool as pt
-from groupingTool.tMatrix import groupTestController as gtc
-from groupingTool.tMatrix import groupPointMatch as gpm
+from rbFontG.tools.tMatrix import PhaseTool as pt
+from rbFontG.tools.tMatrix import groupTestController as gtc
+from rbFontG.tools.tMatrix import groupPointMatch as gpm
 
 def consistClockWise(con):
     pointList = list(con.points)
@@ -18,30 +18,19 @@ def consistClockWise(con):
 
 def getClockDirection(point1 , point2, point3):
     """
-    현재 점의 진행방향이 시계방향인지 반시계 방향인지 확인
+    get value that indicate forword clockwise or reverse clockwise
 
-    Args:
-        point1 :: RPoint
-        point2 :: RPoint
-        point3 :: RPoint
-        조사하고자 하는 RPoint
-
-    Returns :
-        방향에 대한 정보 :: int
-            시계방향이면 양수, 반시계 방향이면 음수
+    return : int
+        if reverse clockwise return positive value else if forword clockwise return negative value 
     """
     return (point1.x*point2.y) + (point2.x*point3.y) + (point3.x*point1.y) - ((point2.x*point1.y) + (point3.x*point2.y) + (point1.x*point3.y))
 
 def sortByStartingPoint(pointList):
     """
-    포인트 리스트에 대하여 y값을 기준으로 오름차순으로 정렬, 만약 y값이 값으면 x값을 기준으로 오름차순 정렬
+    sort by list's index 0 point has minimum y value. If  value same choose minimum x value
 
-    Args:
-        pointList :: List
-            정돈하고자 하는 리스트
-
-    Returns: 
-        정돈한 리스트 :: List
+    Return: List
+        sorted List
     """
     minY = 10000000000
     minX = 10000000000
@@ -88,15 +77,6 @@ def sortByStartingPoint(pointList):
     return slist
 
 def renewDict(value,dictionary):
-    """
-    음수와 양수 값에 따라서 딕셔너리에 방향 횟수를 저장
-
-     Args:
-        value :: int
-            방향값(getClockDirection 함수를 사용하여 반환된 값을 사용)
-        dictionary :: Dict
-            실질적인 데이터를 저장할 딕셔너리
-    """
     if dictionary['check'] == 0:
         if value >= 0:
             dictionary['check'] = 1
@@ -116,16 +96,6 @@ def renewDict(value,dictionary):
                     
                         
 def getClockWiseList(con):
-    """
-    해당 컨투어의 점을 조사하여 시계방향과 반시계 방향을 판별하여 정보를 반환
-    
-     Args:
-        con :: RContour
-            조사하고자 하는 컨투어
-
-    Returns: 
-        방향횟수에 대한 정보를 가지고 있는 딕셔너리 :: Dict
-    """
     
     res = {'reverse' : 0 , 'forword' : 0, 'check' : 0}
     pointList = consistClockWise(con)
@@ -147,6 +117,7 @@ def getClockWiseList(con):
     value = getClockDirection(sortPointList[len(sortPointList) - 1], sortPointList[0], sortPointList[1])
     renewDict(value,res)
     
+    #print(res)
     
     if res['check'] == initCheck:
         if initCheck >=0:

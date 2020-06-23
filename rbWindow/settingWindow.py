@@ -57,10 +57,12 @@ class settingWindow(BaseWindowController):
         self.w.checkGlyphListCheckBox = CheckBox((x,y,w,h), "Apply List Label", callback=self.checkGlyphListCallback)
         y += h + space"""
         y += 30
-        self.w.colorContourCheckBox= CheckBox((x,y,w,h), "Apply Contour Color", callback=self.colorContourCallback)
+        state = getExtensionDefault(DefaultKey+".state")
+        self.w.colorContourCheckBox= CheckBox((x,y,w,h), "Apply Contour Color", callback=self.colorContourCallback, value=state)
         y += h + 20
 
         self.w.methodRadioGroup = RadioGroup((x,y,w,h), ["Matrix", "Topology"], sizeStyle="small", callback=self.methodChangedCallback)
+        self.w.methodRadioGroup.set(getExtensionDefault(DefaultKey+".mode"))
         y += h + space
 
         self.w.open()
@@ -98,7 +100,7 @@ class settingWindow(BaseWindowController):
         sWC.helpCheckGlyphList(self.w.checkGlyphListCheckBox, self.mainWindow)
         print("after : ", self.mainWindow.selectedGlyphs)"""
     def colorContourCallback(self, sender):
-        self.mainWindow.state = self.w.colorContourCheckBox.get()
+        setExtensionDefault(DefaultKey+".state", self.w.colorContourCheckBox.get())
 
     def methodChangedCallback(self, sender):
         # select matrix or topology

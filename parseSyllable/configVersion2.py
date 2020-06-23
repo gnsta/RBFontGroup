@@ -1,5 +1,5 @@
 from parseSyllable.positionCase import *
-from groupingTool.parseUnicodeControll import *
+from rbFontG.tools.parseUnicodeControll import *
 
 def getConfigureVersion2(RGlyph):    
     

@@ -1,5 +1,5 @@
-from groupingTool.tMatrix.PhaseTool import *
-from groupingTool.tMatrix.groupPointMatch import *
+from rbFontG.tools.tMatrix.PhaseTool import *
+from rbFontG.tools.tMatrix.groupPointMatch import *
 from jsonConverter.converter import *
 from rbWindow.ExtensionSetting import extensionValue
 from rbWindow.ExtensionSetting.extensionValue import *
@@ -15,12 +15,6 @@ def mselectAttribute(groupDict,standardMatrix):
     prevPointList = list()
     restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
 
-    g = CurrentGlyph()
-    for point in g.selectedPoints:
-        tmp = list()
-        tmp.append(point); tmp.append(point.name)
-        prevPointList.append(tmp)
-
     for k in groupDict.keys():
         for i in range(0,len(groupDict[k])):
             contoursList.append(k.contours[groupDict[k][i]])
@@ -33,11 +27,18 @@ def mselectAttribute(groupDict,standardMatrix):
 
 
     for i in range(0,len(controllerList)):
+        controllerList[i].mgiveSelected()
+
         if controllerList[i].matchPoint() is not None:
             tmp = list()
             tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveSelected()
+        
+    g = CurrentGlyph()
+    for point in g.selectedPoints:
+        tmp = list()
+        tmp.append(point); tmp.append(point.name)
+        prevPointList.append(tmp)
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
@@ -145,12 +146,6 @@ def minnerFillAttribute(groupDict,standardMatrix):
     prevPointList = list()
     restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
 
-    g = CurrentGlyph()
-    for point in g.selectedPoints:
-        tmp = list()
-        tmp.append(point); tmp.append(point.name)
-        prevPointList.append(tmp)
-
     for k in groupDict.keys():
         for i in range(0,len(groupDict[k])):
             contoursList.append(k.contours[groupDict[k][i]])
@@ -162,11 +157,18 @@ def minnerFillAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
+        controllerList[i].mgiveInnerFill()
+
         if controllerList[i].matchPoint() is not None:
             tmp = list()
             tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveInnerFill()
+
+    g = CurrentGlyph()
+    for point in g.selectedPoints:
+        tmp = list()
+        tmp.append(point); tmp.append(point.name)
+        prevPointList.append(tmp)
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)

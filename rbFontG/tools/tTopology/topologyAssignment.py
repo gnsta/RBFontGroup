@@ -1,14 +1,10 @@
-"""
-create by Heesup Kim
-"""
-
 class topologicalRpoint:
+    """
+    create by Kim heesup
+    """
     def __init__(self,point):
         """
-        point에 대한 정보와 x, y축에 대한 위상값에 대한 정보를 저장
-
-        Args:
-            point :: RPoint
+        contain point, x phase ,and y phase
         """
         self.point = point
         self.x = -1
@@ -27,15 +23,18 @@ class topologicalRpoint:
 
 class checkCon:
     """
-    topology 방법으로 컨투어에 대한 정보를 분석하는 클래스
-
-    Args:
-            con :: RContour
-                분석하고자 하는 컨투어
-            k :: int
-                위상에 대한 margin값 할당
+    create by Kim heesup 
     """
     def __init__(self,con,k):
+        """
+        con : Rcontour
+        
+        pointList : Rcontour's Rpoint's list
+        
+        slist : Rpoint's list sorted by startPoint and clockwise(not include offcurve)
+        
+        tpPointList : topologicalRpoint's list sorted by startPoint and clockwise 
+        """
         self.con = con
         self.k = k
         self.pointList = list(con.points)
@@ -46,7 +45,7 @@ class checkCon:
     
     def consistClockWise(self):
         """
-        컨투어의 점의 순서가 시계방향인지 반 시계방향인지 확인 후 반시계 방향이면 일괄적으로 시계 방향으로 돌려줌
+        To be consisit contours clockwise if contour's clockwise False reverse the clockwise
         """
         
         if(self.con.clockwise == False):
@@ -57,11 +56,10 @@ class checkCon:
             
     def sortByStartingPoint(self):
         """
-        리스트의 점의 시작을 일괄적으로 고정하기 위하여 y값이 가장 작은 점을 시작점으로 분류하고 만약 y값이 같이면 x값이 가장 작은 것으로 설정
-        이 이후에 topology분석을 시작함
+        sort by list's index 0 point has minimum y value. If  value same choose minimum x value
 
-        Returns: 
-            시작점이 설정된 리스트 ::List
+        Return: List
+            sorted List
         """
         minY = 10000000000
         minX = 10000000000
@@ -110,14 +108,10 @@ class checkCon:
              
     def assignmentTopological(self,num):
         """
-        위상을 최종적으로 계산하여 할당해 주는 함수
+        Assign x phase ,and y phase and create topologicalRpoint object and make List
 
-        Args:
-            num :: int
-                margin값
-                
-        Returns:
-            topologicalRpoint인스턴스에 대한 리스트 반환 :: list
+        Return: List
+            topologicalRpoint object's List
         """
         sortByX = sorted(self.pointList,key = lambda RPoint: RPoint.x)
         sortByY = sorted(self.pointList,key = lambda RPoint: RPoint.y)

@@ -1,4 +1,4 @@
-from groupingTool.parseUnicodeController import *
+from rbFontG.tools.parseUnicodeController import *
 
 
 COLOR_RED = (1,0,0,1)

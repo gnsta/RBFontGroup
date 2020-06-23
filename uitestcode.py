@@ -11,13 +11,12 @@ from parseSyllable.configVersionFinal import *
 
 print("uiTEST started")
 configPreset = ConfigExtensionSetting(DefaultKey)
-configPreset.checkLangauge()
 configPreset.registerSettings()
 
-testPath = "/Users/font/Desktop/ChineseGroup2.ttf"
+testPath = "/Users/sslab/Desktop/groupTest.ufo"
 testFile = OpenFont(testPath,showInterface = False)
 groupDict = None
-FileNameList = StartProgram(testPath,testFile,CurrentFont())
+FileNameList = StartProgram(testPath,testFile)
 setExtensionDefault(DefaultKey + ".file", CurrentFont())
 setExtensionDefault(DefaultKey + ".font", CurrentFont())
 setExtensionDefault(DefaultKey + ".jsonFileName1", FileNameList[0])
