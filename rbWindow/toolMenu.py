@@ -15,6 +15,7 @@ import jsonConverter.searchModule as search
 import timeit#
 import jsonConverter.converter as convert
 import rbWindow.Controller.toolMenuController as tMC
+import rbWindow.Controller.toolMenuControllerChinese as ctMC
 from rbWindow.ExtensionSetting.extensionValue import *
 
 def text2Glyph(inputText, font):
@@ -150,10 +151,16 @@ class toolsWindow:
 		jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
 		font = getExtensionDefault(DefaultKey+".font")
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		KoreanCheck = getExtensionDefault(DefaultKey+".korean")
 
 		inputText = self.w.editText.get()
 		standardGlyph = text2Glyph(inputText, font); setExtensionDefault(DefaultKey + ".standardGlyph", standardGlyph)
 		contourIndex = int(self.w.contourIndex.slider.get()); standardContour = standardGlyph.contours[contourIndex]; setExtensionDefault(DefaultKey + ".standardContour", standardContour)
 
-		tMC.handleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1, jsonFileName2, font, groupDict)
+		if KoreanCheck == True:
+			print("korean")
+			tMC.handleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1, jsonFileName2, font, groupDict)
+		else:
+			print("chinese")
+			ctMC.cHandleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1, jsonFileName2, font, groupDict)
 		return

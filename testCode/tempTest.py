@@ -8,10 +8,10 @@ if __name__ == '__main__':
     
     g = CurrentGlyph()
     
-    testPath = "/Users/sslab/Desktop/myungjo/groupTest.ufo"
+    testPath = "/Users/font/Desktop/myungjo/groupTest.ufo"
     testFile = OpenFont(testPath,showInterface = False)
     
-    jsonPath = "/Users/sslab/Desktop/myJSON.json"
+    jsonPath = "/Users/font/Desktop/myJSON.json"
     
     c = g.contours[0]
     

@@ -11,7 +11,7 @@ if __name__ == '__main__':
     
     #g = CurrentGlyph()
     
-    testPath = "/Users/sslab/Desktop/myungjo/groupTest.ufo"
+    testPath = "/Users/font/Desktop/myungjo/groupTest.ufo"
     testFile = OpenFont(testPath,showInterface = False)
     
     

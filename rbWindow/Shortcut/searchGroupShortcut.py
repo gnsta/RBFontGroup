@@ -1,6 +1,7 @@
 from rbWindow.ExtensionSetting.extensionValue import *
-from rbWindow.Controller.toolMenuController import *
-
+import rbWindow.Controller.toolMenuController as tMC
+import rbWindow.Controller.toolMenuControllerChinese as ctMC
+from mojo.UI import Message
 
 def searchGroupProcess():
 	
@@ -10,7 +11,7 @@ def searchGroupProcess():
 	standardGlyph = CurrentGlyph()
 	setExtensionDefault(DefaultKey+".standardGlyph", standardGlyph)
 	for contour in standardGlyph.contours:
-		for point in contour.bPoints:
+		for point in contour.selection:
 			if point.selected is True:
 				selectedDict[point.getParent().index] = True
 
@@ -26,8 +27,13 @@ def searchGroupProcess():
 	jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
 	font = getExtensionDefault(DefaultKey+".font")
 	groupDict = getExtensionDefault(DefaultKey+".groupDict")
+	KoreanCheck = getExtensionDefault(DefaultKey+".korean")
+	print("Short Cut KoreanCheck : ", KoreanCheck)
 	
-	handleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1, jsonFileName2, font, groupDict)
+	if KoreanCheck == True:
+		tMC.handleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1, jsonFileName2, font, groupDict)
+	else:
+		ctMC.cHandleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1, jsonFileName2, font, groupDict)
 
 	for contour in standardGlyph.contours:
 		contour.selected = False
