@@ -146,7 +146,6 @@ class toolsWindow:
 		"""
 		file = getExtensionDefault(DefaultKey+".file")
 		jsonFilePath = getExtensionDefault(DefaultKey+".jsonFilePath")
-		mode = getExtensionDefault(DefaultKey+".mode")
 		jsonFileName1 = getExtensionDefault(DefaultKey+".jsonFileName1")
 		jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
 		font = getExtensionDefault(DefaultKey+".font")
@@ -159,8 +158,8 @@ class toolsWindow:
 
 		if KoreanCheck == True:
 			print("korean")
-			tMC.handleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1, jsonFileName2, font, groupDict)
+			tMC.handleSearchGlyphList(standardGlyph, contourIndex, groupDict)
 		else:
 			print("chinese")
-			ctMC.cHandleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1, jsonFileName2, font, groupDict)
+			ctMC.cHandleSearchGlyphList(standardGlyph, contourIndex, groupDict)
 		return

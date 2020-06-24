@@ -18,7 +18,7 @@ matrix_margin = 20
 matrix_size = 3
 topology_margin = 500
 
-def cSearchGroup(glyph,contourNumber,mode,file,message = False):
+def cSearchGroup(glyph,contourNumber,mode,message = False):
 	"""
 	스마트셋에 그룹이 존재하는지 확인(한자버전)
 	Args:
@@ -28,26 +28,24 @@ def cSearchGroup(glyph,contourNumber,mode,file,message = False):
 			RGlyph의 검사를 진행하고자 하는 컨투어의 번호
 		mode :: int
 			0 -> matrix, 1 -> topology
-		file :: RFont
+		font :: RFont
 			작업하고 있는 RFont
 
 	Return :: int
 		현재 그룹의 번호
 	"""
 
+	font = getExtensionDefault(DefaultKey+".font")
+
 	check = 0
 	positionNumber = None
 	searchSmartSet = None
 
 	if mode == 0:
-		print("mode : Matrix")
 		setStat = cGetSmartSetStatMatrix()
-		print("현재 스마트 셋의 상태 : ", setStat)
 		searchMode = "Matrix"
 	elif mode == 1:
-		print("mode : Topology")
 		setStat = cGetSmartSetStatTopology()
-		print("현재 스마트 셋의 상태 : ", setStat)
 		searchMode = "Topology"
 
 	sSets = getSmartSets()
@@ -72,9 +70,7 @@ def cSearchGroup(glyph,contourNumber,mode,file,message = False):
 				continue
 			if mode == 0:
 				#해당 그룹을 조사
-				print("standardNameList[0]",standardNameList[0])
-				print("standardNameList[0][4:]",standardNameList[0][4:])
-				standardGlyph = file["cid" + str(standardNameList[0][4:]).upper()]
+				standardGlyph = font["cid" + str(standardNameList[0][4:]).upper()]
 				standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
 				compareController = groupTestController(standardMatrix,matrix_margin)
 				result = compareController.conCheckGroup(glyph[contourNumber])
@@ -86,7 +82,7 @@ def cSearchGroup(glyph,contourNumber,mode,file,message = False):
 					break
 
 			elif mode == 1:
-				standardGlyph = file["cid" + str(standardNameList[0][4:]).upper()]
+				standardGlyph = font["cid" + str(standardNameList[0][4:]).upper()]
 				result = topologyJudgementController(standardGlyph.contours[standardIdx],glyph[contourNumber],topology_margin).topologyJudgement()
 				if result is not False: 
 					searchSmartSet = sSet
@@ -100,7 +96,6 @@ def cSearchGroup(glyph,contourNumber,mode,file,message = False):
 	if searchSmartSet is not None:
 		if message == True:
 			appendNumber = str(searchSmartSet.name).split('_')[0]
-			print("checkSetNameList : ", checkSetNameList)
 			print(Message("이미 그룹 연산이 진행이 되어 있으므로 그룹화 작업을 생략합니다."))
 		return [int(checkSetNameList[0]),positionNumber,0]
 	else:
@@ -111,7 +106,7 @@ def cSearchGroup(glyph,contourNumber,mode,file,message = False):
 
 
 
-def searchGroup(glyph,contourNumber,mode,file,message = False):
+def searchGroup(glyph,contourNumber,mode,message = False):
 	"""
 	스마트셋에 그룹이 존재하는지 확인
 	Args:
@@ -121,7 +116,7 @@ def searchGroup(glyph,contourNumber,mode,file,message = False):
 			RGlyph의 검사를 진행하고자 하는 컨투어의 번호
 		mode :: int
 			0 - > matrix , 1-> topology
-		file :: RFont
+		font :: RFont
 			작업하고 있는 RFont
 
 	Return :: List
@@ -130,7 +125,7 @@ def searchGroup(glyph,contourNumber,mode,file,message = False):
 
 	syllableJudgementController = getExtensionDefault(DefaultKey + ".syllableJudgementController")
 	glyphConfigure = syllableJudgementController.GetSyllable(glyph)
-	print('glyphConfigure : ', glyphConfigure)
+	font = getExtensionDefault(DefaultKey+".font")
 
 
 	check = 0
@@ -150,11 +145,9 @@ def searchGroup(glyph,contourNumber,mode,file,message = False):
 
 	if mode == 0:
 		setStat = getSmartSetStatMatrix()
-		print("현재 스마트 셋의 상태 : ", setStat)
 		searchMode = "Matrix"
 	elif mode == 1:
 		setStat = getSmartSetStatTopology()
-		print("현재 스마트 셋의 상태 : ", setStat)
 		searchMode = "Topology"
 
 	if positionNumber == 0:
@@ -185,7 +178,7 @@ def searchGroup(glyph,contourNumber,mode,file,message = False):
 			if item != glyph.name:
 				continue
 			if mode == 0:
-				standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+				standardGlyph = font["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
 				standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
 				compareController = groupTestController(standardMatrix,matrix_margin)
 				result = compareController.conCheckGroup(glyph[contourNumber])
@@ -196,7 +189,7 @@ def searchGroup(glyph,contourNumber,mode,file,message = False):
 					message = True
 					break
 			elif mode == 1:
-				standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+				standardGlyph = font["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
 				result = topologyJudgementController(standardGlyph.contours[standardIdx],glyph[contourNumber],topology_margin).topologyJudgement()
 				if result is not False: 
 					searchSmartSet = sSet

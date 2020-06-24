@@ -20,20 +20,18 @@ def searchGroupProcess():
 		return
 
 	contourIndex = list(selectedDict.keys())[0]
-	file = getExtensionDefault(DefaultKey+".file")
 	jsonFilePath = getExtensionDefault(DefaultKey+".jsonFilePath")
 	mode = getExtensionDefault(DefaultKey+".mode")
 	jsonFileName1 = getExtensionDefault(DefaultKey+".jsonFileName1")
 	jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
-	font = getExtensionDefault(DefaultKey+".font")
 	groupDict = getExtensionDefault(DefaultKey+".groupDict")
 	KoreanCheck = getExtensionDefault(DefaultKey+".korean")
 	print("Short Cut KoreanCheck : ", KoreanCheck)
 	
 	if KoreanCheck == True:
-		tMC.handleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1, jsonFileName2, font, groupDict)
+		tMC.handleSearchGlyphList(standardGlyph, contourIndex, groupDict)
 	else:
-		ctMC.cHandleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1, jsonFileName2, font, groupDict)
+		ctMC.cHandleSearchGlyphList(standardGlyph, contourIndex, groupDict)
 
 	for contour in standardGlyph.contours:
 		contour.selected = False

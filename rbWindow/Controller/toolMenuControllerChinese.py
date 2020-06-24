@@ -6,8 +6,7 @@ from groupingTool.tTopology import topologyJudgement as tj
 from groupingTool.tTopology import topologyAssignment as ta
 from groupingTool import parseUnicodeControll as puc
 import jsonConverter.converter as convert
-from jsonConverter.smartSetSearchModule import *
-from jsonConverter.clockWiseGroup import *
+from rbWindow.Controller.smartSetSearchModule import *
 from parseSyllable.configSyllable import *
 from mojo.UI import *
 from rbWindow.ExtensionSetting.extensionValue import *
@@ -30,7 +29,7 @@ topology_margin = 500
 modify by Kim Heesup Kim
 """
 
-def cGetMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, file,checkSetData,jsonFileName1,jsonFileName2):
+def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 	"""
 	한자버전
 	UI와 그룹 방법을 연결시켜주는 함수 (Matrix 방법)
@@ -47,8 +46,6 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, f
 			매트릭스의 가로 구획 수
 		height :: int
 			매트릭스의 세로 구획 수
-		file  :: RFont
-			조사를 진행하고 있는 폰트 파일
 		checkSetData :: int
 			한자를 관리하기 위한 번호
 		jsonFileName1 :: String
@@ -59,6 +56,15 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, f
 	2020/03/23
 	스마트셋 이름 규칙은 숫자 번호대로
 	"""
+
+	#파라미터를 받아오는 작업
+	font = getExtensionDefault(DefaultKey+".font")#RFont
+	mode = getExtensionDefault(DefaultKey+".mode")
+	jsonFileName1 = getExtensionDefault(DefaultKey+".jsonFileName1")
+	jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
+	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
+	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
+
 	contour = standardGlyph.contours[contourIndex]
 
 	standardMatrix = Matrix(contour,matrix_size)
@@ -88,14 +94,14 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, f
 		smartCheck = 0
 		for i,compare in enumerate(value):
 			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
-				compareContour = file[key].contours[i]
+				compareContour = font[key].contours[i]
 				result = compareController.conCheckGroup(compareContour)
 				if result is not None:
 					smartContourList.append(i)
 					smartCheck = 1
 
 		if smartCheck == 1:
-			glyphUniName = file[key].name
+			glyphUniName = font[key].name
 			smartGroupDict[glyphUniName] = smartContourList
 			smartSetGlyphs.append(glyphUniName)
 			smartContourList = []
@@ -112,7 +118,7 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, height, f
 
 
 
-def cGetMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,jsonFileName1,jsonFileName2):
+def cGetMatchGroupByTopology(standardGlyph, contourIndex,checkSetData):
 	"""
 	2020/03/25
 	modify by Kim heesup
@@ -125,8 +131,6 @@ def cGetMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,j
 			컨투어의 번호
 		k : int
 			topology의 margin값 설정
-		file  :: RFont
-			조사를 진행하고 있는 폰트 파일
 		checkSetData :: int
 			한자를 관리하기 위한 번호
 		jsonFileName1 :: String
@@ -137,6 +141,12 @@ def cGetMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,j
 	2020/03/23
 	스마트셋 이름 규칙은 숫자 번호대로				
 	"""
+	#파라미터를 받아오는 작업
+	font = getExtensionDefault(DefaultKey+".font")#RFont
+	mode = getExtensionDefault(DefaultKey+".mode")
+	jsonFileName1 = getExtensionDefault(DefaultKey+".jsonFileName1")
+	jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
+	topology_margin = getExtensionDefault(DefaultKey+".topology_margin")
 
 	#추가부분
 	with open(jsonFileName1, 'r') as jsonFile1:
@@ -162,14 +172,14 @@ def cGetMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,j
 		barProcess += 1
 		for i,compare in enumerate(value):
 			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
-				compareContour = file[key].contours[i]
+				compareContour = font[key].contours[i]
 				result = topologyJudgementController(standardGlyph.contours[contourIndex],compareContour,topology_margin).topologyJudgement()
 				if result == True:
 					smartContourList.append(i)
 					smartCheck = 1
 
 		if smartCheck == 1:
-			glyphUniName = file[key].name
+			glyphUniName = font[key].name
 			smartGroupDict[glyphUniName] = smartContourList
 			smartSetGlyphs.append(glyphUniName)
 			smartContourList = []
@@ -183,7 +193,7 @@ def cGetMatchGroupByTopology(standardGlyph, contourIndex, k, file,checkSetData,j
 	updateAllSmartSets()
 
 
-def cHandleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1, jsonFileName2, font, groupDict):
+def cHandleSearchGlyphList(standardGlyph, contourIndex, groupDict):
 	"""
 		2020/03/23
 		created by H.W. Cho
@@ -203,23 +213,27 @@ def cHandleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName
 		실질적으로 UI와 컨트롤러를 이어주는 함수
 
 	"""
-	checkSetData = cSearchGroup(standardGlyph,contourIndex,mode,file,True)
+	#파라미터를 받아오는 작업
+	font = getExtensionDefault(DefaultKey+".font")#RFont
+	mode = getExtensionDefault(DefaultKey+".mode")
 
-	print("checkSetData", checkSetData)
+
+	checkSetData = cSearchGroup(standardGlyph,contourIndex,mode,True)
+
 	if checkSetData[2] == 0:
-		groupDict = cFindContoursGroup(checkSetData,file,mode)
+		groupDict = cFindContoursGroup(checkSetData,mode)
 		setExtensionDefault(DefaultKey + ".groupDict", groupDict)
 		print("이미 그룹화가 진행된 컨투어입니다.")
 
 	else:
 		if mode is matrixMode:
-			cGetMatchGroupByMatrix(standardGlyph, contourIndex, margin, width, width, file, checkSetData, jsonFileName1,jsonFileName2)
-			groupDict = cFindContoursGroup(checkSetData, file,mode)
+			cGetMatchGroupByMatrix(standardGlyph, contourIndex,checkSetData)
+			groupDict = cFindContoursGroup(checkSetData,mode)
 			setExtensionDefault(DefaultKey + ".groupDict", groupDict)
 
 		elif mode is topologyMode:
-			cGetMatchGroupByTopology(standardGlyph, contourIndex, k, font,checkSetData,jsonFileName1,jsonFileName2)
-			groupDict = cFindContoursGroup(checkSetData, file, mode)
+			cGetMatchGroupByTopology(standardGlyph, contourIndex, checkSetData)
+			groupDict = cFindContoursGroup(checkSetData, mode)
 			setExtensionDefault(DefaultKey + ".groupDict", groupDict)
 
 	#현재 스마트셋 포커싱
@@ -227,7 +241,7 @@ def cHandleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName
 	
 	sSF.updateSmartSetIndex(smartSetIndex)
 	
-def cFindContoursGroup(checkSetData, file, mode):
+def cFindContoursGroup(checkSetData, mode):
 	"""
 	json파일과 스마트 셋을 참고하여 이미 그룹화가 진행된 컨투어를 찾아냄
 	Args :
@@ -243,6 +257,8 @@ def cFindContoursGroup(checkSetData, file, mode):
 			value :: list
 	"""
 
+	#파라미터를 받아오는 작업
+	font = getExtensionDefault(DefaultKey+".font")#RFont
 
 	ssets = getSmartSets()
 	glyphList = list()
@@ -268,7 +284,7 @@ def cFindContoursGroup(checkSetData, file, mode):
 
 
 	for item in groupSet.glyphNames:
-		glyphList.append(file[str(item)])
+		glyphList.append(font[str(item)])
 
 	#기준 컨투어를 뽑아내는 작업
 	checkSetName = str(groupSet.name)
@@ -282,18 +298,17 @@ def cFindContoursGroup(checkSetData, file, mode):
 		searchContours = []
 		for i,comc in enumerate(g.contours):
 			if mode == 0:
-				standardGlyph = file["cid" + str(standardNameList[0][4:]).upper()]
+				standardGlyph = font["cid" + str(standardNameList[0][4:]).upper()]
 				standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
 				compareController = groupTestController(standardMatrix,matrix_margin)
 				result = compareController.conCheckGroup(comc)
 				if result is not None:
 					searchContours.append(i)
 			elif mode == 1:
-				standardGlyph = file["cid" + str(standardNameList[0][4:]).upper()]
+				standardGlyph = font["cid" + str(standardNameList[0][4:]).upper()]
 				result = topologyJudgementController(standardGlyph.contours[standardIdx],comc,topology_margin).topologyJudgement()
 				if result is not False:
 					searchContours.append(i)
 		res[g] = searchContours
-	print("결과 :", res)
 
 	return res

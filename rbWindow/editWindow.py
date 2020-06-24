@@ -95,9 +95,9 @@ def getMatchGroupDicByGlyph(inputGlyph, groupDict):
 
 class EditGroupMenu(object):
 
-	def __init__(self, font, groupDict, file,jsonFileName1,jsonFileName2):
+	def __init__(self,groupDict,jsonFileName1,jsonFileName2):
 		
-		self.font = font
+		self.font = getExtensionDefault(DefaultKey + ".font")
 		self.groupDict = groupDict
 		
 		self.defaultKey = "com.asaumierdemers.BroadNibBackground"
@@ -106,7 +106,6 @@ class EditGroupMenu(object):
 		self.state = False
 		self.layerName = self.font.layerOrder[0]
 		self.currentPen = None
-		self.file = file
 		self.window = None		# 현재 띄워져 있는 ufo 윈도우
 		
 		self.w = list()
@@ -253,7 +252,7 @@ class EditGroupMenu(object):
 		contourList = []
 
 		try :
-			file = getExtensionDefault(DefaultKey + ".file")
+			font = getExtensionDefault(DefaultKey + ".font")
 			targetIdxList = getExtensionDefault(DefaultKey+".groupDict")[targetGlyph]
 			setExtensionDefault(DefaultKey + ".contourNumber", targetIdxList[0])
 

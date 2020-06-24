@@ -99,6 +99,8 @@ class SyllableJudgement:
                         self.infoDict = json.load(jsonFile)
                     raise FileExist('라벨 파일은 이미 존재합니다')
 
+                print("self.infoDict : ", self.infoDict)
+
                 axis_x1 = list()
                 axis_x2 = list()
                 axis_x4 = list()
@@ -427,6 +429,7 @@ class SyllableJudgement:
         middle = list()
         final = list()
         output = list()
+        print("self.jsonFileName : ", self.jsonFileName)
     
         for i in range(0,len(glyph.contours)):
             if self.infoDict["final label1"] ==  self.infoDict[glyph.name + '/' + str(i)]:

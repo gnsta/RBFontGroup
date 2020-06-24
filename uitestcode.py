@@ -18,10 +18,10 @@ testPath = "/Users/font/Desktop/ChineseGroup2.ttf"
 testFile = OpenFont(testPath,showInterface = False)
 groupDict = None
 FileNameList = StartProgram(testPath,testFile,CurrentFont())
-setExtensionDefault(DefaultKey + ".file", CurrentFont())
+#setExtensionDefault(DefaultKey + ".file", CurrentFont())
 setExtensionDefault(DefaultKey + ".font", CurrentFont())
 setExtensionDefault(DefaultKey + ".jsonFileName1", FileNameList[0])
 setExtensionDefault(DefaultKey + ".jsonFileName2", FileNameList[1])
 syllableJudgementController = SyllableJudgement(testFile,testPath)
 setExtensionDefault(DefaultKey + ".syllableJudgementController", syllableJudgementController)
-menuWindow = ew.EditGroupMenu(CurrentFont(), groupDict, testFile,FileNameList[0],FileNameList[1])
+menuWindow = ew.EditGroupMenu(groupDict,FileNameList[0],FileNameList[1])

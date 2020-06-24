@@ -23,7 +23,7 @@ class ConfigExtensionSetting:
 		    self.registerKey + ".jsonFilePath": None,
 		    self.registerKey + ".jsonFileName1": None,
 		    self.registerKey + ".jsonFileName2": None,
-		    self.registerKey + ".file": None,
+		    #self.registerKey + ".file": None,
 		    
 		    self.registerKey + ".mode": 0,
 

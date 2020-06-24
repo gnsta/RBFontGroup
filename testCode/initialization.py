@@ -1,5 +1,5 @@
 from jsonConverter.makeJsonFile import *
-from jsonConverter.clockWiseGroup import *
+from groupingTool.clockWise.clockWiseGroup import *
 import rbWindow.editWindow as ew
 from parseSyllable.configSyllable import *
 from mojo.UI import *
@@ -46,12 +46,15 @@ def checkLanguage(CurrentFont):
         print(e)
 
 def StartProgram(testPath,testFile,CurrentFont):
+    """
+    프로그램 시작시 해당 폰트 파일이 처음일 경우 1차 필터링 세팅과 한글의 경우 음절분리 과정을 수행하여 .json파일로 저장하여 관리 
+    """
 
     KoreanCheck = checkLanguage(CurrentFont)
 
     #한글일 떄만 해당 사항 적용
-    if KoreanCheck == True:
-        MakeJsonController(testPath,testFile)
+    #if KoreanCheck == True:
+        #MakeJsonController(testPath,testFile)
 
 
     insert = dict()
@@ -59,9 +62,6 @@ def StartProgram(testPath,testFile,CurrentFont):
 
     jsonFileName1 = None
     jsonFileName2 = None
-
-    print("testPath : " , testPath)
-    print("testFile : ",testFile)
 
     
     tempFileName = testPath.split('/')[-1]
@@ -112,8 +112,5 @@ def StartProgram(testPath,testFile,CurrentFont):
             print(e) 
     
     bar.close()
-
-    print("jsonFileName1 : ", jsonFileName1)
-    print("jsonFileName2 : ", jsonFileName2)
 
     return [jsonFileName1,jsonFileName2]
