@@ -1,10 +1,10 @@
 import pathManager.pathSetting as extPath
 from vanilla import FloatingWindow, RadioGroup, Button, HUDFloatingWindow, ImageButton, TextBox, EditText, CheckBox
-from rbFontG.tools.tTopology import topologyButtonEvent as tbt
-from rbFontG.tools.tMatrix import matrixButtonEvent as mbt
-from rbFontG.tools.tMatrix.PhaseTool import *
+from groupingTool.tTopology import topologyButtonEvent as tbt
+from groupingTool.tMatrix import matrixButtonEvent as mbt
+from groupingTool.tMatrix.PhaseTool import *
 from mojo.UI import *
-from jsonConverter.smartSetSearchModule import *
+from rbWindow.Controller import smartSetSearchModule 
 from rbWindow.Controller.toolMenuController import *
 from rbWindow.Controller.smartSetFocus import *
 from rbWindow.ExtensionSetting.extensionValue import *
@@ -86,8 +86,8 @@ class attributeWindow:
 		contourNumber = selectedContour.index;
 		glyph = selectedContour.getParent();
 		mode = getExtensionDefault(DefaultKey + ".mode")
-		file = getExtensionDefault(DefaultKey + ".file")
-		checkSetData = searchGroup(glyph, contourNumber, mode, file)
+		font = getExtensionDefault(DefaultKey + ".font")
+		checkSetData = searchGroup(glyph, contourNumber, mode)
 		smartSetIndex = getMatchingSmartSet(checkSetData, glyph, contourNumber)
 		smartSetIndexList = list()
 		smartSetIndexList.append(smartSetIndex+1) # 0번째는 All Glyphs이므로
@@ -104,7 +104,7 @@ class attributeWindow:
 				matrix = Matrix(selectedContour, matrix_size); 
 				setExtensionDefault(DefaultKey+".matrix", matrix)
 			
-			groupDict = findContoursGroup(checkSetData, file, mode)
+			groupDict = findContoursGroup(checkSetData, font, mode)
 			setExtensionDefault(DefaultKey+".groupDict", groupDict)
 			setExtensionDefault(DefaultKey+".contourNumber", contourNumber)
 			setExtensionDefault(DefaultKey+".standardContour", selectedContour)
@@ -128,7 +128,6 @@ class attributeWindow:
 		matrix_margin = getExtensionDefault(DefaultKey + ".matrix_margin")
 		topology_margin = getExtensionDefault(DefaultKey + ".topology_margin")
 		matrix_size = getExtensionDefault(DefaultKey + ".matrix_size")
-		file = getExtensionDefault(DefaultKey + ".file")
 		
 		if mode is matrixMode:
 			searchMode = "Matrix"
@@ -138,8 +137,7 @@ class attributeWindow:
 			return None
 
 
-		#해당 컨투어가 초성인지 중성인지 종성인지 확인을 해 보아햐함
-		#!!
+		#해당 컨투어가 초성인지 중성인지 종성인지 확인
 		for i in range(0,len(glyphConfigure[str(glyph.unicode)])):
 			for j in range(0,len(glyphConfigure[str(glyph.unicode)][i])):
 				if contourNumber == glyphConfigure[str(glyph.unicode)][i][j]:
@@ -172,7 +170,7 @@ class attributeWindow:
 					continue
 
 				if mode == 0:
-					standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+					standardGlyph = font["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
 
 					standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
 					compareController = groupTestController(standardMatrix,matrix_margin)
@@ -184,7 +182,7 @@ class attributeWindow:
 
 
 				elif mode == 1:
-					standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+					standardGlyph = font["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
 					result = topologyJudgementController(standardGlyph.contours[standardIdx],glyph[contourNumber],topology_margin).topologyJudgement()
 
 					if result is not False: 

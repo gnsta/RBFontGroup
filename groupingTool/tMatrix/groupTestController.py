@@ -1,35 +1,37 @@
-from rbFontG.tools.tMatrix.PhaseTool import *
+from groupingTool.tMatrix.PhaseTool import *
 import math
 import numpy as np
-class groupTestController:
-    """
+
+"""
     create by Kim heesup
-    """
+"""
+
+class groupTestController:
     def __init__(self,matrix,k):
         """
-        conduct inspectation about whether same group
+        Matrix 방법을 이용한 그룹화 진행 
         
         Args:
-            matrix : standard group
-
-            k : value of arrnage same group
+            matrix :: Matrix object
+                기준이 되는 메트릭스
+            k :: int
+                오차율을 조절
         """
         self.k = k
         self.matrix = matrix
 
         self.standardMatrix = np.array(self.matrix.getMatrix())
     def conCheckGroup2(self,con):
-        """inspect that glyph inlcude same contour
+        """
+        현재의 메트릭스에 대하여 새로운 Contour에 대하여 같은 그룹인지 조사
         
         Args:
-            con : want to check contour
+            con :: RContour
+                조사하고자 하는 컨투어
             
-        return:
-        if contour is included return contour else return None
-        
-        2020/03/12
-        modify by Kim heesup
-        change by numpy and modify np.all condition
+        Returns:
+            포함 여부 :: Boolean
+                포함 - True, 포함 안함 - False
         """
         sl = self.matrix.getDivideStatus() #standard position
         
@@ -56,13 +58,15 @@ class groupTestController:
         """
         2020/03/17
         create by Kim heesup
-        inspeect that glyph include same contour to Chineses contour
-
+        현재의 메트릭스에 대하여 새로운 Contour에 대하여 같은 그룹인지 조사
+        (한문을 위해 제작하였으나 현재는 한글, 한자 모두에 적용)
         Args:
-            con :: want to check contour
-        
-        return:
-        if contour is included return contour else return Non
+            con :: RContour
+                조사하고자 하는 컨투어
+            
+        Returns:
+            포함 여부 :: Boolean
+                포함 - True, 포함 안함 - False
         """
 
         compareMatrix = np.array(Matrix(con,self.matrix.getdivk()).getMatrix())
@@ -81,13 +85,16 @@ class groupTestController:
 
 
     def glyphCheckGroup(self,glyph):
-        """Check that glyph include same contour
+        """
+        글리프에 대햐여 해당 메크릭스와 같은 그룹인지 판별하는 함수
         
         Args:
-            glyphs : checked glyphs
+            glyph :: RGlyph
+                조사하고자 하는 클리프
             
-        return:
-        if glyph has included contour return glyph and contou else return None
+        Returns:
+            포함 여부 :: Boolean
+                포함 - True, 포함 안함 - False
         """ 
 
         rl = []

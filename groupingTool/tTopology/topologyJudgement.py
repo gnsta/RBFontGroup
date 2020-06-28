@@ -1,25 +1,23 @@
-from rbFontG.tools.tTopology.topologyAssignment import *
+from groupingTool.tTopology.topologyAssignment import *
 from fwig.tools import attributetools as at
+
+"""
+    Create by Heesup Kim
+"""
 
 class topologyJudgementController:
     """
-    Create by Kim heesup
+    Topology 방법을 이용하여 그룹화를 시킴
+
+    Args: 
+        sCon :: RContour
+            기준이 되는 컨투어
+        cCon :: RContour
+            비교를 하고자 하는 컨투어
+        k :: int
+            margin값
     """
     def __init__(self,sCon,cCon,k):
-        """
-        Args: 
-            sCon :: RContour
-                standard contour
-            cCon :: RContour
-                comparative contour
-            k :: int
-                value of divie(insert None topology at divided position)    
-
-        2020/02/24
-        modify by Kim heesup
-        인자로 k추가 후 테스트 필요함        
-
-        """
         self.sCon = sCon
         self.cCon = cCon
         self.k = k
@@ -29,10 +27,10 @@ class topologyJudgementController:
         
     def topologyJudgement(self):
         """
-        To Judgement whether or not the contour is same group
+        비교 컨투어가 같은 그룹인지 확인해 줌
         
-        Return: bool
-            if same group return True else False
+        Returns: 
+            참이면 포함 포함을 안하면 거짓 ::Boolean
         """
         l1 = self.sCheckCon.tpPointList
         l2 = self.cCheckCon.tpPointList
@@ -51,7 +49,7 @@ class topologyJudgementController:
 
     def giveSelected(self):
         """
-        select to same point in same group
+        select 속성을 추가함
         """
         l1 = self.sCheckCon.tpPointList
         l2 = self.cCheckCon.tpPointList
@@ -66,7 +64,7 @@ class topologyJudgementController:
 
     def giveAttrPenPair(self):
         """
-        Assign PenPair attribute to same point in same group
+        penpair 속성을 추가함
         """
         if self.cCheckCon == None:
             raise Exception('Please executed topologyJudgement method')
@@ -83,7 +81,7 @@ class topologyJudgementController:
                                 
     def giveDependX(self):
         """
-        Assign dependX attribute to same point in same group
+        dependx 속성을 추가함
         """
         if self.cCheckCon == None:
             raise Exception('Please executed topologyJudgement method')
@@ -98,7 +96,7 @@ class topologyJudgementController:
 
     def giveDependY(self):
         """
-        Assign dependY attribute to same point in same group
+        dependy 속성을 추가함
         """
         if self.cCheckCon == None:
             raise Exception('Please executed topologyJudgement method')
@@ -113,7 +111,7 @@ class topologyJudgementController:
 
     def giveInnerFill(self):
         """
-        Assign innerfill attribute to same point in same group
+        innerfill 속성을 추가함
         """
         if self.cCheckCon == None:
             raise Exception('Please executed topologyJudgement method')
@@ -128,7 +126,7 @@ class topologyJudgementController:
 
     def deleteAttr(self,attribute):
         """
-        delete attribute to same point in same group
+        delete 속성을 추가함
         """
         if self.cCheckCon == None:
             raise Exception('Please executed topologyJudgement method')

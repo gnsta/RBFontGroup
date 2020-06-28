@@ -1,14 +1,17 @@
 
 import numpy as np
-"""
-2020/03/09
-modify by Kim heesup
 
-improve performance
 """
+modify by Kim heesup
+"""
+
 class GetMaxMinPointValue:
     """
-    get contours maximum, minimun x,y value
+    컨투어의 영역을 구하는 함수(이미 속성으로 정의가 되어 있어 사용하지 않음)
+    
+    Args:
+        con:: RContour
+            영역을 구하고자 하는 컨투어
     """
     def __init__(self,con):
         self.con = con
@@ -30,45 +33,36 @@ class GetMaxMinPointValue:
     def getMinYValue(self):
         return self.sortByY[0].y     
 
-class Matrix:
+class Matrix:   
     """
-    create by Kim heesup
+    영역을 일정 구간 만큼 나눈 후 나눈 영역의 특정 범위에 점이 몇개가 존재하는지 판단
+
+    Args:
+        con :: RContour
+            조사 하고자 할 RContour
+        divk :: int
+            영역을 몇개의 구간으로 나눌지 지정
     """
-    
     def __init__(self,con,divk):
-        """
-        Divide Matrix by x & y. Calculate how many number of points are in the specific area of matrix.
-        """
         self.divk = divk
         self.con = con
         self.matrix = None
                             
     def getdivk(self):
-        return self.divk 
+        return self.divk
+
     def getCon(self):
         return self.con            
 
     def getPointPart(self,p):
-        """Get point's position if point's x is divided by kx and point's y is divided by ky.
-    
+        """
+        하나의 점에 대하여 어느 영역에 있는지 판별해 줌
         Args:
             p : Rpoint
-        
-            kx : dividing value of x
-        
-            ky : dividing value of y
-        
+
         Return:
-            point position
+            점의 위치 :: list
         """
-
-        #getMinMax = GetMaxMinPointValue(self.con)
-    
-        #maxx = getMinMax.getMaxXValue() + 10
-        #minx = getMinMax.getMinXValue() - 10
-        #maxy = getMinMax.getMaxYValue() + 10
-        #miny = getMinMax.getMinYValue() - 10
-
         maxx = self.con.bounds[2] + 10
         minx = self.con.bounds[0] - 10
         maxy = self.con.bounds[3] + 10
@@ -92,6 +86,9 @@ class Matrix:
     
     
     def getPointCnt(self):
+        """
+        메크릭스에 총 점이 몇개가 있는지 반환
+        """
         res = 0
         for m in self.matrix:
             for j in m:
@@ -101,15 +98,11 @@ class Matrix:
         
     
     def getDivideStatus(self):
-        """Get the number of point each case that points are arranged vertical or horizontal
-    
-        Args:       
-            kx : dividing value of x
+        """
+        각각의 점에 대하여 matrix의 어느 영역에 있는지에 대한 정보를 계산
         
-            ky : dividing value of y
-        
-        Return :
-            list : [vertical arrange, horizonal arrange]     
+        Returns :
+            [행에 대한 정보, 열에 대한 정보] :: list   
         """
     
         point_stat = []
@@ -137,7 +130,7 @@ class Matrix:
 
     def getMatrix(self):
         """
-        get matrix status that indicate how much points are located in specific area
+        특정 위치에 몇개의 점이 위치하는지 matrix에 정보를 저장하고 그에 대한 정보를 반환
         """
 
         if(self.matrix is None):

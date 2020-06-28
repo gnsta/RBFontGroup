@@ -1,12 +1,25 @@
 import copy
 import math
-from rbFontG.tools.tMatrix.PhaseTool import *
+from groupingTool.tMatrix.PhaseTool import *
 from fwig.tools import attributetools as at
+"""
+	2020/02/24
+	create by kim heesup
+"""
 
 def calcDirection(con,point):
 	"""
-	make compare point data's direction
-	[up,down,left,right]
+	포인트 데이터가 해당 컨투어의 어느쪽에 위치하고 있는지 확인하는 함수
+
+	Args:
+		con :: RContour
+			조사하고자 하는 컨투어
+		point :: RPoint
+			RContour안에 있는 조사하고자 하는 점
+	
+	Returs :
+		위치 정보 :: list
+			[up,down,left,right]
 	"""
 
 	dr = [10,-10,0,0]
@@ -27,13 +40,20 @@ def calcDirection(con,point):
 
 class matrixRelocatePoint:
 	"""
-	2020/02/24
-	create by kim heesup
+	점과 위치와 방향정보를 새롭게 객체를 생성하여 연산을 진행하기 위한 class
+
+	Args:
+		point :: RPoint
+			재배치 하고자 하는 점
+		rx :: int
+			x축의 재배치 위치
+		ry :: int
+			y축의 재배치 위치
+		direction :: list
+			calcDirection함수로 인한 결과
+			
 	"""
 	def __init__(self,point,rx,ry,direction):
-		"""
-		contain RPoint, relocated x position, relocate y position
-		"""
 		self.point = point
 		self.rx = rx
 		self.ry = ry
@@ -42,14 +62,17 @@ class matrixRelocatePoint:
 class groupPointMatchController:
 	def __init__(self,matrix,point,con):
 		"""
-		controll match modify contour point and group contours point
+		같은 그룹 내에서의 컨투어의 점들에 대하여 최대한 비슷한 점을 골라냄
 
 		Args:
-			matrix : standard contour
+			matrix :: Matrix Object 
+				기준 Matrix 객체
 
-			point :  selected point
+			point :: RPoint  
+				매칭을 시켜줄 점
 
-			con : contour that is included group 
+			con :: RContour 
+				그룹 내에 있는 컨투어
 		"""
 		self.matrix = matrix
 		self.point = point
@@ -59,7 +82,7 @@ class groupPointMatchController:
 
 	def matchPoint(self):
 		"""
-		match modify contour point and group contours point
+		포인트를 매칭 시켜줌
 
 		return:
 			matched point
@@ -122,14 +145,10 @@ class groupPointMatchController:
 
 
 		#locate contour exactly matrix's contour
-		#standardMinx = getStandardMaxMin.getMinXValue()
 		standardMinx = self.matrix.con.bounds[0]
-		#standardMiny = getStandardMaxMin.getMaxYValue()
 		standardMiny = self.matrix.con.bounds[1]
 
-		#checkMinx = getCompareMaxMin.getMinXValue()
 		checkMinx = self.con.bounds[0]
-		#checkMiny = getCompareMaxMin.getMaxYValue()
 		checkMiny = self.con.bounds[1]
 
 
@@ -153,7 +172,6 @@ class groupPointMatchController:
 		for	i,o in enumerate(relocatepl):
 			if (o.direction[0] != checkSdirection[0]) or (o.direction[1] != checkSdirection[1]) or (o.direction[2] != checkSdirection[2]) or (o.direction[3] != checkSdirection[3]):
 				continue
-
 			dist = math.sqrt(math.pow(self.point.x - o.rx,2) + math.pow(self.point.y - o.ry,2))
 			if(minDist > dist):
 				indx = i
@@ -164,6 +182,9 @@ class groupPointMatchController:
 		else:
 			return None
 
+	"""
+	각각의 속성을 넣어주는 함수들
+	"""
 	def mgiveSelected(self):
 		insertPoint = self.matchPoint()
 		if insertPoint is not None:

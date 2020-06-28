@@ -6,15 +6,16 @@ from mojo.drawingTools import fill, oval
 from mojo.extensions import getExtensionDefault, setExtensionDefault
 from rbWindow.contourPen import BroadNibPen
 from rbWindow.sliderGroup import SliderGroup
-import rbFontG.tools.tMatrix.PhaseTool
-import rbFontG.tools.tMatrix.groupTestController
-from rbFontG.tools.tTopology import topologyJudgement as tj
-from rbFontG.tools.tTopology import topologyAssignment as ta
-from rbFontG.tools import parseUnicodeControll as puc
+import groupingTool.tMatrix.PhaseTool
+import groupingTool.tMatrix.groupTestController
+from groupingTool.tTopology import topologyJudgement as tj
+from groupingTool.tTopology import topologyAssignment as ta
+from groupingTool import parseUnicodeControll as puc
 import jsonConverter.searchModule as search
 import timeit#
 import jsonConverter.converter as convert
 import rbWindow.Controller.toolMenuController as tMC
+import rbWindow.Controller.toolMenuControllerChinese as ctMC
 from rbWindow.ExtensionSetting.extensionValue import *
 
 def text2Glyph(inputText, font):
@@ -140,20 +141,20 @@ class toolsWindow:
 		
 		If there is saved file in directory, load groupDict,
 		else go through matrix, topology process to get groupDict & save it.
-
 		and then print it on the lineView.
 		"""
-		file = getExtensionDefault(DefaultKey+".file")
-		jsonFilePath = getExtensionDefault(DefaultKey+".jsonFilePath")
-		mode = getExtensionDefault(DefaultKey+".mode")
-		jsonFileName1 = getExtensionDefault(DefaultKey+".jsonFileName1")
-		jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
 		font = getExtensionDefault(DefaultKey+".font")
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		KoreanCheck = getExtensionDefault(DefaultKey+".korean")
 
 		inputText = self.w.editText.get()
 		standardGlyph = text2Glyph(inputText, font); setExtensionDefault(DefaultKey + ".standardGlyph", standardGlyph)
 		contourIndex = int(self.w.contourIndex.slider.get()); standardContour = standardGlyph.contours[contourIndex]; setExtensionDefault(DefaultKey + ".standardContour", standardContour)
 
-		tMC.handleSearchGlyphList(standardGlyph, contourIndex, file, mode, jsonFileName1, jsonFileName2, font, groupDict)
+		if KoreanCheck == True:
+			print("korean")
+			tMC.handleSearchGlyphList(standardGlyph, contourIndex, groupDict)
+		else:
+			print("chinese")
+			ctMC.cHandleSearchGlyphList(standardGlyph, contourIndex, groupDict)
 		return

@@ -1,8 +1,6 @@
 # 익스텐션 초기 기본 값 설정 (프로그램 초기 구동 시에 딱 한 번만 수행되고 이후론 수행하지 않음)
 from AppKit import NSColor
 from mojo.extensions import *
-#from rbWindow.Controller import linkedStack
-from rbWindow.Controller.linkedStack import *
 from fontParts.world import CurrentFont
 from rbWindow.Controller.CircularQueue import *
 
@@ -24,7 +22,6 @@ class ConfigExtensionSetting:
 		    self.registerKey + ".jsonFilePath": None,
 		    self.registerKey + ".jsonFileName1": None,
 		    self.registerKey + ".jsonFileName2": None,
-		    self.registerKey + ".file": None,
 		    
 		    self.registerKey + ".mode": 0,
 
@@ -49,7 +46,7 @@ class ConfigExtensionSetting:
 		    self.registerKey + ".restoreStack": bufferStack,
 		    self.registerKey + ".isInitialAppend": True,		# 원형 큐 자료 운영을 위해 필요한 변수(원형 큐가 빈 상태에서 넣는 경우)
 
-		    self.registerKey + ".state": False,		    
+		    self.registerKey + ".state": False,		# 어디에 쓰는 건지 확인하고 안쓰는 거면 지우기    
 		    self.registerKey + ".index": 0,
 		    self.registerKey + ".step": 45,
 		    self.registerKey + ".width": 50,
