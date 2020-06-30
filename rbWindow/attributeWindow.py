@@ -68,6 +68,88 @@ class attributeWindow:
 		self.w.open()
 
 
+
+	def updateAttributeComponent(self):
+		"""
+			2020/05/14 created by Cho H.W.
+
+			사용자의 조작에 의해 찾아놓은 groupDict가 아닌 다른 요소에 대해 속성을 부여하는 과정에서
+			필요한 인자들을(ex. matrix, groupDict, standardGlyph, ...) 갱신하기 위한 보조함수
+
+			선택된 컨투어가 기존의 groupDict 내에 포함된 요소라면 갱신하지 않고 메소드가 종료됩니다.
+		"""
+
+		count = 0
+		selectedContour = None
+		currentGlyph = CurrentGlyph()
+		prevGlyph = getExtensionDefault(DefaultKey+".standardGlyph")
+		prevContour = getExtensionDefault(DefaultKey+".standardContour")
+		prevGroupDict = getExtensionDefault(DefaultKey+".groupDict")
+		mode = getExtensionDefault(DefaultKey+".mode")
+		font = getExtensionDefault(DefaultKey+".font")
+
+		#현재 선택된 컨투어 알아내기
+		for contour in currentGlyph:
+			if len(contour.selection) > 0:
+				count += 1
+				selectedContour = contour
+
+		#하나의 컨투어만을 선택했는지 필터링
+		if count != 1:
+			Message("하나의 컨투어를 선택해주십시오.")
+			return False
+
+
+		else: 
+
+			# 현재 선택된 컨투어가 그룹딕셔너리에 있나 확인하기
+			if selectedContour != prevContour:
+				
+				try:
+					contourList = prevGroupDict[currentGlyph] 
+					
+					for contourIdx in contourList:
+
+						#현재 선택된 컨투어를 이전 그룹 딕셔너리에서 찾았다면 standard Contour, Glyph, contourNumber 갱신
+						if selectedContour.index == contourIdx:
+							res = True
+							setExtensionDefault(DefaultKey+".standardContour", selectedContour)
+							setExtensionDefault(DefaultKey+".standardGlyph", currentGlyph)
+							setExtensionDefault(DefaultKey+".contourNumber", selectedContour.index)	
+
+							#매트릭스 관련 설정값 갱신
+							if mode is matrixMode:
+								matrix = Matrix(selectedContour, matrix_size); 
+								setExtensionDefault(DefaultKey+".matrix", matrix)
+
+
+
+							#현재 스마트셋 포커싱
+							checkSetData = searchGroup(currentGlyph, selectedContour.index, mode, font)
+							index = getMatchingSmartSet(checkSetData, currentGlyph, selectedContour.index)
+							
+							if index is not None : 
+								smartSetIndexList = list()
+								smartSetIndexList.append(index)
+								selectSmartSets(smartSetIndexList)
+
+							return True
+
+					# 같은 글리프라도 컨투어가 같은 그룹딕셔너리가 아니라면 익셉션을 raise한다.
+					raise Exception
+
+				# 다른 스마트 셋에 있거나 아직 탐색이 완료되지 않은 경우 처리
+				except Exception as e:
+					result = updateSmartSetChanged(selectedContour)
+					
+					if result is False:
+						Message("해당되는 그룹 결과가 존재하지 않습니다. 탐색을 먼저 진행해주세요.")
+						
+					return result
+
+			else:
+				return True
+
 	def updateSmartSetChanged(self, selectedContour):
 		"""
 			이전 standardContour와 현재 선택된 standardContour의 smartSet이 다른 경우,
@@ -87,7 +169,7 @@ class attributeWindow:
 		glyph = selectedContour.getParent();
 		mode = getExtensionDefault(DefaultKey + ".mode")
 		font = getExtensionDefault(DefaultKey + ".font")
-		checkSetData = searchGroup(glyph, contourNumber, mode)
+		checkSetData = searchGroup(glyph, contourNumber, mode, font)
 		smartSetIndex = getMatchingSmartSet(checkSetData, glyph, contourNumber)
 		smartSetIndexList = list()
 		smartSetIndexList.append(smartSetIndex+1) # 0번째는 All Glyphs이므로
@@ -128,6 +210,7 @@ class attributeWindow:
 		matrix_margin = getExtensionDefault(DefaultKey + ".matrix_margin")
 		topology_margin = getExtensionDefault(DefaultKey + ".topology_margin")
 		matrix_size = getExtensionDefault(DefaultKey + ".matrix_size")
+		font = getExtensionDefault(DefaultKey + ".font")
 		
 		if mode is matrixMode:
 			searchMode = "Matrix"
@@ -137,7 +220,8 @@ class attributeWindow:
 			return None
 
 
-		#해당 컨투어가 초성인지 중성인지 종성인지 확인
+		#해당 컨투어가 초성인지 중성인지 종성인지 확인을 해 보아햐함
+		#!!
 		for i in range(0,len(glyphConfigure[str(glyph.unicode)])):
 			for j in range(0,len(glyphConfigure[str(glyph.unicode)][i])):
 				if contourNumber == glyphConfigure[str(glyph.unicode)][i][j]:
@@ -279,9 +363,7 @@ class attributeWindow:
 		CurrentFont().save() 	#XML 업데이트
 
 	def handleSelect(self, sender):
-		# 다른 함수들과 다르게 쌍자음에 대한 고려를 안해도 되므로, (동일 글리프 내 같은 형상의 컨투어)
-		# 선택한 컨투어가 하나만 존재하도록 보장한다.
-		if updateAttributeComponent(True) is False:
+		if updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")

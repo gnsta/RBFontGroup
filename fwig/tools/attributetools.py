@@ -94,7 +94,6 @@ def name2dict(name) -> dict:
     if name is None:
         return {}
     name = '{' + name.replace("'", '"') + '}'
-    print("name = ", name)
     name_dict = json.loads(name)
 
     return name_dict

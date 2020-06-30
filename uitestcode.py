@@ -7,7 +7,6 @@ import rbWindow.editWindow as ew
 from jsonConverter.makeJsonFile import *
 from testCode.initialization import *
 from rbWindow.ExtensionSetting.extensionValue import *
-from mojo.extensions import *
 from parseSyllable.configVersionFinal import *
 
 print("uiTEST started")
@@ -15,7 +14,7 @@ configPreset = ConfigExtensionSetting(DefaultKey)
 configPreset.checkLangauge()
 configPreset.registerSettings()
 
-testPath = "/Users/sslab/Desktop/ChineseGroup2.ttf"
+testPath = "/Users/font/Desktop/ChineseGroup2.ttf"
 testFile = OpenFont(testPath,showInterface = False)
 groupDict = None
 FileNameList = StartProgram(testPath,testFile,CurrentFont())
@@ -23,9 +22,6 @@ FileNameList = StartProgram(testPath,testFile,CurrentFont())
 setExtensionDefault(DefaultKey + ".font", CurrentFont())
 setExtensionDefault(DefaultKey + ".jsonFileName1", FileNameList[0])
 setExtensionDefault(DefaultKey + ".jsonFileName2", FileNameList[1])
-KoreanCheck = getExtensionDefault(DefaultKey+".korean")
-
-if KoreanCheck is True:
-	syllableJudgementController = SyllableJudgement(testFile,testPath)
-	setExtensionDefault(DefaultKey + ".syllableJudgementController", syllableJudgementController)
+syllableJudgementController = SyllableJudgement(testFile,testPath)
+setExtensionDefault(DefaultKey + ".syllableJudgementController", syllableJudgementController)
 menuWindow = ew.EditGroupMenu(groupDict,FileNameList[0],FileNameList[1])

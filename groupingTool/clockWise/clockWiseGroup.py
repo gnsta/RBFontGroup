@@ -19,11 +19,13 @@ def consistClockWise(con):
 def getClockDirection(point1 , point2, point3):
     """
     현재 점의 진행방향이 시계방향인지 반시계 방향인지 확인
+
     Args:
         point1 :: RPoint
         point2 :: RPoint
         point3 :: RPoint
         조사하고자 하는 RPoint
+
     Returns :
         방향에 대한 정보 :: int
             시계방향이면 양수, 반시계 방향이면 음수
@@ -33,9 +35,11 @@ def getClockDirection(point1 , point2, point3):
 def sortByStartingPoint(pointList):
     """
     포인트 리스트에 대하여 y값을 기준으로 오름차순으로 정렬, 만약 y값이 값으면 x값을 기준으로 오름차순 정렬
+
     Args:
         pointList :: List
             정돈하고자 하는 리스트
+
     Returns: 
         정돈한 리스트 :: List
     """
@@ -86,6 +90,7 @@ def sortByStartingPoint(pointList):
 def renewDict(value,dictionary):
     """
     음수와 양수 값에 따라서 딕셔너리에 방향 횟수를 저장
+
      Args:
         value :: int
             방향값(getClockDirection 함수를 사용하여 반환된 값을 사용)
@@ -117,6 +122,7 @@ def getClockWiseList(con):
      Args:
         con :: RContour
             조사하고자 하는 컨투어
+
     Returns: 
         방향횟수에 대한 정보를 가지고 있는 딕셔너리 :: Dict
     """
@@ -136,7 +142,6 @@ def getClockWiseList(con):
         
         renewDict(value,res)
     
-    print(sortPointList)
     value = getClockDirection(sortPointList[len(sortPointList) - 2], sortPointList[len(sortPointList) - 1], sortPointList[0])
     renewDict(value,res)
     value = getClockDirection(sortPointList[len(sortPointList) - 1], sortPointList[0], sortPointList[1])
@@ -151,4 +156,9 @@ def getClockWiseList(con):
             if res['forword'] != 1: 
                 res['forword'] -= 1
     
-    return res 
+    return res            
+    
+
+
+                
+            

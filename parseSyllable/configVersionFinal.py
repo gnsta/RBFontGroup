@@ -8,8 +8,6 @@ from groupingTool.parseUnicodeControll import *
 import os
 import json
 from mojo.UI import *
-from rbWindow.ExtensionSetting.extensionValue import *
-from mojo.extensions import *
 
 """
 create by Heesup Kim
@@ -18,6 +16,7 @@ create by Heesup Kim
 class PositionState:
     """
     컨투어와 컨투어의 번호를 관리하기 위한 클래스
+
     Args:
         con:: RContour
             관리하고자 하는 RContour 
@@ -29,6 +28,7 @@ class PositionState:
 class PointInfo:
     """
     점의 위치를 관리하기 위한 클래스
+
     Args:
         x :: RPoint.x
             포인트의 x값
@@ -42,9 +42,11 @@ class PointInfo:
 class FileExist(Exception):
     """
     그룹 정보를 담는 json파일의 존재 유무를 확인하기 위한 예외 클래스
+
     Args:
         msg :: str
             예외 메세지
+
     Returns:
         예외 메세지:: str
     """
@@ -57,11 +59,13 @@ class FileExist(Exception):
 class SyllableJudgement:
     """
     한글파일(.ufo) 폰트 파일에 대하여 각각의 컨투어의 초성, 중성, 종성을 구분하는 클래스
+
     Args:
         fontFile :: RFont
             폰트파일 객체
         fontPath :: str
             폰트파일 경로
+
     Raises:
         파일이 존재하지 않을 시 에러를 반환 :: FileExist
     """
@@ -86,7 +90,7 @@ class SyllableJudgement:
 
         tempFileName = fontPath.split('/')[-1]
 
-        if getExtensionDefault(DefaultKey+".korean") is True:
+        if tempFileName.split('.')[1] == 'ufo':
             try:
                 tempFileName = fontPath.split('/')[-1]
                 self.jsonFileName = os.path.dirname(os.path.abspath(__file__)) +'/jsonResource/'+ tempFileName.split('.')[0] + '_label.json'
@@ -253,11 +257,13 @@ class SyllableJudgement:
     def MakeLabel(self,case,samples):
         """
         샘플 데이터와 각각의 케이스에 맞게 데이터를 군집화
+
         Args:
             case :: int
                 케이스 번호 이름(종성이 있는 경우만 고려, 케이스 번호는 모음에 따라 분리)
             samples :: Numpy Array
                 컨투어 무게중심의 좌표값의 정보를 가지고 있음
+
         Returns:
             label :: Numpy Array
                 각각의 정보에 대한 라벨링의 결과
@@ -325,6 +331,7 @@ class SyllableJudgement:
         
         Args:
             glyph :: RGlyph
+
         Returns:
             글리프에 대한 초성, 중성, 종성 컨투어에 대한 정보를 반환 :: list
             Example
@@ -753,3 +760,6 @@ class SyllableJudgement:
         output.append(final)
     
         return output
+
+
+

@@ -7,10 +7,17 @@ from groupingTool.tMatrix.groupTestController import *
 from groupingTool.tTopology.topologyJudgement import *
 from groupingTool.tTopology.topologyAssignment import *
 from rbWindow.ExtensionSetting.extensionValue import *
+from groupingTool.Bitmap import rasterize as re
 
 """
 create By Heesup Kim
 """
+
+baseDir = "/Users/font/Desktop/GroupDict/"
+
+matrix_margin = 20
+matrix_size = 3
+topology_margin = 500
 
 def cSearchGroup(glyph,contourNumber,mode,message = False):
 	"""
@@ -24,14 +31,13 @@ def cSearchGroup(glyph,contourNumber,mode,message = False):
 			0 -> matrix, 1 -> topology
 		font :: RFont
 			작업하고 있는 RFont
+
 	Return :: int
 		현재 그룹의 번호
 	"""
 
 	font = getExtensionDefault(DefaultKey+".font")
-	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
-	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
-	
+
 	check = 0
 	positionNumber = None
 	searchSmartSet = None
@@ -68,9 +74,17 @@ def cSearchGroup(glyph,contourNumber,mode,message = False):
 				standardGlyph = font["cid" + str(standardNameList[0][4:]).upper()]
 				standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
 				compareController = groupTestController(standardMatrix,matrix_margin)
+
+				#Matrix 필터링
 				result = compareController.conCheckGroup(glyph[contourNumber])
 
-				if result is not None: 
+				#rasterize 필터링
+				if result is not None:
+					result2 = re.compareBitMap(standardGlyph[standardIdx], glyph[contourNumber],45)
+				else:
+					continue
+
+				if result2 is True: 
 					searchSmartSet = sSet
 					check = 1
 					message = True
@@ -78,8 +92,17 @@ def cSearchGroup(glyph,contourNumber,mode,message = False):
 
 			elif mode == 1:
 				standardGlyph = font["cid" + str(standardNameList[0][4:]).upper()]
+
+				#Topology 필터링
 				result = topologyJudgementController(standardGlyph.contours[standardIdx],glyph[contourNumber],topology_margin).topologyJudgement()
-				if result is not False: 
+
+				#rasterize 필터링
+				if result == None:
+					result2 = re.compareBitMap(standardGlyph[standardIdx], glyph[contourNumber],45)
+				else:
+					continue
+
+				if result2 is True: 
 					searchSmartSet = sSet
 					check = 1
 					message = True
@@ -113,6 +136,7 @@ def searchGroup(glyph,contourNumber,mode,message = False):
 			0 - > matrix , 1-> topology
 		font :: RFont
 			작업하고 있는 RFont
+
 	Return :: List
 		[스마트 셋의 번호,음절 번호(0 - 초성, 1- 중성, 2- 종성),그룹화 진행 여부에 대한 번호(0 -> grouped , 1 -> not grouped)]
 	"""
@@ -120,8 +144,6 @@ def searchGroup(glyph,contourNumber,mode,message = False):
 	syllableJudgementController = getExtensionDefault(DefaultKey + ".syllableJudgementController")
 	glyphConfigure = syllableJudgementController.GetSyllable(glyph)
 	font = getExtensionDefault(DefaultKey+".font")
-	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
-	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
 
 
 	check = 0
@@ -256,6 +278,7 @@ def getSmartSetStatMatrix():
 	현재 스마트 셋을 조사하여 다음 그룹화 진행시 어느 번호에 저장해야 하는지 반환(Matrix)
 	set name format example
 		:##(number)_##(syllable)_####(mode)
+
 	Returns:
 		번호에 대한 정보 :: list
 			[초성번호, 중성번호, 종성번호]
@@ -327,6 +350,7 @@ def getSmartSetStatTopology():
 	현재 스마트 셋을 조사하여 다음 그룹화 진행시 어느 번호에 저장해야 하는지 반환(Topology)
 	set name format example
 		:##(number)_##(syllable)_####(mode)
+
 	Returns:
 		번호에 대한 정보 :: list
 			[초성번호, 중성번호, 종성번호]
@@ -395,6 +419,7 @@ def cGetSmartSetStatMatrix():
 	현재 스마트 셋을 조사하여 다음 그룹화 진행시 어느 번호에 저장해야 하는지 반환(Matrix)
 	set name format example
 		:##(number)_Matrix
+
 	Returns:
 		번호에 대한 정보 :: list
 			[그룹 번호, mode 정보]
@@ -455,6 +480,7 @@ def cGetSmartSetStatTopology():
 	현재 스마트 셋을 조사하여 다음 그룹화 진행시 어느 번호에 저장해야 하는지 반환(Matrix)
 	set name format example
 		:##(number)_Matrix
+
 	Returns:
 		번호에 대한 정보 :: list
 			[그룹 번호, mode 정보]
@@ -507,3 +533,5 @@ def cGetSmartSetStatTopology():
 	resList.append("Topology")
 
 	return resList
+
+

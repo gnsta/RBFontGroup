@@ -141,8 +141,13 @@ class toolsWindow:
 		
 		If there is saved file in directory, load groupDict,
 		else go through matrix, topology process to get groupDict & save it.
+
 		and then print it on the lineView.
 		"""
+		file = getExtensionDefault(DefaultKey+".file")
+		jsonFilePath = getExtensionDefault(DefaultKey+".jsonFilePath")
+		jsonFileName1 = getExtensionDefault(DefaultKey+".jsonFileName1")
+		jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
 		font = getExtensionDefault(DefaultKey+".font")
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		KoreanCheck = getExtensionDefault(DefaultKey+".korean")

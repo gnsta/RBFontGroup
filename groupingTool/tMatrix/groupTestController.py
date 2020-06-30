@@ -14,6 +14,7 @@ class groupTestController:
         Args:
             matrix :: Matrix object
                 기준이 되는 메트릭스
+
             k :: int
                 오차율을 조절
         """
@@ -58,8 +59,10 @@ class groupTestController:
         """
         2020/03/17
         create by Kim heesup
+
         현재의 메트릭스에 대하여 새로운 Contour에 대하여 같은 그룹인지 조사
         (한문을 위해 제작하였으나 현재는 한글, 한자 모두에 적용)
+
         Args:
             con :: RContour
                 조사하고자 하는 컨투어

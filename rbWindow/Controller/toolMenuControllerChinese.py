@@ -2,6 +2,8 @@ import os
 import jsonConverter.searchModule as search
 import groupingTool.tMatrix.PhaseTool
 import groupingTool.tMatrix.groupTestController
+import queue
+from groupingTool.Bitmap import rasterize as re
 from groupingTool.tTopology import topologyJudgement as tj
 from groupingTool.tTopology import topologyAssignment as ta
 from groupingTool import parseUnicodeControll as puc
@@ -27,7 +29,7 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 	UI와 그룹 방법을 연결시켜주는 함수 (Matrix 방법)
 	Args :
 		standardGlyph :: RGlyph 
-			기준 컨투어
+			기준 글리프
 		contourIndex ::  int
 			컨투어의 번호
 		margin :: int
@@ -44,6 +46,7 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 			시계방향, 반시계방향 정보를 담고 있는 json파일 이름(1차 필터링 결과)
 		jsonFileName2 :: String
 			음절 분리가 되어 있는 json파일 이름을 반환
+
 	2020/03/23
 	스마트셋 이름 규칙은 숫자 번호대로
 	"""
@@ -68,28 +71,36 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 	with open(jsonFileName1, 'r') as jsonFile1:
 	    resultDict = json.load(jsonFile1)
 
-	#print("resultDict : ",resultDict)
 
 	standard = resultDict[standardGlyph.name][contourIndex]
-	print("standard = ", standard)
+
 	bar = ProgressBar('Matrix Process',len(resultDict),'Grouping...')
 	barProcess = 0
 
 	smartGroupDict = {}
 	smartContourList = []
 
-	#print("standardGlyph Unicode : ",standardGlyph.unicode)
 	smartSet.name = str(checkSetData[0])+"_Matrix_" + "(" + str(standardGlyph.name) + "-" + str(contourIndex) + ")"
 			
 	for key, value in resultDict.items():
 		barProcess += 1
 		smartCheck = 0
 		for i,compare in enumerate(value):
+			#clockWise 1차 필터링
 			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
+				#비교 컨투어 설정
 				compareContour = font[key].contours[i]
+
+				#Matrix 2차 필터링
 				result = compareController.conCheckGroup(compareContour)
-				print("key = ", key," compareContour = ", compareContour, " result = ", result)
+
+				#rasterize 3차 필터링
 				if result is not None:
+					result2 = re.compareBitMap(standardGlyph[contourIndex], compareContour,45)
+				else:
+					continue
+
+				if result2 is True:
 					smartContourList.append(i)
 					smartCheck = 1
 
@@ -119,7 +130,7 @@ def cGetMatchGroupByTopology(standardGlyph, contourIndex,checkSetData):
 	To get group contours Based on standard Glyph's contour by topology
 	Args :
 		standardGlyph :: RGlyph 
-			기준 컨투어
+			기준 글리프
 		contourIndex ::  int
 			컨투어의 번호
 		k : int
@@ -130,6 +141,7 @@ def cGetMatchGroupByTopology(standardGlyph, contourIndex,checkSetData):
 			시계방향, 반시계방향 정보를 담고 있는 json파일 이름(1차 필터링 결과)
 		jsonFileName2 :: String
 			음절 분리가 되어 있는 json파일 이름을 반환
+
 	2020/03/23
 	스마트셋 이름 규칙은 숫자 번호대로				
 	"""
@@ -163,10 +175,21 @@ def cGetMatchGroupByTopology(standardGlyph, contourIndex,checkSetData):
 		smartCheck = 0
 		barProcess += 1
 		for i,compare in enumerate(value):
+			#clockWise 1차 필터링
 			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
+				#비교 컨투어 설정
 				compareContour = font[key].contours[i]
+
+				#Topology 2차 필터링
 				result = topologyJudgementController(standardGlyph.contours[contourIndex],compareContour,topology_margin).topologyJudgement()
-				if result == True:
+
+				#rasterize 3차 필터링
+				if result == None:
+					result2 = re.compareBitMap(standardGlyph[contourIndex], compareContour,45)
+				else:
+					continue
+
+				if result2 is True:
 					smartContourList.append(i)
 					smartCheck = 1
 
@@ -189,16 +212,21 @@ def cHandleSearchGlyphList(standardGlyph, contourIndex, groupDict):
 	"""
 		2020/03/23
 		created by H.W. Cho
+
 		Get matching file and update currentWindow's group. If there is no matching file,
 		search process will find a new group. Update view is followed at the end of process.
+
 		Args::
 			standardGlyph(RGlyph), contourIndex(int) : target object which want to search.
 			file(RFont) : search area
 			currentWindow(toolMenu object)
+
 		2020/03/25
 		modifyed by Kim heesup
 		add smart set information
+
 		실질적으로 UI와 컨트롤러를 이어주는 함수
+
 	"""
 	#파라미터를 받아오는 작업
 	font = getExtensionDefault(DefaultKey+".font")#RFont
@@ -206,6 +234,8 @@ def cHandleSearchGlyphList(standardGlyph, contourIndex, groupDict):
 
 
 	checkSetData = cSearchGroup(standardGlyph,contourIndex,mode,True)
+
+	print("checkSetData : ", checkSetData)
 
 	if checkSetData[2] == 0:
 		groupDict = cFindContoursGroup(checkSetData,mode)
@@ -245,9 +275,6 @@ def cFindContoursGroup(checkSetData, mode):
 	"""
 
 	#파라미터를 받아오는 작업
-
-	matrix_margin = getExtensionDefault(DefaultKey + ".matrix_margin")
-	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
 	font = getExtensionDefault(DefaultKey+".font")#RFont
 
 	ssets = getSmartSets()
@@ -301,5 +328,4 @@ def cFindContoursGroup(checkSetData, mode):
 					searchContours.append(i)
 		res[g] = searchContours
 
-	print("cFindContoursGroup에서 찾아낸 결과 = ",res)
 	return res

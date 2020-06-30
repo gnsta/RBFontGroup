@@ -6,8 +6,7 @@ from groupingTool.tTopology import topologyJudgement as tj
 from groupingTool.tTopology import topologyAssignment as ta
 from groupingTool import parseUnicodeControll as puc
 import jsonConverter.converter as convert
-from rbWindow.Controller.smartSetSearchModule import *
-from groupingTool.clockWise.clockWiseGroup import *
+from rbWindow.Controller.smartSetSearchModule import * 
 from parseSyllable.configSyllable import *
 from mojo.UI import *
 from rbWindow.ExtensionSetting.extensionValue import *
@@ -19,11 +18,13 @@ topologyMode = 1
 
 margin = 20
 width = 100
-k = 500
 
-matrix_margin = 20
-matrix_size = 3
 topology_margin = 500
+
+"""
+2020/03/35 
+modify by Kim Heesup Kim
+"""
 
 def getMatchGroupByMatrix(standardGlyph, contourIndex,checkSetData):
 	"""
@@ -49,6 +50,7 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex,checkSetData):
 			시계방향, 반시계방향 정보를 담고 있는 json파일 이름(1차 필터링 결과)
 		jsonFileName2 :: String
 			음절 분리가 되어 있는 json파일 이름을 반환
+
 	2020/03/23
 	스마트셋 이름 규칙을 정리함
 	set name format example
@@ -141,6 +143,7 @@ def getMatchGroupByTopology(standardGlyph, contourIndex, checkSetData):
 			시계방향, 반시계방향 정보를 담고 있는 json파일 이름(1차 필터링 결과)
 		jsonFileName2 :: String
 			음절 분리가 되어 있는 json파일 이름을 반환
+
 	2020/03/23
 	스마트셋 이름 규칙을 정리함
 	set name format example
@@ -209,14 +212,18 @@ def handleSearchGlyphList(standardGlyph, contourIndex, groupDict):
 	"""
 		2020/03/23
 		created by H.W. Cho
+
 		Get matching file and update currentWindow's group. If there is no matching file,
 		search process will find a new group. Update view is followed at the end of process.
+
 		Args::
 			standardGlyph(RGlyph), contourIndex(int) : target object which want to search.
 			currentWindow(toolMenu object)
+
 		2020/03/25
 		modifyed by Kim heesup
 		add smart set information
+
 	"""
 	#파라미터 가져옴
 	mode = getExtensionDefault(DefaultKey+".mode")

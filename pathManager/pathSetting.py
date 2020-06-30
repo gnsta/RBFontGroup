@@ -9,3 +9,4 @@ ImagePath = fontToolBundle.resourcesPath()+"/"
 resourcePath = ImagePath
 
 attrImgList = ["innerFill", "penPair", "dependX", "dependY",  "rubbish", "select"]
+

@@ -1,15 +1,10 @@
-from mojo.UI import Message
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))))
-from fontParts.world import *
-from uitestcode import *
 from rbWindow.ExtensionSetting.extensionValue import *
 import rbWindow.Controller.toolMenuController as tMC
 import rbWindow.Controller.toolMenuControllerChinese as ctMC
+from mojo.UI import Message
 
 def searchGroupProcess():
-
+	
 	selectedDict = dict()
 
 	#try:
@@ -30,7 +25,6 @@ def searchGroupProcess():
 	jsonFileName1 = getExtensionDefault(DefaultKey+".jsonFileName1")
 	jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
 	groupDict = getExtensionDefault(DefaultKey+".groupDict")
-	
 	KoreanCheck = getExtensionDefault(DefaultKey+".korean")
 	print("Short Cut KoreanCheck : ", KoreanCheck)
 	
@@ -38,9 +32,10 @@ def searchGroupProcess():
 		tMC.handleSearchGlyphList(standardGlyph, contourIndex, groupDict)
 	else:
 		ctMC.cHandleSearchGlyphList(standardGlyph, contourIndex, groupDict)
-		
+
 	for contour in standardGlyph.contours:
 		contour.selected = False
+	#except Exception as e:
+	#	print(Message("예상치 못한 에러 발생...\n찾고자 하는 글리프를 선택한 뒤 해당 컨투어를 선택하여 주십시오."))
 
-menuWindow.createUI()
 searchGroupProcess()
