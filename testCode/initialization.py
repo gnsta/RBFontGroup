@@ -94,7 +94,7 @@ def StartProgram(testPath,testFile,CurrentFont):
 
     insert = dict()
     #한글의 음절 분리 경우에만!
-    if tempFileName.split('.')[1] == 'ufo':
+    if KoreanCheck == True:
        try:
             tempFileName = testPath.split('/')[-1]
             jsonFileName2 = os.path.dirname(os.path.abspath(__file__)) + '/jsonResource/' + tempFileName.split('.')[0] + '_config.json'
@@ -102,6 +102,7 @@ def StartProgram(testPath,testFile,CurrentFont):
                 raise FileExist('해당 파일은 이미 존재합니다')
             for tg in testFile:
                 barProcess += 1
+                print("tg : " ,tg.name)
                 tempDict = getConfigure(tg)
                 insert[tg.name] = tempDict[str(tg.unicode)]
                 if barProcess % 10 == 0:

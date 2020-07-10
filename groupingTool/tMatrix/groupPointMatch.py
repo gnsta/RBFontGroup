@@ -2,6 +2,7 @@ import copy
 import math
 from groupingTool.tMatrix.PhaseTool import *
 from fwig.tools import attributetools as at
+from groupingTool.clockWise.clockWiseGroup import *
 """
 	2020/02/24
 	create by kim heesup
@@ -22,8 +23,8 @@ def calcDirection(con,point):
 			[up,down,left,right]
 	"""
 
-	dr = [10,-10,0,0]
-	dc = [0,0,-10,10]
+	dr = [20,-20,0,0]
+	dc = [0,0,-20,20]
 
 	#standard direction
 	checkCdirection = [0,0,0,0]
@@ -36,6 +37,7 @@ def calcDirection(con,point):
 			checkCdirection[i] = 1
 
 	return checkCdirection
+
 
 
 class matrixRelocatePoint:
@@ -118,12 +120,17 @@ class groupPointMatchController:
 		checkMatrix = Matrix(self.con,self.matrix.getdivk())
 		getCompareMaxMin = GetMaxMinPointValue(checkMatrix.con)
 
+		#매트릭스 기준점을 가져옴
+		standardCutLine = self.matrix.getMatrixCutLine()
+		compareCutLine = checkMatrix.getMatrixCutLine()
+
 
 		#additional mechanism
-		dr = [10,-10,0,0]
-		dc = [0,0,-10,10]
+		dr = [20,-20,0,0]
+		dc = [0,0,-20,20]
 
 		#standard direction
+		#사용하지 않는 로직
 		checkSdirection = [0,0,0,0]
 		r = self.point.y
 		c = self.point.x
@@ -135,7 +142,7 @@ class groupPointMatchController:
 
 
 
-
+		#비교 컨투어 direction조사
 		for p in self.con.points:
 			if(p.type != 'offcurve'):
 				checkPart = checkMatrix.getPointPart(p)
@@ -143,9 +150,97 @@ class groupPointMatchController:
 					originpl.append(p)
 
 
+		#pointPart의 첫 원소는 x부분이고 두번째 원소는 y부분이다.
+		#기준컨투어에서 점의 거리를 구함
+		standard_dist = math.sqrt(math.pow(self.point.x - standardCutLine[0][pointPart[0]],2) + math.pow(self.point.y - standardCutLine[1][pointPart[1]],2))
+		standard_term_x = self.matrix.getTermX()
+		standard_term_y = self.matrix.getTermY()
+
+		compare_term_x = checkMatrix.getTermX()
+		compare_term_y = checkMatrix.getTermY()
+
+		#get point that get minimum distance
+		minDist = 10000000000
+		indx = -1
+
+		#시험 코드
+		standardClockDegree = getPointClockDegree(self.matrix.con,self.point)
+		print("standardClockDegree : ", standardClockDegree)
+		print("compareCon:",self.con)
+
+		for i in range(0,len(originpl)):
+			print("compare point : ",originpl[i])
+			#direction으로 1차 필터링
+			diff_count = 0
+			checkCdirection = calcDirection(self.con,originpl[i])
+			print("checkSdirection : ", checkSdirection)
+			print("checkCdirection : ",checkCdirection)
+			for j in range(0,4):
+				if(checkSdirection[j] != checkCdirection[j]):
+					diff_count += 1
+
+			if diff_count > 1:
+				continue
+
+			#회전율로 2차 필터링
+			#compareClockDegree = getPointClockDegree(self.con,originpl[i])
+			#print("compareClockDegree : ",compareClockDegree)
+			#print("standardClockDegree - compareClockDegree: ", abs(standardClockDegree - compareClockDegree))
+
+			#방향이 같은 것만 고려
+			#if compareClockDegree > 0  and standardClockDegree < 0:
+				#continue
+			#elif compareClockDegree < 0  and standardClockDegree > 0:
+				#continue
+
+			#if abs(standardClockDegree - compareClockDegree) > 5000:
+				#continue
+
+			#거리로 3차 필터링
+			compare_dist_origin_x = originpl[i].x - compareCutLine[0][pointPart[0]]
+			compare_dist_origin_y = originpl[i].y - compareCutLine[1][pointPart[1]]
+
+			#거리의 크기 조정
+			compare_dist_x = (compare_dist_origin_x) * (standard_term_x / compare_term_x)
+			compare_dist_y = (compare_dist_origin_y) * (standard_term_y / compare_term_y)
+
+			#조정된 길이를 이용하여 거리를 구해줌
+			compare_dist = math.sqrt(math.pow(compare_dist_x,2) + math.pow(compare_dist_y,2))
+
+			dist = abs(standard_dist - compare_dist)
+			print("dist : ",dist)
+
+			if(minDist > dist):
+				indx = i
+				minDist = dist
+		print("==========================================")
+
+		#회전율 최종 필터링
+		compareClockDegree = getPointClockDegree(self.con,originpl[indx])
+		print("compareClockDegree : ",compareClockDegree)
+		print("standardClockDegree - compareClockDegree: ", abs(standardClockDegree - compareClockDegree))
+
+		#방향이 같은 것만 고려
+		if compareClockDegree > 0  and standardClockDegree < 0:
+			indx = -1
+		elif compareClockDegree < 0  and standardClockDegree > 0:
+			indx = -1
+
+		if abs(standardClockDegree - compareClockDegree) > 5000:
+			indx = -1
+
+		if indx != -1:
+			print(minDist)
+			return originpl[indx]
+		else:
+			return None
+
+
+
+
 
 		#locate contour exactly matrix's contour
-		standardMinx = self.matrix.con.bounds[0]
+		'''standardMinx = self.matrix.con.bounds[0]
 		standardMiny = self.matrix.con.bounds[1]
 
 		checkMinx = self.con.bounds[0]
@@ -168,9 +263,15 @@ class groupPointMatchController:
 		minDist = 10000000000
 		indx = -1
 
+		
+		for	i,o in enumerate(relocatepl):		
+			#direction오차를 줌
+			diff_count = 0
+			for j in range(0,4):
+				if(o.direction[j] != checkSdirection[j]):
+					diff_count += 1
 
-		for	i,o in enumerate(relocatepl):
-			if (o.direction[0] != checkSdirection[0]) or (o.direction[1] != checkSdirection[1]) or (o.direction[2] != checkSdirection[2]) or (o.direction[3] != checkSdirection[3]):
+			if diff_count > 1:
 				continue
 			dist = math.sqrt(math.pow(self.point.x - o.rx,2) + math.pow(self.point.y - o.ry,2))
 			if(minDist > dist):
@@ -180,44 +281,38 @@ class groupPointMatchController:
 		if indx != -1:
 			return relocatepl[indx].point
 		else:
-			return None
+			return None'''
 
 	"""
 	각각의 속성을 넣어주는 함수들
 	"""
-	def mgiveSelected(self):
-		insertPoint = self.matchPoint()
-		if insertPoint is not None:
-			insertPoint.selected = True
+	def mgiveSelected(self,matchPoint):
+		if matchPoint is not None:
+			matchPoint.selected = True
 
-	def mgiveAttrPenPair(self):
-		insertPoint = self.matchPoint()
-		if insertPoint is not None:
+	def mgiveAttrPenPair(self,matchPoint):
+		if matchPoint is not None:
 			temp = at.get_attr(self.point,'penPair')
-			at.add_attr(insertPoint,'penPair',temp)
+			at.add_attr(matchPoint,'penPair',temp)
 
-	def mgiveDependX(self):
-		insertPoint = self.matchPoint()
-		if insertPoint is not None:
+	def mgiveDependX(self,matchPoint):
+		if matchPoint is not None:
 			temp = at.get_attr(self.point,'dependX')
-			at.add_attr(insertPoint,'dependX',temp)
+			at.add_attr(matchPoint,'dependX',temp)
 
-	def mgiveDependY(self):
-		insertPoint = self.matchPoint()
-		if insertPoint is not None:
+	def mgiveDependY(self,matchPoint):
+		if matchPoint is not None:
 			temp = at.get_attr(self.point,'dependY')
-			at.add_attr(insertPoint,'dependY',temp)
+			at.add_attr(matchPoint,'dependY',temp)
 
-	def mgiveInnerFill(self):
-		insertPoint = self.matchPoint()
-		if insertPoint is not None:
+	def mgiveInnerFill(self,matchPoint):
+		if matchPoint is not None:
 			temp = at.get_attr(self.point,'innerFill')
-			at.add_attr(insertPoint,'innerFill',temp)
+			at.add_attr(matchPoint,'innerFill',temp)
 
-	def mdeleteAttr(self,attribute):
-		insertPoint = self.matchPoint()
-		if insertPoint is not None:
-			at.del_attr(insertPoint,attribute)		
+	def mdeleteAttr(self,attribute,matchPoint):
+		if matchPoint is not None:
+			at.del_attr(matchPoint,attribute)		
 
 
 

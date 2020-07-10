@@ -31,13 +31,13 @@ def mselectAttribute(groupDict,standardMatrix):
                 if(sp.selected == True):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
-
     for i in range(0,len(controllerList)):
-        if controllerList[i].matchPoint() is not None:
+        mPoint = controllerList[i].matchPoint()
+        if mPoint is not None:
             tmp = list()
-            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
+            tmp.append(mPoint); tmp.append(mPoint.name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveSelected()
+        controllerList[i].mgiveSelected(mPoint)
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
@@ -66,11 +66,12 @@ def mpenPairAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        if controllerList[i].matchPoint() is not None:
+        mPoint = controllerList[i].matchPoint()
+        if mPoint is not None:
             tmp = list()
-            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
+            tmp.append(mPoint); tmp.append(mPoint.name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveAttrPenPair()
+        controllerList[i].mgiveAttrPenPair(mPoint)
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
@@ -98,11 +99,12 @@ def mdependXAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        if controllerList[i].matchPoint() is not None:
+        mPoint = controllerList[i].matchPoint()
+        if mPoint is not None:
             tmp = list()
-            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
+            tmp.append(mPoint); tmp.append(mPoint.name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveDependX()
+        controllerList[i].mgiveDependX(mPoint)
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
@@ -130,11 +132,12 @@ def mdependYAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        if controllerList[i].matchPoint() is not None:
+        mPoint = controllerList[i].matchPoint()
+        if mPoint is not None:
             tmp = list()
-            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
+            tmp.append(mPoint); tmp.append(mPoint.name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveDependY()
+        controllerList[i].mgiveDependY(mPoint)
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
@@ -162,11 +165,12 @@ def minnerFillAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        if controllerList[i].matchPoint() is not None:
+        mPoint = controllerList[i].matchPoint()
+        if mPoint is not None:
             tmp = list()
-            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
+            tmp.append(mPoint); tmp.append(mPoint.name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveInnerFill()
+        controllerList[i].mgiveInnerFill(mPoint)
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
@@ -193,11 +197,12 @@ def mdeleteAttribute(groupDict,standardMatrix,attribute):
                 controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        if controllerList[i].matchPoint() is not None:
+        mPoint = controllerList[i].matchPoint()
+        if mPoint is not None:
             tmp = list()
-            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
+            tmp.append(mPoint); tmp.append(mPoint.name)
             prevPointList.append(tmp)
-        controllerList[i].mdeleteAttr(attribute)
+        controllerList[i].mdeleteAttr(attribute,mPoint)
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)

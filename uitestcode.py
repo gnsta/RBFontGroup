@@ -14,8 +14,10 @@ configPreset = ConfigExtensionSetting(DefaultKey)
 configPreset.checkLangauge()
 configPreset.registerSettings()
 
-testPath = "/Users/font/Desktop/ChineseGroup2.ttf"
+#임시적으로 첨가해놓은 부분
+testPath = GetFile()
 testFile = OpenFont(testPath,showInterface = False)
+
 groupDict = None
 FileNameList = StartProgram(testPath,testFile,CurrentFont())
 #setExtensionDefault(DefaultKey + ".file", CurrentFont())

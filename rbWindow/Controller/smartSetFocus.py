@@ -5,7 +5,7 @@ from groupingTool.tMatrix.PhaseTool import *
 from groupingTool.tMatrix.groupTestController import *
 from groupingTool.tTopology.topologyJudgement import *
 from fontParts.world import CurrentGlyph
-from rbWindow.Controller import smartSetSearchModule 
+from rbWindow.Controller.smartSetSearchModule import *
 import sys
 
 from rbWindow.Controller import toolMenuController as tMC
@@ -33,6 +33,7 @@ def updateAttributeComponent():
 	prevGlyph = getExtensionDefault(DefaultKey+".standardGlyph")
 	prevContour = getExtensionDefault(DefaultKey+".standardContour")
 	prevGroupDict = getExtensionDefault(DefaultKey+".groupDict")
+	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
 	mode = getExtensionDefault(DefaultKey+".mode")
 	font = getExtensionDefault(DefaultKey+".font")
 
@@ -77,7 +78,7 @@ def updateAttributeComponent():
 
 
 						#현재 스마트셋 포커싱
-						checkSetData = searchGroup(currentGlyph, selectedContour.index, mode, font)
+						checkSetData = searchGroup(currentGlyph, selectedContour.index, mode)
 						index = getMatchingSmartSet(checkSetData, currentGlyph, selectedContour.index)
 						
 						updateSmartSetIndex(index)
@@ -124,10 +125,10 @@ def updateSmartSetChanged(selectedContour):
 	mode = getExtensionDefault(DefaultKey + ".mode")
 	font = getExtensionDefault(DefaultKey + ".font")
 	if KoreanCheck == True:
-		checkSetData = searchGroup(glyph, contourNumber, mode, font)
+		checkSetData = searchGroup(glyph, contourNumber, mode)
 		smartSetIndex = getMatchingSmartSet(checkSetData, glyph, contourNumber)
 	else:
-		checkSetData = cSearchGroup(glyph, contourNumber, mode, font)
+		checkSetData = cSearchGroup(glyph, contourNumber, mode)
 		smartSetIndex = cGetMatchingSmartSet(checkSetData, glyph, contourNumber)
 	
 	updateSmartSetIndex(smartSetIndex)

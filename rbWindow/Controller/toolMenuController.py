@@ -63,6 +63,8 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex,checkSetData):
 	jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
 	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
 	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
+	print("jsonFileName1 : ", jsonFileName1)
+	print("jsonFileName2 : ",jsonFileName2)
 
 	contour = standardGlyph.contours[contourIndex]
 

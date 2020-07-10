@@ -52,7 +52,67 @@ class Matrix:
         return self.divk
 
     def getCon(self):
-        return self.con            
+        return self.con
+
+    def getTermX(self):
+        maxx = self.con.bounds[2] + 10
+        minx = self.con.bounds[0] - 10
+
+        term_x = float((maxx - minx) / self.divk)
+
+        return term_x
+
+    def getTermY(self):
+        maxy = self.con.bounds[3] + 10
+        miny = self.con.bounds[1] - 10
+
+        term_y = float((maxy - miny) / self.divk)
+
+        return term_y
+
+
+    def getMatrixCutLine(self):
+        """
+        매트릭스틑 쪼갤 때 나뉘어지는 포인트를 리턴해 줌
+        (point 매칭시 거리계산시 사용)
+        
+        Return:
+            나뉘어지는 포인트 :: list
+                [[x축 기준 포인트], [y축 기준 포인트]]
+        """
+
+        divided_x = list()
+        divided_y = list()
+        res_divided = list()
+
+        maxx = self.con.bounds[2] + 10
+        minx = self.con.bounds[0] - 10
+        maxy = self.con.bounds[3] + 10
+        miny = self.con.bounds[1] - 10
+
+        term_x = float((maxx - minx) / self.divk)
+        term_y = float((maxy - miny) / self.divk)
+
+
+        divided_pointx = minx
+        divided_pointy = miny
+
+        for i in range(0,self.divk):
+            #print("i : ",i)
+            #print("divided_pointx + (term_x * i) :", divided_pointx + (term_x * i))
+            divided_x.append(divided_pointx + (term_x * i))
+            #print(divided_x)
+            #print("divided_pointy + (term_y * i) : ",divided_pointy + (term_y * i))
+            divided_y.append(divided_pointy + (term_y * i))
+            #print(divided_y)
+
+        res_divided.append(divided_x)
+        res_divided.append(divided_y)
+
+        return res_divided
+
+
+
 
     def getPointPart(self,p):
         """
