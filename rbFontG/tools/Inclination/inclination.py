@@ -1,5 +1,7 @@
 from mojo.roboFont import *
 from mojo.drawingTools import fill, oval, rect
+from groupingTool.inclination.contourPen2 import *
+
 
 def getInclination(point1, point2):
 	"""
@@ -34,7 +36,7 @@ def getLine(point,inclination):
 
 	return [a,b]
 
-'''def checkPointPositionToLine(line, point):
+def checkPointPositionToLine(line, point):
 	"""
 	해당 점이 선의 위에 있나 아래에 있나 판별
 
@@ -54,10 +56,10 @@ def getLine(point,inclination):
 	elif res > point.y:
 		return -1
 	else:
-		return 0'''
+		return 0
 
 
-'''def getInsertIndex(startPoint,conotur,line):
+def getInsertIndex(startPoint,conotur,line):
 	"""
 	새로운 점이 들어갈 위치를 찾는 함수
 
@@ -85,54 +87,16 @@ def getLine(point,inclination):
 			res = i-1
 			break
 
-	return res'''
-
-
-def getMatchPoint(line,contour):
-
-	maxx = contour.bounds[2] + 10
-	minx = contour.bounds[0] - 10
-	#maxy = contour.bounds[3] + 10
-	#miny = contour.bounds[1] - 10
-
-
-	count = 0
-	check = 0
-
-	pointList = list()
-
-	for i in range(minx,maxx):
-		j = line[0] * i + line[1]
-		if count == 0:
-			count += 1
-			if contour.pointInside((i,j)):
-				count = 1
-				continue
-			else:
-				count = -1
-				continue
-
-		if count == 1:
-			if !contour.pointInside((i,j)):
-				pointList.append((i,j))
-				count = -1
-		elif count == -1:
-			if contour.pointInside((i,j)):
-				pointList.append((i,j))
-				count = 1
-
-	return pointList
+	return res
 
 
 
-
-def getMatchLineAndContour(inclination,contour,point):
+def getMatchLineAndContour(line,contour,point):
 	"""
-	직선과 컨투어가 만나는 페어점을 반환
+	직선과 컨투어가 만나는 나머지 한 점을 반환
 
 	Args:
-		inclination :: double
-			기준이 되는 직선의 기울기
+		line :: List
 		contour :: RContour
 		point :: RPoint
 			해당 컨투어에서 PenPair를 잡아줄 점
@@ -150,50 +114,10 @@ def getMatchLineAndContour(inclination,contour,point):
 
 	res = currentPen.getDrawPath()
 
-	compareLine = getLine(point,inclination)
-
-
-	pointList = getMatchPoint(compareLine,contour)
-
-	if (len(pointList) % 2) != 0:
-		compareLine[0] += 10
-		pointList = getMatchPoint(compareLine,contour)
-		if (len(pointList) % 2) != 0:
-			compareLine[0] -= 20
-			pointList = getMatchPoint(cimpareLine,contour)
-
-
-
-	#리스트에서 해당 점의 인덱스를 찾아줌
-	min_diff = 100000
-	point_idx = -1
-
-	for i in range(0,len(pointList)):
-		_diff = abs(pointList.x - point.x) + abs(pointList.y - point.y)
-
-		if min_diff < _diff:
-			point_idx = i
-			min_diff = _diff
-
-
-	if point_idx % 2 == 0:
-		return pointList[point_idx - 1]
-	else:
-		return pointList[point_idx + 1]
-
-
-
-
-
-
-
-
-
-
 	#직선과 컨투어가 만나는 점을 구함
-	'''for i in range(0,len(res)):
+	for i in range(0,len(res)):
 		#직선일때의 값
-		line_amount = compareLine[0]*res[0] + compareLine[1]
+		line_amount = line[0]*res[0] + line[1]
 
 		#곡선위의 값과의 차이
 		_diff = abs(line_amount - res[1])
@@ -216,9 +140,9 @@ def getMatchLineAndContour(inclination,contour,point):
 	else:
 		insert_location = point2_location
 
-	return insert_location'''
+	return insert_location
 
-'''def insertPointToContour(standardPoint1, standardPoint2, contour, comparePoint1):
+def insertPointToContour(standardPoint1, standardPoint2, contour, comparePoint1):
 	"""
 	기준 컨투어에서 쌍을 만들었을 때 비교 컨투어에 해당 페어점을 추가
 
@@ -238,6 +162,6 @@ def getMatchLineAndContour(inclination,contour,point):
 	#들어갈 위치 정보를 가져옴
 	pointLocation = getMatchLineAndContour(lineInfo,contour,comparePoint1)
 
-	contours.insertPoint(indexInfo,pointLocation,type="curve",smooth=True)'''
+	contours.insertPoint(indexInfo,pointLocation,type="curve",smooth=True)
 
 
