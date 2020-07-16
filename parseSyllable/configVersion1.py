@@ -1,4 +1,4 @@
-from groupingTool.parseUnicodeControll import *
+from rbFontG.tools.parseUnicodeControll import *
 
 vertical = 0
 horizontal = 1

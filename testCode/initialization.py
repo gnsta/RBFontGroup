@@ -1,5 +1,5 @@
 from jsonConverter.makeJsonFile import *
-from groupingTool.clockWise.clockWiseGroup import *
+from jsonConverter.clockWiseGroup import *
 import rbWindow.editWindow as ew
 from parseSyllable.configSyllable import *
 from mojo.UI import *
@@ -13,8 +13,6 @@ class FileExist(Exception):
         
     def __str__(self):
         return self.msg
-
-
 
 def checkLanguage(CurrentFont):
     """
@@ -56,7 +54,6 @@ def StartProgram(testPath,testFile,CurrentFont):
     #if KoreanCheck == True:
         #MakeJsonController(testPath,testFile)
 
-
     insert = dict()
     barProcess = 0
 
@@ -72,7 +69,6 @@ def StartProgram(testPath,testFile,CurrentFont):
         bar = ProgressBar('start',len(testFile),'initial setting...')
         barProcess = 0
 
-    #1차필터링
     try:
         jsonFileName1 = os.path.dirname(os.path.abspath(__file__)) + '/jsonResource/' + tempFileName.split('.')[0] + '.json'
         if os.path.exists(jsonFileName1):
@@ -93,6 +89,7 @@ def StartProgram(testPath,testFile,CurrentFont):
 
 
     insert = dict()
+
     #한글의 음절 분리 경우에만!
     if KoreanCheck == True:
        try:

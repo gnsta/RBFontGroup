@@ -1,15 +1,13 @@
-from groupingTool.tMatrix.PhaseTool import *
+from rbFontG.tools.tMatrix.PhaseTool import *
 import math
 import numpy as np
-
-"""
-    create by Kim heesup
-"""
-
 class groupTestController:
+    """
+    create by Kim heesup
+    """
     def __init__(self,matrix,k):
         """
-        Matrix 방법을 이용한 그룹화 진행 
+        conduct inspectation about whether same group
         
         Args:
             matrix :: Matrix object
@@ -23,16 +21,17 @@ class groupTestController:
 
         self.standardMatrix = np.array(self.matrix.getMatrix())
     def conCheckGroup2(self,con):
-        """
-        현재의 메트릭스에 대하여 새로운 Contour에 대하여 같은 그룹인지 조사
+        """inspect that glyph inlcude same contour
         
         Args:
-            con :: RContour
-                조사하고자 하는 컨투어
+            con : want to check contour
             
-        Returns:
-            포함 여부 :: Boolean
-                포함 - True, 포함 안함 - False
+        return:
+        if contour is included return contour else return None
+        
+        2020/03/12
+        modify by Kim heesup
+        change by numpy and modify np.all condition
         """
         sl = self.matrix.getDivideStatus() #standard position
         
@@ -64,12 +63,10 @@ class groupTestController:
         (한문을 위해 제작하였으나 현재는 한글, 한자 모두에 적용)
 
         Args:
-            con :: RContour
-                조사하고자 하는 컨투어
-            
-        Returns:
-            포함 여부 :: Boolean
-                포함 - True, 포함 안함 - False
+            con :: want to check contour
+        
+        return:
+        if contour is included return contour else return Non
         """
 
         compareMatrix = np.array(Matrix(con,self.matrix.getdivk()).getMatrix())
@@ -88,16 +85,13 @@ class groupTestController:
 
 
     def glyphCheckGroup(self,glyph):
-        """
-        글리프에 대햐여 해당 메크릭스와 같은 그룹인지 판별하는 함수
+        """Check that glyph include same contour
         
         Args:
-            glyph :: RGlyph
-                조사하고자 하는 클리프
+            glyphs : checked glyphs
             
-        Returns:
-            포함 여부 :: Boolean
-                포함 - True, 포함 안함 - False
+        return:
+        if glyph has included contour return glyph and contou else return None
         """ 
 
         rl = []

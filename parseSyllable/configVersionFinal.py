@@ -2,9 +2,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pylab as plt
 from sklearn.cluster import KMeans
-from groupingTool.parseUnicodeControll import *
+from rbFontG.tools.parseUnicodeControll import *
 from parseSyllable.utility.contourDistributionChart import *
-from groupingTool.parseUnicodeControll import *
+from rbFontG.tools.parseUnicodeControll import *
 import os
 import json
 from mojo.UI import *
@@ -21,11 +21,14 @@ class PositionState:
         con:: RContour
             관리하고자 하는 RContour 
     """
+
+class PositionState:
+
     def __init__(self,con,conNumber):
         self.con = con
         self.conNumber = conNumber
-
 class PointInfo:
+
     """
     점의 위치를 관리하기 위한 클래스
 
@@ -38,7 +41,6 @@ class PointInfo:
     def __init__(self,x,y):
         self.x = x
         self.y = y
-
 class FileExist(Exception):
     """
     그룹 정보를 담는 json파일의 존재 유무를 확인하기 위한 예외 클래스
@@ -70,16 +72,6 @@ class SyllableJudgement:
         파일이 존재하지 않을 시 에러를 반환 :: FileExist
     """
     def __init__(self, fontFile, fontPath):
-        """
-        한글의 경우를 12가지 케이스로 나눔
-        1 group : 'ㅏ','ㅑ','ㅓ','ㅕ','ㅣ','ㅐ'
-        2 group : 'ㅔ','ㅖ','ㅒ'
-        3 group : 'ㅗ','ㅛ','ㅜ','ㅠ','ㅡ'
-        4 group : 'ㅘ','ㅚ','ㅟ', 'ㅢ','ㅙ'
-        5 group : 'ㅝ'
-        6 group : 'ㅞ'
-        (종성의 유무에 따라 각각 2가치 케이스로 더 나뉘고 총 12가지 케이스로 나뉨)
-        """
 
         self.middle_one = ['ㅏ','ㅑ','ㅓ','ㅕ','ㅣ','ㅐ']
         self.middle_two = ['ㅔ','ㅖ','ㅒ']
@@ -98,8 +90,6 @@ class SyllableJudgement:
                     with open(self.jsonFileName, 'r') as jsonFile:
                         self.infoDict = json.load(jsonFile)
                     raise FileExist('라벨 파일은 이미 존재합니다')
-
-                print("self.infoDict : ", self.infoDict)
 
                 axis_x1 = list()
                 axis_x2 = list()
@@ -128,20 +118,19 @@ class SyllableJudgement:
                 bar = ProgressBar('Analysis Progress',len(fontFile),'analysis...')
                 barProcess = 0
 
-                #각 케이스대로 데이터를 분류 (종성이 있는 경우)
+                #각 케이스대로 데이터를 분류
                 for gly in fontFile:
                     puc = parseUnicodeController(gly.unicode)
                     chars = puc.getChars()
                     barProcess += 1
-                    # 종성O, 케이스1의 경우
+                    #종성 케이스1의 경우
                     if (chars[1] in self.middle_one) and (chars[2] is not None):
                         for i,con in enumerate(gly.contours):
                             temp = getContourPosition(gly,con,10000,10000)
                             point_list1.append(PointInfo(temp[0],temp[1]))
                             axis_x1.append(temp[0])
                             axis_y1.append(temp[1])
-                            check_glyph1.append([gly,i])
-                    # 종성O, 케이스2의 경우                 
+                            check_glyph1.append([gly,i])                 
                     elif chars[1] in self.middle_two and (chars[2] is not None):
                         for i,con in enumerate(gly.contours):
                             temp = getContourPosition(gly,con,10000,10000)
@@ -149,7 +138,6 @@ class SyllableJudgement:
                             axis_x2.append(temp[0])
                             axis_y2.append(temp[1])
                             check_glyph2.append([gly,i])
-                    # 종성O, 케이스4의 경우
                     elif chars[1] in self.middle_four and (chars[2] is not None):
                         for i,con in enumerate(gly.contours):
                             temp = getContourPosition(gly,con,10000,10000)
@@ -157,7 +145,6 @@ class SyllableJudgement:
                             axis_x4.append(temp[0])
                             axis_y4.append(temp[1])
                             check_glyph4.append([gly,i])
-                    # 종성O, 케이스5의 경우
                     elif chars[1] in self.middle_five and (chars[2] is not None):
                         for i,con in enumerate(gly.contours):
                             temp = getContourPosition(gly,con,10000,10000)
@@ -165,7 +152,6 @@ class SyllableJudgement:
                             axis_x5.append(temp[0])
                             axis_y5.append(temp[1])
                             check_glyph5.append([gly,i])
-                    # 종성O, 케이스6의 경우
                     elif chars[1] in self.middle_six and (chars[2] is not None):
                         for i,con in enumerate(gly.contours):
                             temp = getContourPosition(gly,con,10000,10000)
@@ -325,8 +311,9 @@ class SyllableJudgement:
 
         return labels
 
-    def GetSyllable(self,glyph):
+    def GetSyllable(self,RGlyph):
         """
+
         글리프에 대한 초성, 중성, 종성 컨투어를 반환
         
         Args:
@@ -336,43 +323,42 @@ class SyllableJudgement:
             글리프에 대한 초성, 중성, 종성 컨투어에 대한 정보를 반환 :: list
             Example
             [[초성 컨투어 숫자], [중성 컨투어 숫자], [종성 컨투어 숫자]]
-    
         """
 
         resultList = list()
         resultDict = dict()
         
-        puc = parseUnicodeController(glyph.unicode)
+        puc = parseUnicodeController(RGlyph.unicode)
         chars = puc.getChars()
         
         if chars[2] is None:
             if chars[1] in self.middle_one:
-                resultList = self.case1(glyph)
+                resultList = self.case1(RGlyph)
             elif chars[1] in self.middle_two:
-                resultList = self.case3(glyph)
+                resultList = self.case3(RGlyph)
             elif chars[1] in self.middle_three:
-                resultList = self.case5(glyph)
+                resultList = self.case5(RGlyph)
             elif chars[1] in self.middle_four:
-                resultList = self.case7(glyph)
+                resultList = self.case7(RGlyph)
             elif chars[1] in self.middle_five:
-                resultList = self.case9(glyph)
+                resultList = self.case9(RGlyph)
             elif chars[1] in self.middle_six:
-                resultList = self.case11(glyph)
+                resultList = self.case11(RGlyph)
         else:
             if chars[1] in self.middle_one:
-                resultList = self.case2(glyph)
+                resultList = self.case2(RGlyph)
             elif chars[1] in self.middle_two:
-                resultList = self.case4(glyph)
+                resultList = self.case4(RGlyph)
             elif chars[1] in self.middle_three:
-                resultList = self.case5(glyph)
+                resultList = self.case5(RGlyph)
             elif chars[1] in self.middle_four:
-                resultList = self.case8(glyph)
+                resultList = self.case8(RGlyph)
             elif chars[1] in self.middle_five:
-                resultList = self.case10(glyph)
+                resultList = self.case10(RGlyph)
             elif chars[1] in self.middle_six:
-                resultList = self.case12(glyph)
+                resultList = self.case12(RGlyph)
                 
-        resultDict[str(glyph.unicode)] = resultList
+        resultDict[str(RGlyph.unicode)] = resultList
         
         return resultDict
 
@@ -391,7 +377,7 @@ class SyllableJudgement:
     """
     def case1(self,glyph):
         """
-        종성X , 중성 그룹1
+        middle one , no final
         """
     
         point_list = list()
@@ -420,7 +406,7 @@ class SyllableJudgement:
 
     def case2(self,glyph):
         """
-        종성O , 중성 그룹1
+        middle one, exist final
         """
     
         point_list = list()
@@ -429,7 +415,6 @@ class SyllableJudgement:
         middle = list()
         final = list()
         output = list()
-        print("self.jsonFileName : ", self.jsonFileName)
     
         for i in range(0,len(glyph.contours)):
             if self.infoDict["final label1"] ==  self.infoDict[glyph.name + '/' + str(i)]:
@@ -453,7 +438,7 @@ class SyllableJudgement:
 
     def case3(self,glyph):
         """
-        종성X , 중성 그룹2
+        middle two, no final
         """
     
         point_list = list()
@@ -517,7 +502,7 @@ class SyllableJudgement:
 
     def case5(self,glyph):
         """
-        종성 유무 상관없음 , 중성 그룹1
+        middle three, does not matter final
         """
     
         point_list = list()
@@ -554,7 +539,7 @@ class SyllableJudgement:
 
     def case7(self,glyph):
         """
-        종성X , 중성 그룹4
+        middle four, exist final
         """   
         point_list = list()
     
@@ -583,7 +568,7 @@ class SyllableJudgement:
 
     def case8(self,glyph):
         """
-        종성O , 중성 그룹4
+        middle four, exist final
         """
     
         point_list = list()
@@ -615,7 +600,7 @@ class SyllableJudgement:
 
     def case9(self,glyph):
         """
-        종성X , 중성 그룹5
+        middle five, no final
         """
     
         point_list = list()
@@ -650,7 +635,7 @@ class SyllableJudgement:
 
     def case10(self,glyph):
         """
-        종성O , 중성 그룹5
+        middle five, exist final
         """
     
         point_list = list()
@@ -687,7 +672,7 @@ class SyllableJudgement:
 
     def case11(self,glyph):
         """
-        종성X , 중성 그룹6
+        middle six, no final
         """
     
         point_list = list()
@@ -723,7 +708,7 @@ class SyllableJudgement:
 
     def case12(self,glyph):
         """
-        종성O , 중성 그룹1
+        middle five, exist final
         """
         
         point_list = list()

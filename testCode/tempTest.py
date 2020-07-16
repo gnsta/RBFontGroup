@@ -1,7 +1,12 @@
 from rbWindow.editWindow import *
 from rbWindow.converter import *
+<<<<<<< HEAD
 import groupingTool.tMatrix.PhaseTool
 import groupingTool.tMatrix.groupTestController
+=======
+import rbFontG.tools.tMatrix.PhaseTool
+import rbFontG.tools.tMatrix.groupTestController
+>>>>>>> parent of f58663d... merge completed
 import rbWindow.editWindow as ew
 import json
 if __name__ == '__main__':
@@ -12,6 +17,7 @@ if __name__ == '__main__':
     testFile = OpenFont(testPath,showInterface = False)
     
     jsonPath = "/Users/font/Desktop/myJSON.json"
+
     
     c = g.contours[0]
     

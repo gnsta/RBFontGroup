@@ -1,5 +1,5 @@
-from groupingTool.tTopology.topologyJudgement import *
-from groupingTool.tTopology.topologyAssignment import *
+from rbFontG.tools.tTopology.topologyJudgement import *
+from rbFontG.tools.tTopology.topologyAssignment import *
 from jsonConverter.converter import *
 from mojo.extensions import *
 from mojo.roboFont import CurrentGlyph

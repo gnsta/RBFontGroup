@@ -1,6 +1,6 @@
 import pandas as pd 
 import matplotlib.pylab as plt
-from groupingTool.parseUnicodeControll import *
+from rbFontG.tools.parseUnicodeControll import *
 from parseSyllable.utility.contourDistributionChart import *
 
 def getGravity(con):

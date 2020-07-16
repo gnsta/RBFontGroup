@@ -5,7 +5,7 @@ size = (30,30)
 originPath = "/Users/font/Desktop/image/"
 destPath = "/Users/font/Desktop/image/resized/"
 srcImageList = ["dependX.png", "dependY.png", "innerFill.png", "penPair.png", "rubbish.png", "select.png"]
-
+new_color = None
 if __name__ == "__main__":
     
     try:

@@ -3,6 +3,7 @@ import rbWindow.Controller.toolMenuController as tMC
 import rbWindow.Controller.toolMenuControllerChinese as ctMC
 from mojo.UI import Message
 
+
 def searchGroupProcess():
 	
 	selectedDict = dict()
@@ -20,10 +21,12 @@ def searchGroupProcess():
 		return
 
 	contourIndex = list(selectedDict.keys())[0]
+	file = getExtensionDefault(DefaultKey+".file")
 	jsonFilePath = getExtensionDefault(DefaultKey+".jsonFilePath")
 	mode = getExtensionDefault(DefaultKey+".mode")
 	jsonFileName1 = getExtensionDefault(DefaultKey+".jsonFileName1")
 	jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
+	font = getExtensionDefault(DefaultKey+".font")
 	groupDict = getExtensionDefault(DefaultKey+".groupDict")
 	KoreanCheck = getExtensionDefault(DefaultKey+".korean")
 	print("Short Cut KoreanCheck : ", KoreanCheck)

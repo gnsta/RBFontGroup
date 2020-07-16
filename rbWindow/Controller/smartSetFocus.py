@@ -1,15 +1,14 @@
 from mojo.UI import *
 from rbWindow.ExtensionSetting.extensionValue import *
 from parseSyllable.configSyllable import *
-from groupingTool.tMatrix.PhaseTool import *
-from groupingTool.tMatrix.groupTestController import *
-from groupingTool.tTopology.topologyJudgement import *
+from rbFontG.tools.tMatrix.PhaseTool import *
+from rbFontG.tools.tMatrix.groupTestController import *
+from rbFontG.tools.tTopology.topologyJudgement import *
+from jsonConverter.smartSetSearchModule import *
 from fontParts.world import CurrentGlyph
-from rbWindow.Controller.smartSetSearchModule import *
 import sys
 
 from rbWindow.Controller import toolMenuController as tMC
-from rbWindow.Controller import toolMenuControllerChinese as ctMC
 
 from mojo.extensions import *
 
@@ -117,6 +116,7 @@ def updateSmartSetChanged(selectedContour):
 			True : 갱신된 컨투어에 해당되는 스마트 셋이 존재하는 경우
 			False : 갱신된 컨투어에 해당되는 스마트 셋이 존재하지 않는 경우 
 	"""
+
 	#print(sys.path)
 	KoreanCheck = getExtensionDefault(DefaultKey+".korean")
 
@@ -140,11 +140,11 @@ def updateSmartSetChanged(selectedContour):
 			matrix = Matrix(selectedContour, matrix_size); 
 			setExtensionDefault(DefaultKey+".matrix", matrix)
 		
-		#print("checkSetData : ",checkSetData," file : ",file," mode : ",mode)
 		if KoreanCheck == True:
 			groupDict = tMC.findContoursGroup(checkSetData,mode)
 		else:
 			groupDict = ctMC.cFindContoursGroup(checkSetData, mode)
+
 		setExtensionDefault(DefaultKey+".groupDict", groupDict)
 		setExtensionDefault(DefaultKey+".contourNumber", contourNumber)
 		setExtensionDefault(DefaultKey+".standardContour", selectedContour)
@@ -213,7 +213,6 @@ def cGetMatchingSmartSet(checkSetData, glyph, contourNumber):
 
 	return None
 
-
 def getMatchingSmartSet(checkSetData, glyph, contourNumber):
 	"""
 		현재 속성을 부여하려고 시도한 그룹 딕셔너리가 바뀌는 경우 교체하기 위한 메소드(한글 버전)
@@ -227,7 +226,7 @@ def getMatchingSmartSet(checkSetData, glyph, contourNumber):
 	matrix_margin = getExtensionDefault(DefaultKey + ".matrix_margin")
 	topology_margin = getExtensionDefault(DefaultKey + ".topology_margin")
 	matrix_size = getExtensionDefault(DefaultKey + ".matrix_size")
-	font = getExtensionDefault(DefaultKey + ".font")
+	file = getExtensionDefault(DefaultKey + ".file")
 	
 	if mode is matrixMode:
 		searchMode = "Matrix"
@@ -271,7 +270,7 @@ def getMatchingSmartSet(checkSetData, glyph, contourNumber):
 				continue
 
 			if mode == 0:
-				standardGlyph = font["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+				standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
 
 				standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
 				compareController = groupTestController(standardMatrix,matrix_margin)
@@ -283,7 +282,7 @@ def getMatchingSmartSet(checkSetData, glyph, contourNumber):
 
 
 			elif mode == 1:
-				standardGlyph = font["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+				standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
 				result = topologyJudgementController(standardGlyph.contours[standardIdx],glyph[contourNumber],topology_margin).topologyJudgement()
 
 				if result is not False: 

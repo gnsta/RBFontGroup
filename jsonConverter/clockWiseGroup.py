@@ -1,8 +1,8 @@
 import numpy as np
 import json
-from groupingTool.tMatrix import PhaseTool as pt
-from groupingTool.tMatrix import groupTestController as gtc
-from groupingTool.tMatrix import groupPointMatch as gpm
+from rbFontG.tools.tMatrix import PhaseTool as pt
+from rbFontG.tools.tMatrix import groupTestController as gtc
+from rbFontG.tools.tMatrix import groupPointMatch as gpm
 
 def consistClockWise(con):
     pointList = list(con.points)
@@ -70,6 +70,7 @@ def getClockDirection(point1 , point2, point3):
 
 def sortByStartingPoint(pointList):
     """
+
     포인트 리스트에 대하여 y값을 기준으로 오름차순으로 정렬, 만약 y값이 값으면 x값을 기준으로 오름차순 정렬
 
     Args:
@@ -183,6 +184,7 @@ def getClockWiseList(con):
     value = getClockDirection(sortPointList[len(sortPointList) - 1], sortPointList[0], sortPointList[1])
     renewDict(value,res)
     
+    #print(res)
     
     if res['check'] == initCheck:
         if initCheck >=0:
@@ -192,11 +194,5 @@ def getClockWiseList(con):
             if res['forword'] != 1: 
                 res['forword'] -= 1
     
+
     return res
-
-  
-    
-
-
-                
-            

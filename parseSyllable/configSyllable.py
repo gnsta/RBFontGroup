@@ -1,4 +1,4 @@
-from groupingTool.parseUnicodeControll import *
+from rbFontG.tools.parseUnicodeControll import *
 from parseSyllable.configVersion1 import *
 from parseSyllable.configVersion2 import *
 from parseSyllable.configVersion3 import *

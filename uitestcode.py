@@ -11,16 +11,16 @@ from parseSyllable.configVersionFinal import *
 
 print("uiTEST started")
 configPreset = ConfigExtensionSetting(DefaultKey)
-configPreset.checkLangauge()
 configPreset.registerSettings()
 
 #임시적으로 첨가해놓은 부분
 testPath = GetFile()
+
 testFile = OpenFont(testPath,showInterface = False)
 
 groupDict = None
-FileNameList = StartProgram(testPath,testFile,CurrentFont())
-#setExtensionDefault(DefaultKey + ".file", CurrentFont())
+FileNameList = StartProgram(testPath,testFile)
+setExtensionDefault(DefaultKey + ".file", CurrentFont())
 setExtensionDefault(DefaultKey + ".font", CurrentFont())
 setExtensionDefault(DefaultKey + ".jsonFileName1", FileNameList[0])
 setExtensionDefault(DefaultKey + ".jsonFileName2", FileNameList[1])

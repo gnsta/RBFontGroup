@@ -1,10 +1,10 @@
 import pathManager.pathSetting as extPath
 from vanilla import FloatingWindow, RadioGroup, Button, HUDFloatingWindow, ImageButton, TextBox, EditText, CheckBox
-from groupingTool.tTopology import topologyButtonEvent as tbt
-from groupingTool.tMatrix import matrixButtonEvent as mbt
-from groupingTool.tMatrix.PhaseTool import *
+from rbFontG.tools.tTopology import topologyButtonEvent as tbt
+from rbFontG.tools.tMatrix import matrixButtonEvent as mbt
+from rbFontG.tools.tMatrix.PhaseTool import *
 from mojo.UI import *
-from rbWindow.Controller import smartSetSearchModule 
+from jsonConverter.smartSetSearchModule import *
 from rbWindow.Controller.toolMenuController import *
 from rbWindow.Controller.smartSetFocus import *
 from rbWindow.ExtensionSetting.extensionValue import *
@@ -170,6 +170,7 @@ class attributeWindow:
 		mode = getExtensionDefault(DefaultKey + ".mode")
 		font = getExtensionDefault(DefaultKey + ".font")
 		checkSetData = searchGroup(glyph, contourNumber, mode, font)
+
 		smartSetIndex = getMatchingSmartSet(checkSetData, glyph, contourNumber)
 		smartSetIndexList = list()
 		smartSetIndexList.append(smartSetIndex+1) # 0번째는 All Glyphs이므로
@@ -186,7 +187,7 @@ class attributeWindow:
 				matrix = Matrix(selectedContour, matrix_size); 
 				setExtensionDefault(DefaultKey+".matrix", matrix)
 			
-			groupDict = findContoursGroup(checkSetData, font, mode)
+			groupDict = findContoursGroup(checkSetData, file, mode)
 			setExtensionDefault(DefaultKey+".groupDict", groupDict)
 			setExtensionDefault(DefaultKey+".contourNumber", contourNumber)
 			setExtensionDefault(DefaultKey+".standardContour", selectedContour)
@@ -211,6 +212,7 @@ class attributeWindow:
 		topology_margin = getExtensionDefault(DefaultKey + ".topology_margin")
 		matrix_size = getExtensionDefault(DefaultKey + ".matrix_size")
 		font = getExtensionDefault(DefaultKey + ".font")
+
 		
 		if mode is matrixMode:
 			searchMode = "Matrix"
@@ -254,7 +256,7 @@ class attributeWindow:
 					continue
 
 				if mode == 0:
-					standardGlyph = font["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+					standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
 
 					standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
 					compareController = groupTestController(standardMatrix,matrix_margin)
@@ -266,7 +268,7 @@ class attributeWindow:
 
 
 				elif mode == 1:
-					standardGlyph = font["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
+					standardGlyph = file["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
 					result = topologyJudgementController(standardGlyph.contours[standardIdx],glyph[contourNumber],topology_margin).topologyJudgement()
 
 					if result is not False: 
