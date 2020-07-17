@@ -1,6 +1,5 @@
 from mojo.roboFont import *
-from mojo.drawingTools import fill, oval, rect
-from groupingTool.inclination.contourPen2 import *
+from rbWindow.contourPen import BroadNibPen
 
 
 def getInclination(point1, point2):
@@ -84,16 +83,18 @@ def getInsertIndex(startPoint,conotur,line):
 		if compareCheck == standardCheck:
 			continue
 		else:
-			res = i-1
+			res = i
 			break
 
 	return res
 
 
 
+
+
 def getMatchLineAndContour(line,contour,point):
 	"""
-	직선과 컨투어가 만나는 나머지 한 점을 반환
+	직선과 컨투어가 만나는 점을 반환
 
 	Args:
 		line :: List
@@ -105,63 +106,11 @@ def getMatchLineAndContour(line,contour,point):
 		두 점에 대한 정보
 	"""
 
-	min1 = 1000000
-	min2 = 1000000
-
-	currentPen = BroadNibPen2(None,100,30,30,0,oval)
+	currentPen = BoardNibPen(None,100,30,30,0,oval)
 
 	contour.draw(currentPen)
 
-	res = currentPen.getDrawPath()
+	res = _getDrawPath()
 
-	#직선과 컨투어가 만나는 점을 구함
 	for i in range(0,len(res)):
-		#직선일때의 값
-		line_amount = line[0]*res[0] + line[1]
-
-		#곡선위의 값과의 차이
-		_diff = abs(line_amount - res[1])
-
-		#최소값이면 갱신 
-		if min1 > _diff:
-			min1 = _diff
-			point1_location = res[i]
-		elif min2 > _diff:
-			min2 = _diff
-			point2_location = res[i]
-		else:
-			continue
-
-	location_diff1 = abs(point.x - point1_location[0]) + abs(point.y - point1_location[1])
-	location_diff2 = abs(point.y - point2_loaction[0]) + abs(point.y - point2_location[1])
-
-	if location_diff1 > location_diff2:
-		insert_location = point1_location
-	else:
-		insert_location = point2_location
-
-	return insert_location
-
-def insertPointToContour(standardPoint1, standardPoint2, contour, comparePoint1):
-	"""
-	기준 컨투어에서 쌍을 만들었을 때 비교 컨투어에 해당 페어점을 추가
-
-	Args:
-		standardPoint1 :: RPoint
-		standardPoint2 :: RPoint
-		contour :: RContour
-		comparePoint :: RPoint
-	"""
-
-	#직선의 정보를 가져옴
-	lineInfo = getLine(standardPoint1,getInclination(standardPoint1,standardPoint2))
-
-	#들어갈 인덱스 정보를 가져옴
-	indexInfo = getInsertIndex(comparePoint1, contour, lineInfo)
-
-	#들어갈 위치 정보를 가져옴
-	pointLocation = getMatchLineAndContour(lineInfo,contour,comparePoint1)
-
-	contours.insertPoint(indexInfo,pointLocation,type="curve",smooth=True)
-
-
+		print(res[i])
