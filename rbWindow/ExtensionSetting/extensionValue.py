@@ -1,18 +1,52 @@
 # 익스텐션 초기 기본 값 설정 (프로그램 초기 구동 시에 딱 한 번만 수행되고 이후론 수행하지 않음)
 from AppKit import NSColor
 from mojo.extensions import *
-from rbWindow.Controller import linkedStack
-from rbWindow.Controller.linkedStack import *
-from fontParts.world import CurrentFont
+from rbWindow.Controller.CircularQueue import *
+from fontParts.world import CurrentFont, OpenFont
+from mojo.UI import *
+
 
 DefaultKey = "com.robofontTool.rbFontGroup"
 rewindBufferSize = 50
+
+def launchFontTool():
+
+	currentFont = CurrentFont()
+	if currentFont is not None:
+		# 전에 열었던 폰트 파일과 같다면 굳이 물어볼 필요가 없다. (getExtensionDefault가 잘 안먹히는 오류가 있긴 함)
+		if currentFont == getExtensionDefault(DefaultKey+".font"):
+			return getExtensionDefault(DefaultKey+".testPath"), currentFont
+		
+		testPath = currentFont.path
+
+		if testPath is None:
+			dontShowAgainMessage(messageText='폰트 파일 경로를 알 수 없습니다.'
+				, informativeText='.ttf의 경우, 폰트 파일 경로를 알 수 없어 파일 탐색기를 통해 선택해야 합니다.\n.ttf를 .ufo로 바꾸려면 [File]-[Save]를 눌러주세요'
+				, alertStyle=2, dontShowAgainKey=DefaultKey)
+			target = GetFile()
+			if target is None:
+				quit()
+
+			if target is not None:
+				OpenFont(target)
+				
+		else:
+			target = testPath
+
+	else:
+		target = GetFile()
+
+		if target is not None:
+			OpenFont(target)
+
+	print("target (testPath) = ", target)
+	return target, currentFont
 
 class ConfigExtensionSetting:
 
 	def __init__(self, registerKey):
 
-		bufferStack = Stack(rewindBufferSize)
+		bufferStack = CircularQueue(rewindBufferSize)
 
 		self.registerKey = registerKey
 		self.defaults = {
@@ -23,9 +57,11 @@ class ConfigExtensionSetting:
 		    self.registerKey + ".jsonFilePath": None,
 		    self.registerKey + ".jsonFileName1": None,
 		    self.registerKey + ".jsonFileName2": None,
-		    #self.registerKey + ".file": None,
+		    self.registerKey + ".testPath": None,
+
 		    
 		    self.registerKey + ".mode": 0,
+		    self.registerKey + ".state": False,
 
 		    self.registerKey + ".margin": 20,
 		    self.registerKey + ".width": 100,
@@ -55,7 +91,7 @@ class ConfigExtensionSetting:
 		}
 
 		self.checkLangauge()
-
+		
 
 	def registerSettings(self):
 		"""
@@ -63,6 +99,16 @@ class ConfigExtensionSetting:
 			Extension에 대한 기본적인 설정값을 등록한다.
 		"""
 		registerExtensionDefaults(self.defaults)
+
+		# registerExtensionDefaults가 잘 동작하지 않을 때도 많아서 중요 고정값들은 틀리지 않게 설정
+		setExtensionDefault(self.registerKey + ".margin", 20)
+		setExtensionDefault(self.registerKey + ".width", 100)
+		setExtensionDefault(self.registerKey + ".height", 100)
+		setExtensionDefault(self.registerKey + ".k", 500)
+
+		setExtensionDefault(self.registerKey + ".matrix_margin", 20)
+		setExtensionDefault(self.registerKey + ".matrix_size", 3)
+		setExtensionDefault(self.registerKey + ".topology_margin", 500)
 
 	def removeSettings(self):
 

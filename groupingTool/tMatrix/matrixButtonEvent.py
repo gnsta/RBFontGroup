@@ -15,11 +15,7 @@ def mselectAttribute(groupDict,standardMatrix):
     prevPointList = list()
     restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
 
-    g = CurrentGlyph()
-    for point in g.selectedPoints:
-        tmp = list()
-        tmp.append(point); tmp.append(point.name)
-        prevPointList.append(tmp)
+    empty = restoreStack.isEmpty()
 
     for k in groupDict.keys():
         for i in range(0,len(groupDict[k])):
@@ -32,16 +28,22 @@ def mselectAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        mPoint = controllerList[i].matchPoint()
-        if mPoint is not None:
+        controllerList[i].mgiveSelected()
+        if controllerList[i].matchPoint() is not None and empty is True:
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
+            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveSelected(mPoint)
 
-    restoreStack.push(prevPointList)
-    setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
-    
+    if empty is True:
+        g = CurrentGlyph()
+        for point in g.selectedPoints:
+            tmp = list()
+            tmp.append(point); tmp.append(point.name)
+            prevPointList.append(tmp)
+
+        restoreStack.push(prevPointList)
+        setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
+        
 
 def mpenPairAttribute(groupDict,standardMatrix):
     controllerList = []
@@ -49,11 +51,7 @@ def mpenPairAttribute(groupDict,standardMatrix):
     prevPointList = list()
     restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
 
-    g = CurrentGlyph()
-    for point in g.selectedPoints:
-        tmp = list()
-        tmp.append(point); tmp.append(point.name)
-        prevPointList.append(tmp)
+
 
     for k in groupDict.keys():
         for i in range(0,len(groupDict[k])):
@@ -66,12 +64,17 @@ def mpenPairAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        mPoint = controllerList[i].matchPoint()
-        if mPoint is not None:
+        controllerList[i].mgiveAttrPenPair()
+        if controllerList[i].matchPoint() is not None:
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
+            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveAttrPenPair(mPoint)
+
+    g = CurrentGlyph()
+    for point in g.selectedPoints:
+        tmp = list()
+        tmp.append(point); tmp.append(point.name)
+        prevPointList.append(tmp)
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
@@ -82,12 +85,6 @@ def mdependXAttribute(groupDict,standardMatrix):
     prevPointList = list()
     restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
 
-    g = CurrentGlyph()
-    for point in g.selectedPoints:
-        tmp = list()
-        tmp.append(point); tmp.append(point.name)
-        prevPointList.append(tmp)
-
     for k in groupDict.keys():
         for i in range(0,len(groupDict[k])):
             contoursList.append(k.contours[groupDict[k][i]])
@@ -99,12 +96,17 @@ def mdependXAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        mPoint = controllerList[i].matchPoint()
-        if mPoint is not None:
+        controllerList[i].mgiveDependX()
+        if controllerList[i].matchPoint() is not None:
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
+            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveDependX(mPoint)
+
+    g = CurrentGlyph()
+    for point in g.selectedPoints:
+        tmp = list()
+        tmp.append(point); tmp.append(point.name)
+        prevPointList.append(tmp)
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
@@ -115,12 +117,6 @@ def mdependYAttribute(groupDict,standardMatrix):
     prevPointList = list()
     restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
 
-    g = CurrentGlyph()
-    for point in g.selectedPoints:
-        tmp = list()
-        tmp.append(point); tmp.append(point.name)
-        prevPointList.append(tmp)
-
     for k in groupDict.keys():
         for i in range(0,len(groupDict[k])):
             contoursList.append(k.contours[groupDict[k][i]])
@@ -132,12 +128,17 @@ def mdependYAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        mPoint = controllerList[i].matchPoint()
-        if mPoint is not None:
+        controllerList[i].mgiveDependY()
+        if controllerList[i].matchPoint() is not None:
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
+            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveDependY(mPoint)
+
+    g = CurrentGlyph()
+    for point in g.selectedPoints:
+        tmp = list()
+        tmp.append(point); tmp.append(point.name)
+        prevPointList.append(tmp)
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
@@ -148,11 +149,7 @@ def minnerFillAttribute(groupDict,standardMatrix):
     prevPointList = list()
     restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
 
-    g = CurrentGlyph()
-    for point in g.selectedPoints:
-        tmp = list()
-        tmp.append(point); tmp.append(point.name)
-        prevPointList.append(tmp)
+
 
     for k in groupDict.keys():
         for i in range(0,len(groupDict[k])):
@@ -165,12 +162,18 @@ def minnerFillAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        mPoint = controllerList[i].matchPoint()
-        if mPoint is not None:
+        controllerList[i].mgiveInnerFill()
+
+        if controllerList[i].matchPoint() is not None:
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
+            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveInnerFill(mPoint)
+
+    g = CurrentGlyph()
+    for point in g.selectedPoints:
+        tmp = list()
+        tmp.append(point); tmp.append(point.name)
+        prevPointList.append(tmp)
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
@@ -181,11 +184,6 @@ def mdeleteAttribute(groupDict,standardMatrix,attribute):
     prevPointList = list()
     restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
 
-    g = CurrentGlyph()
-    for point in g.selectedPoints:
-        tmp = list()
-        tmp.append(point); tmp.append(point.name)
-        prevPointList.append(tmp)
 
     for k in groupDict.keys():
         for i in range(0,len(groupDict[k])):
@@ -197,12 +195,18 @@ def mdeleteAttribute(groupDict,standardMatrix,attribute):
                 controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        mPoint = controllerList[i].matchPoint()
-        if mPoint is not None:
+        controllerList[i].mdeleteAttr(attribute)
+        if controllerList[i].matchPoint() is not None:
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
+            tmp.append(controllerList[i].matchPoint()); tmp.append(controllerList[i].matchPoint().name)
             prevPointList.append(tmp)
-        controllerList[i].mdeleteAttr(attribute,mPoint)
+
+
+    g = CurrentGlyph()
+    for point in g.selectedPoints:
+        tmp = list()
+        tmp.append(point); tmp.append(point.name)
+        prevPointList.append(tmp)
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)

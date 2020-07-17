@@ -22,7 +22,6 @@ class settingWindow(BaseWindowController):
     def __init__(self, mainWindow):
         self.mainWindow = mainWindow
         self.createUI(self)
-        self.state = False
 
     def createUI(self, sender):
 
@@ -98,7 +97,8 @@ class settingWindow(BaseWindowController):
         sWC.helpCheckGlyphList(self.w.checkGlyphListCheckBox, self.mainWindow)
         print("after : ", self.mainWindow.selectedGlyphs)"""
     def colorContourCallback(self, sender):
-        self.mainWindow.state = self.w.colorContourCheckBox.get()
+        state = self.w.colorContourCheckBox.get()
+        setExtensionDefault(DefaultKey+".state", state)
 
     def methodChangedCallback(self, sender):
         # select matrix or topology

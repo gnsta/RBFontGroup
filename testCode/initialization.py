@@ -6,6 +6,7 @@ from mojo.UI import *
 import os
 import math
 from mojo.extensions import getExtensionDefault, setExtensionDefault
+from rbWindow.ExtensionSetting.extensionValue import DefaultKey
 
 class FileExist(Exception):
     def __init__(self,msg):
@@ -71,6 +72,14 @@ def StartProgram(testPath,testFile,CurrentFont):
     else:
         bar = ProgressBar('start',len(testFile),'initial setting...')
         barProcess = 0
+    
+    # 기존의 폰트 파일이 다른 폰트 파일로 바뀐 경우 기존의 파일을 삭제합니다.
+    if CurrentFont != getExtensionDefault(DefaultKey+".font"):
+        filePath = os.path.dirname(os.path.abspath(__file__))+'/jsonResource/'
+
+        if os.path.exists(filePath):
+            for file in os.scandir(filePath):
+                os.remove(file.path)
 
     #1차필터링
     try:
@@ -102,7 +111,6 @@ def StartProgram(testPath,testFile,CurrentFont):
                 raise FileExist('해당 파일은 이미 존재합니다')
             for tg in testFile:
                 barProcess += 1
-                print("tg : " ,tg.name)
                 tempDict = getConfigure(tg)
                 insert[tg.name] = tempDict[str(tg.unicode)]
                 if barProcess % 10 == 0:
