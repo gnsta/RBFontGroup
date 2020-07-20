@@ -64,7 +64,6 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 	standardMatrix = Matrix(contour,matrix_size)
 	#k에 대한 마진값 적용하는 부분 넣어 주워야 함
 	compareController = groupTestController(standardMatrix,matrix_margin)
-
 	smartSetGlyphs = []
 	smartSet = SmartSet()
 
@@ -117,6 +116,7 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 
 
 	smartSet.glyphNames = smartSetGlyphs
+	print("그룹화를 진행한 글리프 셋", len(smartSetGlyphs))
 	addSmartSet(smartSet)
 	updateAllSmartSets()	
 

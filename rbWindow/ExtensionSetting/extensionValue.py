@@ -20,27 +20,12 @@ def launchFontTool():
 		testPath = currentFont.path
 
 		if testPath is None:
-			dontShowAgainMessage(messageText='폰트 파일 경로를 알 수 없습니다.'
-				, informativeText='.ttf의 경우, 폰트 파일 경로를 알 수 없어 파일 탐색기를 통해 선택해야 합니다.\n.ttf를 .ufo로 바꾸려면 [File]-[Save]를 눌러주세요'
-				, alertStyle=2, dontShowAgainKey=DefaultKey)
-			target = GetFile()
-			if target is None:
-				quit()
+			Message('폰트 파일 경로를 알 수 없습니다.'
+				, informativeText='.ttf의 경우, 폰트 파일 경로를 알 수 없어 ufo 변환을 해야 합니다.\n.ttf를 .ufo로 바꾸려면 [File]-[Save]를 눌러주세요')
+			return None, None
 
-			if target is not None:
-				OpenFont(target)
-				
-		else:
-			target = testPath
+	return testPath, currentFont
 
-	else:
-		target = GetFile()
-
-		if target is not None:
-			OpenFont(target)
-
-	print("target (testPath) = ", target)
-	return target, currentFont
 
 class ConfigExtensionSetting:
 

@@ -240,7 +240,6 @@ class groupPointMatchController:
 			print("==========================================")
 			return None
 
-
 	"""
 	각각의 속성을 넣어주는 함수들
 	"""

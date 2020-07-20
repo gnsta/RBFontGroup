@@ -1,5 +1,5 @@
 import math
-from rbWindow import editWindow as ew
+import rbWindow.editWindow as ew
 from rbWindow.ExtensionSetting.extensionValue import *
 from jsonConverter.makeJsonFile import *
 from testCode.initialization import *
@@ -10,6 +10,9 @@ from mojo.UI import *
 print("uiTEST started")
 
 testPath, testFile = launchFontTool()
+if testPath is None:
+	quit()
+
 
 print("testPath(launchFontTool) = ",testPath)
 configPreset = ConfigExtensionSetting(DefaultKey)

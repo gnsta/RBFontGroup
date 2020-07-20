@@ -206,4 +206,3 @@ def mdeleteAttribute(groupDict,standardMatrix,attribute):
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
-

@@ -109,10 +109,7 @@ class Matrix:
         res_divided.append(divided_x)
         res_divided.append(divided_y)
 
-        return res_divided
-
-
-
+        return res_divided            
 
     def getPointPart(self,p):
         """

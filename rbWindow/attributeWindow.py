@@ -15,28 +15,21 @@ matrixMode = 0
 topologyMode = 1
 
 
-
 class attributeWindow:
 
 	def __init__(self):
 		
 		self.createUI()
+		self.testPath = getExtensionDefault(DefaultKey+".testPath")
 	
-		
-
 	def createUI(self):
 		x = 10; y = 10; w = 100; h = 30; space = 5; self.size = (200,250); pos = (1200,300); self.minSize = (50,250);
 
 		self.w = HUDFloatingWindow((pos[0],pos[1],self.minSize[0],self.minSize[1]), "ToolsWindow", minSize=(self.minSize[0], self.minSize[1]))
-
-		#h = 50
-		#self.w.optionRadioGroup = RadioGroup((32,20,w,h), ["PenPair", "DependX", "DependY"], sizeStyle="small")
-		#y += h + space + 15
 		
 		h = 30
 
 		self.w.innerFillButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[0]+".png", callback=self.handleInnerFill)
-		print("ImagePath = ", extPath.ImagePath+extPath.attrImgList[0]+".png")
 		self.w.innerFillText = TextBox((x+40,y,w,h), "innerFill")
 		y += h + space
 
@@ -121,8 +114,6 @@ class attributeWindow:
 							if mode is matrixMode:
 								matrix = Matrix(selectedContour, matrix_size); 
 								setExtensionDefault(DefaultKey+".matrix", matrix)
-
-
 
 							#현재 스마트셋 포커싱
 							checkSetData = searchGroup(currentGlyph, selectedContour.index, mode, font)
@@ -282,60 +273,76 @@ class attributeWindow:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
-		
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+
 		if mode is matrixMode:
-			groupDict = getExtensionDefault(DefaultKey+".groupDict")
 			matrix = getExtensionDefault(DefaultKey+".matrix")
 			mbt.mdependXAttribute(groupDict, matrix)
 
 		elif mode is topologyMode:
-			groupDict = getExtensionDefault(DefaultKey+".groupDict")
 			standardContour = getExtensionDefault(DefaultKey+".standardContour")
 			k = getExtensionDefault(DefaultKey+".k")
 			tbt.dependXAttribute(groupDict, standardContour, k)
 				
 		else:
 			Message("모드 에러")
+			return
+
+		self.markAppendedGlyph()
+
+		CurrentFont().update()	#로보폰트 업데이트
+		CurrentFont().save(self.testPath) 	#XML 업데이트
 
 	def handleDependY(self, sender):
 		if updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
-		
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+
 		if mode is matrixMode:
-			groupDict = getExtensionDefault(DefaultKey+".groupDict")
 			matrix = getExtensionDefault(DefaultKey+".matrix")
 			mbt.mdependYAttribute(groupDict, matrix)
 
 		elif mode is topologyMode:
-			groupDict = getExtensionDefault(DefaultKey+".groupDict")
 			standardContour = getExtensionDefault(DefaultKey+".standardContour")
 			k = getExtensionDefault(DefaultKey+".k")
 			tbt.mdependYAttribute(groupDict, standardContour, k)
 				
 		else:
 			Message("모드 에러")
+			return
+
+		self.markAppendedGlyph()
+
+		CurrentFont().update()	#로보폰트 업데이트
+		CurrentFont().save(self.testPath) 	#XML 업데이트
+
 
 	def handlePenPair(self, sender):
 		if updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
-		
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+
 		if mode is matrixMode:
-			groupDict = getExtensionDefault(DefaultKey+".groupDict")
 			matrix = getExtensionDefault(DefaultKey+".matrix")
 			mbt.mpenPairAttribute(groupDict, matrix)
 
 		elif mode is topologyMode:
-			groupDict = getExtensionDefault(DefaultKey+".groupDict")
 			standardContour = getExtensionDefault(DefaultKey+".standardContour")
 			k = getExtensionDefault(DefaultKey+".k")
 			tbt.penPairAttribute(groupDict, standardContour, k)
 				
 		else:
 			Message("모드 에러")
+			return
+
+		self.markAppendedGlyph()
+
+		CurrentFont().update()	#로보폰트 업데이트
+		CurrentFont().save(self.testPath) 	#XML 업데이트
 
 	def handleInnerFill(self, sender):
 
@@ -350,7 +357,6 @@ class attributeWindow:
 			mbt.minnerFillAttribute(groupDict, matrix)
 
 		elif mode is topologyMode:
-			groupDict = getExtensionDefault(DefaultKey+".groupDict")
 			standardContour = getExtensionDefault(DefaultKey+".standardContour")
 			k = getExtensionDefault(DefaultKey+".k")
 			tbt.innerFillAttribute(groupDict, standardContour, k)
@@ -359,8 +365,10 @@ class attributeWindow:
 			Message("모드 에러")
 			return
 
+		self.markAppendedGlyph()
+
 		CurrentFont().update()	#로보폰트 업데이트
-		CurrentFont().save() 	#XML 업데이트
+		CurrentFont().save(self.testPath) 	#XML 업데이트
 
 	def handleSelect(self, sender):
 		if updateAttributeComponent() is False:
@@ -368,10 +376,6 @@ class attributeWindow:
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-
-		#현재 상태 저장
-		for glyph in groupDict.keys():
-			glyph.prepareUndo()
 
 		if mode is matrixMode:
 			matrix = getExtensionDefault(DefaultKey+".matrix")
@@ -386,30 +390,47 @@ class attributeWindow:
 			Message("모드 에러")
 			return
 
-		for glyph in groupDict.keys():
-			glyph.performUndo()
 
 	def handleDelete(self, sender):
 		if updateAttributeComponent() is False:
 			return
 
 		mode = getExtensionDefault(DefaultKey+".mode")
-		
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+
 		if mode is matrixMode:
-			groupDict = getExtensionDefault(DefaultKey+".groupDict")
 			matrix = getExtensionDefault(DefaultKey+".matrix")
 			pass
 
 		elif mode is topologyMode:
-			groupDict = getExtensionDefault(DefaultKey+".groupDict")
 			standardContour = getExtensionDefault(DefaultKey+".standardContour")
 			k = getExtensionDefault(DefaultKey+".k")
 			pass
 				
 		else:
 			Message("모드 에러")
+		
+		CurrentFont().update()	#로보폰트 업데이트
+		CurrentFont().save(self.testPath) 	#XML 업데이트
 
+	def markAppendedGlyph():
 
+		font = getExtensionDefault(DefaultKey+".font")
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+
+		check = False
+		for key in groupDict.keys():
+			for contour in key.contours:
+				for point in contour.points:
+					if point.name is not None and point.name is not "inserted":
+						font[key.name].markColor = (0.5,0.5,1,1)
+						check = True
+						break
+				if check is True:
+					check = False
+					break
+				else:
+					font[key.name].markColor = None
 			
 	def minimizeCallback(self, sender):
 		if sender.get() == True:

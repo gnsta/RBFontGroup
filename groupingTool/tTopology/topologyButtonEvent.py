@@ -53,7 +53,6 @@ def selectAttribute(groupDict,standardContour,num):
 				# restoreStack에 필요한 데이터를 넣는 과정
 				if(controllerList[i].sCheckCon.tpPointList[j].point.selected == True):
 					tmp = list()
-					mPoint
 					tmp.append(controllerList[i].cCheckCon.tpPointList[j].point); tmp.append(controllerList[i].cCheckCon.tpPointList[j].point.name)
 					prevPointList.append(tmp)
 

@@ -9,12 +9,11 @@ from rbWindow.contourPen import BroadNibPen
 from rbWindow.sliderGroup import SliderGroup
 from rbWindow.toolMenu import toolsWindow
 from rbWindow.attributeWindow import attributeWindow
-from rbWindow.previewWindow import previewWindow
 from rbWindow.settingWindow import settingWindow
 from mojo.UI import CurrentFontWindow
 from AppKit import *
 from rbWindow.ExtensionSetting.extensionValue import *
-from rbWindow.Controller import linkedStack
+from rbWindow.Controller import CircularQueue
 from fontParts.world import CurrentFont
 
 
@@ -103,7 +102,6 @@ class EditGroupMenu(object):
 		self.defaultKey = "com.asaumierdemers.BroadNibBackground"
 		self.selectedGlyphs = []                # Apply List Label을 통해 색칠된 글리프들을 다시 무채색으로 변환하기 위한 변수
 		self.markColor = 0.3, 0.4, 0.7, 0.7
-		self.state = False
 		self.layerName = self.font.layerOrder[0]
 		self.currentPen = None
 		self.window = None		# 현재 띄워져 있는 ufo 윈도우
@@ -117,6 +115,8 @@ class EditGroupMenu(object):
 		self.jsonFileName1 = jsonFileName1
 		self.jsonFileName2 = jsonFileName2
 		self.createUI()
+
+		self.testPath = getExtensionDefault(DefaultKey+".testPath")
 		self.color = None
 		self.step = None
 		self.width = None
@@ -136,10 +136,10 @@ class EditGroupMenu(object):
 			return
 
 		toolbarItems = self.window.getToolbarItems()
-		print("dir(toolbarItems) = ", dir(toolbarItems))
 		self.newToolbarItems = list()
 		newItem1 = dict(itemIdentifier="Search", label="Search", imageNamed=NSImageNameRevealFreestandingTemplate, callback=self.popSearchWindow); self.newToolbarItems.append(newItem1);
-		newItem2 = dict(itemIdentifier="Rewind", label="Rewind", imageNamed=NSImageNameRefreshFreestandingTemplate, callback=self.restoreAttribute); self.newToolbarItems.append(newItem2);
+		newItem2_1 = dict(itemIdentifier="Rewind", label="Rewind", imageNamed=NSImageNameRefreshFreestandingTemplate, callback=self.restoreAttribute); self.newToolbarItems.append(newItem2_1);
+		newItem2_2 = dict(itemIdentifier="Undo", label="Undo", imageNamed=NSImageNameInvalidDataFreestandingTemplate, callback=self.rollbackAttribute); self.newToolbarItems.append(newItem2_2);
 		newItem3 = dict(itemIdentifier="Save", label="Save", imageNamed=NSImageNameComputer, callback=None); self.newToolbarItems.append(newItem3);
 		newItem4 = dict(itemIdentifier="Exit", label="Exit", imageNamed=NSImageNameStopProgressFreestandingTemplate, callback=self.windowCloseCallback); self.newToolbarItems.append(newItem4);
 		newItem5 = dict(itemIdentifier="Settings", label="Settings", imageNamed=NSImageNameAdvanced, callback=self.popSettingWindow); self.newToolbarItems.append(newItem5);
@@ -173,7 +173,6 @@ class EditGroupMenu(object):
 
 	def popManualWindow(self,sender):
 		manual = extPath.resourcePath + "manual.html"
-		print(manual)
 		HelpWindow(htmlPath=manual)
 
 	def popSettingWindow(self, sender):
@@ -190,7 +189,7 @@ class EditGroupMenu(object):
 		mode = getExtensionDefault(DefaultKey + ".mode")
 		contourNumber = getExtensionDefault(DefaultKey + ".contourNumber")
 		if mode is None or contourNumber is None:
-			print(Message("먼저 속성을 부여할 그룹을 찾아야 합니다."))
+			Message("먼저 속성을 부여할 그룹을 찾아야 합니다.")
 			return
 		self.w[3] = attributeWindow()
 
@@ -217,7 +216,7 @@ class EditGroupMenu(object):
 
 	    currentToolbarItems = self.window.getToolbarItems()
 
-	    for i in range(7):
+	    for i in range(len(self.newToolbarItems)):
 	    	currentToolbarItems.pop()
 
 	    self.window.setToolbar()
@@ -236,13 +235,41 @@ class EditGroupMenu(object):
 			Message("더 이상 되돌릴 수 없습니다.")
 			return
 
+		restoreStack.print()
 		top = restoreStack.pop()
+		if top is None:
+			Message("더 이상 되돌릴 수 없습니다.")
+			return
+
 		for element in top:
-			print("value : ",element)
 			element[0].name = element[1]
 
+		restoreStack.print()
 		CurrentFont().update()
-		CurrentFont().save()
+		CurrentFont().save(self.testPath)
+
+	def rollbackAttribute(self, sender):
+
+		restoreStack = getExtensionDefault(DefaultKey + ".restoreStack")
+
+		if restoreStack is None or restoreStack.front == restoreStack.rear:
+			Message("복원할 수 없습니다.")
+			return
+
+		restoreStack.print()
+		target = restoreStack.rollback()
+	
+		if target is None:
+			Message("복원할 수 없습니다.")
+			return 
+
+		for element in target:
+			element[0].name = element[1]
+
+		restoreStack.print()
+		CurrentFont().update()
+		CurrentFont().save(self.testPath)
+
 
 	def drawBroadNibBackground(self, info):
 		
@@ -251,14 +278,15 @@ class EditGroupMenu(object):
 		# picks current contours which should be painted from current group
 		contourList = []
 
+		state = getExtensionDefault(DefaultKey+".state")
+		# 칠할 필요가 없다면 해당 컨투어 번호만 세팅하고 종료
+		if bool(state) is not True:
+			return
+
 		try :
-			font = getExtensionDefault(DefaultKey + ".font")
+			file = getExtensionDefault(DefaultKey + ".file")
 			targetIdxList = getExtensionDefault(DefaultKey+".groupDict")[targetGlyph]
 			setExtensionDefault(DefaultKey + ".contourNumber", targetIdxList[0])
-
-			# 칠할 필요가 없다면 해당 컨투어 번호만 세팅하고 종료
-			if self.state is not 1:
-				return
 
 			r,g,b,a = self.color
 			fill(r,g,b,a)

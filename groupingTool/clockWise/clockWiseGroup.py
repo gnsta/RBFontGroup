@@ -61,10 +61,6 @@ def getPointClockDegree(con,point1):
 
     return (point1.x*point2.y) + (point2.x*point3.y) + (point3.x*point1.y) - ((point2.x*point1.y) + (point3.x*point2.y) + (point1.x*point3.y))
 
-
-
-
-
 def getClockDirection(point1 , point2, point3):
     """
     현재 점의 진행방향이 시계방향인지 반시계 방향인지 확인
@@ -206,9 +202,6 @@ def getClockWiseList(con):
                 res['forword'] -= 1
     
     return res
-
-  
-    
 
 
                 

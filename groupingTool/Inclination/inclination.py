@@ -111,6 +111,3 @@ def getMatchLineAndContour(line,contour,point):
 	contour.draw(currentPen)
 
 	res = _getDrawPath()
-
-	for i in range(0,len(res)):
-		print(res[i])

@@ -483,7 +483,7 @@ class SyllableJudgement:
 
     def case4(self,glyph):
         """
-        middle two, exist final
+        종성 유 , 중성 그룹2
         """
     
         point_list = list()
