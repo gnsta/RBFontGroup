@@ -160,7 +160,7 @@ class groupPointMatchController:
 		compare_term_y = checkMatrix.getTermY()
 
 		#get point that get minimum distance
-		minDist = 10000000000
+		minDiff = 10000000000
 		indx = -1
 
 		#시험 코드
@@ -180,108 +180,66 @@ class groupPointMatchController:
 					diff_count += 1
 
 			if diff_count > 1:
+				print("diff_count_out")
 				continue
 
 			#회전율로 2차 필터링
-			#compareClockDegree = getPointClockDegree(self.con,originpl[i])
-			#print("compareClockDegree : ",compareClockDegree)
-			#print("standardClockDegree - compareClockDegree: ", abs(standardClockDegree - compareClockDegree))
+			compareClockDegree = getPointClockDegree(self.con,originpl[i])
+			print("compareClockDegree : ",compareClockDegree)
+			print("standardClockDegree - compareClockDegree: ", abs(standardClockDegree - compareClockDegree))
 
 			#방향이 같은 것만 고려
-			#if compareClockDegree > 0  and standardClockDegree < 0:
-				#continue
-			#elif compareClockDegree < 0  and standardClockDegree > 0:
-				#continue
+			if compareClockDegree > 0  and standardClockDegree < 0:
+				print("clock_out")
+				continue
+			elif compareClockDegree < 0  and standardClockDegree > 0:
+				print("clock_out")
+				continue
 
-			#if abs(standardClockDegree - compareClockDegree) > 5000:
-				#continue
+			diff = abs(standardClockDegree - compareClockDegree)
+
+			if diff > 5000:
+				continue
+
+			if(minDiff > diff):
+				indx = i
+				minDiff = diff
 
 			#거리로 3차 필터링
 			compare_dist_origin_x = originpl[i].x - compareCutLine[0][pointPart[0]]
 			compare_dist_origin_y = originpl[i].y - compareCutLine[1][pointPart[1]]
 
 			#거리의 크기 조정
-			compare_dist_x = (compare_dist_origin_x) * (standard_term_x / compare_term_x)
-			compare_dist_y = (compare_dist_origin_y) * (standard_term_y / compare_term_y)
+			compare_dist_x = compare_dist_origin_x * standard_term_x / compare_term_x
+			compare_dist_y = compare_dist_origin_y * standard_term_y / compare_term_y
 
 			#조정된 길이를 이용하여 거리를 구해줌
 			compare_dist = math.sqrt(math.pow(compare_dist_x,2) + math.pow(compare_dist_y,2))
 
 			dist = abs(standard_dist - compare_dist)
+			#print("커트된 기준점!!!")
+			#print("x축 : ", compareCutLine[0][pointPart[0]])
+			#print("y축 : ", compareCutLine[1][pointPart[1]])
 			print("dist : ",dist)
 
-			if(minDist > dist):
-				indx = i
-				minDist = dist
-		print("==========================================")
-
-		#회전율 최종 필터링
-		compareClockDegree = getPointClockDegree(self.con,originpl[indx])
-		print("compareClockDegree : ",compareClockDegree)
-		print("standardClockDegree - compareClockDegree: ", abs(standardClockDegree - compareClockDegree))
-
-		#방향이 같은 것만 고려
-		if compareClockDegree > 0  and standardClockDegree < 0:
-			indx = -1
-		elif compareClockDegree < 0  and standardClockDegree > 0:
-			indx = -1
-
-		if abs(standardClockDegree - compareClockDegree) > 5000:
-			indx = -1
+			#if(minDist > dist):
+				#indx = i
+				#minDist = dist
 
 		if indx != -1:
-			print(minDist)
+			print("일단 나온 점 : ", originpl[indx])
+		else:
+			print("나온 점 없음")
+
+
+		if indx != -1:
+			print("매칭이 된 점: ", originpl[indx])
+			print("==========================================")
 			return originpl[indx]
 		else:
+			print("==========================================")
 			return None
 
-
-
-
-
-		#locate contour exactly matrix's contour
-		'''standardMinx = self.matrix.con.bounds[0]
-		standardMiny = self.matrix.con.bounds[1]
-
-		checkMinx = self.con.bounds[0]
-		checkMiny = self.con.bounds[1]
-
-
-		termX = checkMinx - standardMinx
-		termY = checkMiny - standardMiny
-
-		#apply pl
-		for p in originpl:
-			rx = p.x - termX
-			ry = p.y - termY
-			checkCdirection = calcDirection(self.con,p)
-			relocatepl.append(matrixRelocatePoint(p,rx,ry,checkCdirection))
-
-
-
-		#get point that get minimum distance
-		minDist = 10000000000
-		indx = -1
-
-		
-		for	i,o in enumerate(relocatepl):		
-			#direction오차를 줌
-			diff_count = 0
-			for j in range(0,4):
-				if(o.direction[j] != checkSdirection[j]):
-					diff_count += 1
-
-			if diff_count > 1:
-				continue
-			dist = math.sqrt(math.pow(self.point.x - o.rx,2) + math.pow(self.point.y - o.ry,2))
-			if(minDist > dist):
-				indx = i
-				minDist = dist
-
-		if indx != -1:
-			return relocatepl[indx].point
-		else:
-			return None'''
 
 	"""
 	각각의 속성을 넣어주는 함수들

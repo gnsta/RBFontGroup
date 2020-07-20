@@ -24,7 +24,6 @@ class SliderGroup(Group):
 			self.edit.set(value)
 		self.slider.set(value)
 
-
 	def enable(self):
 		self.text.enable(True)
 		self.slider.enable(True)

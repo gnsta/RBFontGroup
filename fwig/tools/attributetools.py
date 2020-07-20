@@ -93,15 +93,7 @@ def name2dict(name) -> dict:
     """
     if name is None:
         return {}
-
-    '''
-    inserted와 같이 key, value 형식이 아닌 값을 거르기 위한 과정
-    '''
-    name = name.replace(' ','')
-    name = name.replace("inserted,","").replace(",inserted","").replace("inserted","").strip()
-
     name = '{' + name.replace("'", '"') + '}'
-
     name_dict = json.loads(name)
 
     return name_dict

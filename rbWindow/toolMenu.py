@@ -45,12 +45,11 @@ class toolsWindow:
 	def __init__(self):
 
 		self.createUI()
-		self.searchGlyph = None
 
 	def createUI(self):
 		x = 10; y = 10; w = 150; h = 22; space = 10; size = (180,300); pos = (800,300);
 
-		self.w = HUDFloatingWindow((pos[0],pos[1], size[0],size[1]), "ToolsWindow")
+		self.w = FloatingWindow((pos[0],pos[1], size[0],size[1]), "ToolsWindow")
 		
 		self.w.searchOptionText = TextBox((x,y,w,h), "Search Option", alignment="center")
 		y += h + space
@@ -59,11 +58,39 @@ class toolsWindow:
 		self.w.divider1 = HorizontalLine((x,y,w,h))
 		y += h + space
 
-		h = 22
-		self.w.browserButton = Button((x,y,w-40, h), "글자 찾기", callback=self.browserCallback)
+		"""
+		# deprecated => preset margin, width, k
+
+		h = 50
+		self.marginValue = getExtensionDefault("%s.%s" %(self.defaultKey, "margin"), 0)
+		self.w.margin = SliderGroup((x,y,w,h), "Margin:", 0, 50, self.marginValue, callback=self.marginChanged)
+		y += h + space
+	
+		self.widthValue = getExtensionDefault("%s.%s" %(self.defaultKey, "width"), 10)
+		self.mainWindow.widthValue = self.widthValue
+		self.w.matrixWidth = SliderGroup((x,y,w,h), "Width & Height:", 0, 100, self.widthValue, callback=self.widthChanged)
 		y += h + space
 
-		self.w.targetGlyphText = TextBox((x,y,w,h), "현재 글리프 : ")
+		self.kValue = getExtensionDefault("%s.%s" %(self.defaultKey, "k"), 10)
+		self.mainWindow.kValue = self.kValue
+		self.w.topologyK = SliderGroup((x,y,w,h), "K :", 0, 400, self.kValue, callback=self.kChanged)
+		y += h + space
+		"""
+
+		"""
+		# 2020/03/16 modified by cho : width & height should be same
+		
+		heightValue = getExtensionDefault("%s.%s" %(self.defaultKey, "height"), 10)
+		self.w.matrixHeight = SliderGroup((x,y,w,h), "Height:", 0, 100, heightValue, callback=self.heightChanged)
+		y += h + space
+	
+		self.w.divider2 = HorizontalLine((x,y,w,h))
+		y += h + space
+		"""
+
+		h = 22
+		self.w.editTextBox = TextBox((x,y,w-40, h), "Input Glyph : ", alignment="left")
+		self.w.editText = EditText((x+w-40,y,40,h))
 		y += h + space
 
 		h = 50
@@ -78,17 +105,34 @@ class toolsWindow:
 		self.w.open()
 
 	
+	"""
+	# deprecated => preset values...
+	
+	def marginChanged(self, sender):
+	    
+	    setExtensionDefault("%s.%s" %(self.defaultKey, "margin"), int(sender.get()))
+	    self.w.margin.updateView()
+	    
+	def widthChanged(self, sender):
+	    
+	    setExtensionDefault("%s.%s" %(self.defaultKey, "width"), int(sender.get()))
+	    self.w.matrixWidth.updateView()
+
+	def kChanged(self, sender):
+	    
+	    setExtensionDefault("%s.%s" %(self.defaultKey, "k"), int(sender.get()))
+	    self.w.topologyK.updateView()
+	"""
+	    
+	# def heightChanged(self, sneder):
+	    
+	#     setExtensionDefault("%s.%s" %(self.defaultKey, "height"), int(sender.get()))
+	#     self.w.matrixHeight.updateView()
 
 	def indexChanged(self, sender):
 
 		setExtensionDefault("%s.%s" %(DefaultKey, "index"), int(sender.get()))
-		#self.w.contourIndex.updateView()
-	def browserCallback(self, sender):
-		glyph = FindGlyph(CurrentFont())
-
-		if glyph is not None:
-			OpenGlyphWindow(glyph, newWindow=False)
-			self.searchGlyph = glyph
+		self.w.contourIndex.updateView()
 
 	def searchGlyphListCallback(self, sender):
 		"""
@@ -108,8 +152,8 @@ class toolsWindow:
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		KoreanCheck = getExtensionDefault(DefaultKey+".korean")
 
-		
-		standardGlyph = self.searchGlyph; setExtensionDefault(DefaultKey + ".standardGlyph", standardGlyph)
+		inputText = self.w.editText.get()
+		standardGlyph = text2Glyph(inputText, font); setExtensionDefault(DefaultKey + ".standardGlyph", standardGlyph)
 		contourIndex = int(self.w.contourIndex.slider.get()); standardContour = standardGlyph.contours[contourIndex]; setExtensionDefault(DefaultKey + ".standardContour", standardContour)
 
 		if KoreanCheck == True:

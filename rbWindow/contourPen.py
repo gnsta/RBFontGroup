@@ -15,6 +15,10 @@ class BroadNibPen(BasePen):
         self.shape = shape
         self.firstPoint = None
 
+        #경로를 뽑기 위하여 필드 추가
+        self.drawPath = list()
+
+
     #firstPoint를 pt점으로 이
     def _moveTo(self, pt):
         
@@ -43,16 +47,22 @@ class BroadNibPen(BasePen):
             self._drawPoints(points)
 
     # shape에 해당하는 모양으로 색칠
-    def _drawPoints(self, points):
-        
+    def _drawPoints(self, points):       
         for point in points:
             x, y = point
+            self.drawPath.append((x,y))
             save()              # 현재 상태 저장
             translate(x, y)     # x,y 만큼 평행이동
             rotate(self.angle)  # 각도 만큼 회전
             translate(-self.width/2, -self.height/2)    #설정한 높낮이 만큼 평행이동
             self.shape(0, 0, self.width, self.height)   #이동한 위치에서 설정한 모양대로 그림 그리기
             restore()                                   #원래 위치로 돌아가기
+
+    def _getDrawPath(self):
+        """
+        해당 컨투어의 외곽 라인을 받아오기 위한 함수
+        """
+        return self.drawPath
 
 # 커브 위의 점을 n에 비례한 정밀도를 가지고 표시한다.
 def getPointsOnCurve(n, p0, p1, p2, p3):

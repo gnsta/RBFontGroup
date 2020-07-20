@@ -63,6 +63,8 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex,checkSetData):
 	jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
 	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
 	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
+	print("jsonFileName1 : ", jsonFileName1)
+	print("jsonFileName2 : ",jsonFileName2)
 
 	contour = standardGlyph.contours[contourIndex]
 
@@ -119,6 +121,7 @@ def getMatchGroupByMatrix(standardGlyph, contourIndex,checkSetData):
 
 
 	smartSet.glyphNames = smartSetGlyphs
+	print("그룹화를 진행한 글리프 셋", len(smartSetGlyphs))
 	addSmartSet(smartSet)
 	updateAllSmartSets()	
 

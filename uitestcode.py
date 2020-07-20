@@ -1,5 +1,5 @@
 import math
-import rbWindow.editWindow as ew
+from rbWindow import editWindow as ew
 from rbWindow.ExtensionSetting.extensionValue import *
 from jsonConverter.makeJsonFile import *
 from testCode.initialization import *

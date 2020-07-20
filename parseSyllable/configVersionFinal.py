@@ -391,7 +391,7 @@ class SyllableJudgement:
     """
     def case1(self,glyph):
         """
-        종성 무 , 중성 그룹1
+        종성X , 중성 그룹1
         """
     
         point_list = list()
@@ -420,7 +420,7 @@ class SyllableJudgement:
 
     def case2(self,glyph):
         """
-        종성 유 , 중성 그룹1
+        종성O , 중성 그룹1
         """
     
         point_list = list()
@@ -453,7 +453,7 @@ class SyllableJudgement:
 
     def case3(self,glyph):
         """
-        종성 무 , 중성 그룹2
+        종성X , 중성 그룹2
         """
     
         point_list = list()
@@ -483,7 +483,7 @@ class SyllableJudgement:
 
     def case4(self,glyph):
         """
-        종성 유 , 중성 그룹2
+        middle two, exist final
         """
     
         point_list = list()
@@ -517,7 +517,7 @@ class SyllableJudgement:
 
     def case5(self,glyph):
         """
-        종성 유무 상관없음 , 중성 그룹3
+        종성 유무 상관없음 , 중성 그룹1
         """
     
         point_list = list()
@@ -554,7 +554,7 @@ class SyllableJudgement:
 
     def case7(self,glyph):
         """
-        종성무 , 중성 그룹4
+        종성X , 중성 그룹4
         """   
         point_list = list()
     
@@ -583,7 +583,7 @@ class SyllableJudgement:
 
     def case8(self,glyph):
         """
-        종성 유 , 중성 그룹4
+        종성O , 중성 그룹4
         """
     
         point_list = list()
@@ -615,7 +615,7 @@ class SyllableJudgement:
 
     def case9(self,glyph):
         """
-        종성 무 , 중성 그룹5
+        종성X , 중성 그룹5
         """
     
         point_list = list()
@@ -650,7 +650,7 @@ class SyllableJudgement:
 
     def case10(self,glyph):
         """
-        종성 유 , 중성 그룹5
+        종성O , 중성 그룹5
         """
     
         point_list = list()
@@ -687,7 +687,7 @@ class SyllableJudgement:
 
     def case11(self,glyph):
         """
-        종성 무 , 중성 그룹6
+        종성X , 중성 그룹6
         """
     
         point_list = list()
@@ -723,7 +723,7 @@ class SyllableJudgement:
 
     def case12(self,glyph):
         """
-        종성 유 , 중성 그룹6
+        종성O , 중성 그룹1
         """
         
         point_list = list()

@@ -15,6 +15,55 @@ def consistClockWise(con):
 
     return pointList
 
+def getPointClockDegree(con,point1):
+    """
+    한 점에 대하여 컨투어에서 얼마만큼 꺽여 있는지 정도를 파악해주는 함수
+    (점 매칠 필터링에서 사용)
+
+    Args:
+        con :: RContour
+        point1 :: RPoint
+    
+    Returns :
+        방향에 대한 상세 정보 :: int
+    """
+    #offcurve는 제외
+    originpl = list()
+    pointList = consistClockWise(con)
+    for i in range(0,len(pointList)):
+        if pointList[i].type != 'offcurve':
+            originpl.append(pointList[i])
+
+    #print("point1 : ", point1)
+
+    #print("totalOriginalpl")
+    #for i in range(0,len(pointList)):
+        #print(pointList[i])
+
+    #print("originalpl!!!!")
+    #컨투어의 어느 위치에 점이 있는지 파악
+    for i in range(0,len(originpl)):
+        #print(originpl[i])
+        if (originpl[i].x == point1.x) and (originpl[i].y == point1.y):
+            currentLocation = i
+            #print("true")
+            break
+        #print("flase")
+
+    #print("======================================")
+
+    if currentLocation == (len(originpl)-1):
+        point2 = originpl[currentLocation -1]
+        point3 = originpl[0]
+    else:
+        point2 = originpl[currentLocation-1]
+        point3 = originpl[currentLocation+1]
+
+    return (point1.x*point2.y) + (point2.x*point3.y) + (point3.x*point1.y) - ((point2.x*point1.y) + (point3.x*point2.y) + (point1.x*point3.y))
+
+
+
+
 
 def getClockDirection(point1 , point2, point3):
     """
@@ -155,5 +204,12 @@ def getClockWiseList(con):
         else:
             if res['forword'] != 1: 
                 res['forword'] -= 1
-
+    
     return res
+
+  
+    
+
+
+                
+            
