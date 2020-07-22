@@ -84,8 +84,9 @@ def StartProgram(testPath,testFile,CurrentFont):
     #1차필터링
     try:
         jsonFileName1 = os.path.dirname(os.path.abspath(__file__)) + '/jsonResource/' + tempFileName.split('.')[0] + '.json'
+        print("jsonFileName1 : ", jsonFileName1)
         if os.path.exists(jsonFileName1):
-            raise FileExist('해당 파일은 이미 존재합니다')
+            raise FileExist('팔터링 파일은 이미 존재합니다')
         for tg in testFile:
             barProcess += 1
             tempList = list()
@@ -107,8 +108,9 @@ def StartProgram(testPath,testFile,CurrentFont):
        try:
             tempFileName = testPath.split('/')[-1]
             jsonFileName2 = os.path.dirname(os.path.abspath(__file__)) + '/jsonResource/' + tempFileName.split('.')[0] + '_config.json'
+            print("jsonFileName2 : ", jsonFileName2)
             if os.path.exists(jsonFileName2):
-                raise FileExist('해당 파일은 이미 존재합니다')
+                raise FileExist('음절 분리 파일은 이미 존재합니다')
             for tg in testFile:
                 barProcess += 1
                 tempDict = getConfigure(tg)

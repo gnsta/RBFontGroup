@@ -81,16 +81,17 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 	smartContourList = []
 
 	smartSet.name = str(checkSetData[0])+"_Matrix_" + "(" + str(standardGlyph.name) + "-" + str(contourIndex) + ")"
-			
+	
+
+
 	for key, value in resultDict.items():
 		barProcess += 1
 		smartCheck = 0
 		for i,compare in enumerate(value):
+			#비교 컨투어 설정
+			compareContour = font[key].contours[i]
 			#clockWise 1차 필터링
 			if (standard['reverse'] == compare['reverse']) and (standard['forword'] == compare['forword']):
-				#비교 컨투어 설정
-				compareContour = font[key].contours[i]
-
 				#Matrix 2차 필터링
 				result = compareController.conCheckGroup(compareContour)
 
@@ -101,6 +102,9 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 					continue
 
 				if result2 is True:
+					print("컨투어 : " , compareContour)
+					print("standard : " , standard['reverse'], standard['forword'])
+					print("compare : " , compare['reverse'], compare['forword'])
 					smartContourList.append(i)
 					smartCheck = 1
 
@@ -116,7 +120,6 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 
 
 	smartSet.glyphNames = smartSetGlyphs
-	print("그룹화를 진행한 글리프 셋", len(smartSetGlyphs))
 	addSmartSet(smartSet)
 	updateAllSmartSets()	
 
@@ -308,7 +311,11 @@ def cFindContoursGroup(checkSetData, mode):
 	checkSetNameList = checkSetName.split('_')
 	standardNameList = checkSetNameList[2].split('-')
 	standardGlyphUnicode = int(standardNameList[0][4:])
-	standardIdx = int(standardNameList[1][:len(standardNameList[1]) -1]) 
+	standardIdx = int(standardNameList[1][:len(standardNameList[1]) -1])
+	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
+	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
+	topology_margin = getExtensionDefault(DefaultKey+".topology_margin")
+
 
 
 	for g in glyphList:

@@ -91,7 +91,7 @@ class ConfigExtensionSetting:
 		setExtensionDefault(self.registerKey + ".height", 100)
 		setExtensionDefault(self.registerKey + ".k", 500)
 
-		setExtensionDefault(self.registerKey + ".matrix_margin", 20)
+		setExtensionDefault(self.registerKey + ".matrix_margin", 30)
 		setExtensionDefault(self.registerKey + ".matrix_size", 3)
 		setExtensionDefault(self.registerKey + ".topology_margin", 500)
 

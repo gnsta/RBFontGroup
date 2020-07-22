@@ -117,6 +117,9 @@ def updateSmartSetChanged(selectedContour):
 			True : 갱신된 컨투어에 해당되는 스마트 셋이 존재하는 경우
 			False : 갱신된 컨투어에 해당되는 스마트 셋이 존재하지 않는 경우 
 	"""
+	matrix_margin = getExtensionDefault(DefaultKey + ".matrix_margin")
+	topology_margin = getExtensionDefault(DefaultKey + ".topology_margin")
+	matrix_size = getExtensionDefault(DefaultKey + ".matrix_size")
 	#print(sys.path)
 	KoreanCheck = getExtensionDefault(DefaultKey+".korean")
 

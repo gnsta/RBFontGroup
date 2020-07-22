@@ -94,12 +94,12 @@ class SyllableJudgement:
             try:
                 tempFileName = fontPath.split('/')[-1]
                 self.jsonFileName = os.path.dirname(os.path.abspath(__file__)) +'/jsonResource/'+ tempFileName.split('.')[0] + '_label.json'
+                print("self.jsonFileName : ", self.jsonFileName)
                 if os.path.exists(self.jsonFileName):
                     with open(self.jsonFileName, 'r') as jsonFile:
                         self.infoDict = json.load(jsonFile)
                     raise FileExist('라벨 파일은 이미 존재합니다')
 
-                print("self.infoDict : ", self.infoDict)
 
                 axis_x1 = list()
                 axis_x2 = list()

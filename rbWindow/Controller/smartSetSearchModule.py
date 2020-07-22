@@ -15,9 +15,6 @@ create By Heesup Kim
 
 baseDir = "/Users/font/Desktop/GroupDict/"
 
-matrix_margin = 20
-matrix_size = 3
-topology_margin = 500
 
 def cSearchGroup(glyph,contourNumber,mode,message = False):
 	"""
@@ -35,6 +32,9 @@ def cSearchGroup(glyph,contourNumber,mode,message = False):
 	Return :: int
 		현재 그룹의 번호
 	"""
+	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
+	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
+	topology_margin = getExtensionDefault(DefaultKey+".topology_margin")
 
 	font = getExtensionDefault(DefaultKey+".font")
 
@@ -72,6 +72,7 @@ def cSearchGroup(glyph,contourNumber,mode,message = False):
 			if mode == 0:
 				#해당 그룹을 조사
 				standardGlyph = font["cid" + str(standardNameList[0][4:]).upper()]
+				print("matrix_margin : ", matrix_margin)
 				standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
 				compareController = groupTestController(standardMatrix,matrix_margin)
 
@@ -144,6 +145,9 @@ def searchGroup(glyph,contourNumber,mode,message = False):
 	syllableJudgementController = getExtensionDefault(DefaultKey + ".syllableJudgementController")
 	glyphConfigure = syllableJudgementController.GetSyllable(glyph)
 	font = getExtensionDefault(DefaultKey+".font")
+	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
+	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
+	topology_margin = getExtensionDefault(DefaultKey+".topology_margin")
 
 
 	check = 0

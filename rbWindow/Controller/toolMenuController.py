@@ -19,8 +19,6 @@ topologyMode = 1
 margin = 20
 width = 100
 
-topology_margin = 500
-
 """
 2020/03/35 
 modify by Kim Heesup Kim
@@ -267,6 +265,9 @@ def findContoursGroup(checkSetData, mode):
 			key :: RGlyph
 			value :: list
 	"""
+	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
+	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
+	topology_margin = getExtensionDefault(DefaultKey+".topology_margin")
 	#파라미터를 받아오는 작업
 	font = getExtensionDefault(DefaultKey+".font")#RFont
 

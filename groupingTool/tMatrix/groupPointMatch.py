@@ -85,29 +85,6 @@ class groupPointMatchController:
 	def matchPoint(self):
 		"""
 		포인트를 매칭 시켜줌
-
-		return:
-			matched point
-
-		example(if divided 3 by 3)
-		-------------------------------------------------
-		|		|		|2	3	|
-		|		|	       4|1		|
-		-------------------------------------------------
-		|		|		|		|
-		|		|		|		|
-		-------------------------------------------------
-		|		|		|		|
-		|		|		|		|
-		-------------------------------------------------
-
-		if selected point is point 1
-
-		point 2, point 3 and point 4 is group contour's points
-
-		result is that point 1 and point 2 are match
-		
-		Because they are included same part and has shortest distance in the part
 		"""	 
 		pointPart = self.matrix.getPointPart(self.point)
 		getStandardMaxMin = GetMaxMinPointValue(self.matrix.con)
@@ -160,13 +137,19 @@ class groupPointMatchController:
 		compare_term_y = checkMatrix.getTermY()
 
 		#get point that get minimum distance
-		minDiff = 10000000000
-		indx = -1
+		minDiff_dir_zero = 10000000000
+		dir_diff_zero_indx = -1
+
+		minDiff_dir_one = 10000000000
+		dir_diff_one_indx = -1
+
+		diff_count_mode = 0
 
 		#시험 코드
 		standardClockDegree = getPointClockDegree(self.matrix.con,self.point)
-		print("standardClockDegree : ", standardClockDegree)
-		print("compareCon:",self.con)
+
+		print("con : ", self.con)
+
 
 		for i in range(0,len(originpl)):
 			print("compare point : ",originpl[i])
@@ -182,6 +165,11 @@ class groupPointMatchController:
 			if diff_count > 1:
 				print("diff_count_out")
 				continue
+			elif diff_count == 0:
+				diff_count_mode = 0
+			elif diff_count == 1:
+				diff_count_mode = 1
+
 
 			#회전율로 2차 필터링
 			compareClockDegree = getPointClockDegree(self.con,originpl[i])
@@ -200,10 +188,6 @@ class groupPointMatchController:
 
 			if diff > 5000:
 				continue
-
-			if(minDiff > diff):
-				indx = i
-				minDiff = diff
 
 			#거리로 3차 필터링
 			compare_dist_origin_x = originpl[i].x - compareCutLine[0][pointPart[0]]
@@ -225,19 +209,28 @@ class groupPointMatchController:
 			#if(minDist > dist):
 				#indx = i
 				#minDist = dist
+			if dist > 25:
+				print("dist : ", dist)
+				continue
 
-		if indx != -1:
-			print("일단 나온 점 : ", originpl[indx])
-		else:
-			print("나온 점 없음")
+			if diff_count_mode == 0:
+				if(minDiff_dir_zero > diff):
+					minDiff_dir_zero = diff
+					dir_diff_zero_indx = i
+			elif diff_count_mode == 1:
+				if(minDiff_dir_one > diff):
+					minDiff_dir_one = diff
+					dir_diff_one_indx = i
 
 
-		if indx != -1:
-			print("매칭이 된 점: ", originpl[indx])
+		if dir_diff_zero_indx != -1:
+			print("매칭이 된 점: ", originpl[dir_diff_zero_indx])
 			print("==========================================")
-			return originpl[indx]
-		else:
+			return originpl[dir_diff_zero_indx]
+		elif dir_diff_one_indx != -1:
 			print("==========================================")
+			return originpl[dir_diff_one_indx]
+		else:
 			return None
 
 	"""
