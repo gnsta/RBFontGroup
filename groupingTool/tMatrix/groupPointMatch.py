@@ -8,6 +8,14 @@ from groupingTool.clockWise.clockWiseGroup import *
 	create by kim heesup
 """
 
+
+class ClockPointPair:
+	def __init__(self,point,clockDegree,index):
+	    self.point = point
+	    self.clockDegree = clockDegree
+	    self.index = index
+
+
 def calcDirection(con,point):
 	"""
 	포인트 데이터가 해당 컨투어의 어느쪽에 위치하고 있는지 확인하는 함수
@@ -82,6 +90,48 @@ class groupPointMatchController:
 
 		self.standardCon = matrix.getCon()
 
+	def firstFiltering(self,point,checkSdirection):
+		"""
+		matchPoint함수에서 적용
+		1차 필터링 과정
+		direction방법으로 필터링
+		"""
+		print("compare point : ",point)
+		#direction으로 1차 필터링
+		diff_count = 0
+		checkCdirection = calcDirection(self.con,point)
+		print("checkSdirection : ", checkSdirection)
+		print("checkCdirection : ",checkCdirection)
+		for j in range(0,4):
+			if(checkSdirection[j] != checkCdirection[j]):
+				diff_count += 1
+
+		if diff_count > 1:
+			print("diff_count_out")
+			return -1
+		elif diff_count == 0:
+			return 0
+		elif diff_count == 1:
+			return 1
+	def secondFiltering(self,standardClockDegree,compareClockDegree):
+		#방향이 같은 것만 고려
+		if compareClockDegree > 0  and standardClockDegree < 0:
+			print("clock_out")
+			return None
+		elif compareClockDegree < 0  and standardClockDegree > 0:
+			print("clock_out")
+			return None
+
+		diff = abs(standardClockDegree - compareClockDegree)
+
+		if diff > 10000:
+			print("clock_cut")
+			return None
+		else:
+			return diff
+
+
+
 	def matchPoint(self):
 		"""
 		포인트를 매칭 시켜줌
@@ -118,13 +168,24 @@ class groupPointMatchController:
 				checkSdirection[i] = 1
 
 
-
+		print("======================================================================")
+		print("con : ", self.con)
 		#비교 컨투어 direction조사
+		#자신의 범위와 주변 범위들을 조사
 		for p in self.con.points:
 			if(p.type != 'offcurve'):
 				checkPart = checkMatrix.getPointPart(p)
-				if((pointPart[0] == checkPart[0]) and (pointPart[1] == checkPart[1])):
+				check_part_one = abs(pointPart[0] - checkPart[0])
+				check_part_two = abs(pointPart[1] - checkPart[1])
+				print(p)
+				if(check_part_one <= 1) and (check_part_two <= 1):
+					print("in")
 					originpl.append(p)
+
+
+		#print("originpl!!!!!!!")
+		#for i in range(0,len(originpl)):
+			#print(originpl[i])
 
 
 		#pointPart의 첫 원소는 x부분이고 두번째 원소는 y부분이다.
@@ -137,61 +198,64 @@ class groupPointMatchController:
 		compare_term_y = checkMatrix.getTermY()
 
 		#get point that get minimum distance
-		minDiff_dir_zero = 10000000000
+		#minDiff_dir_zero = 10000000000
 		dir_diff_zero_indx = -1
 
-		minDiff_dir_one = 10000000000
+		#minDiff_dir_one = 10000000000
 		dir_diff_one_indx = -1
 
 		diff_count_mode = 0
 
 		#시험 코드
 		standardClockDegree = getPointClockDegree(self.matrix.con,self.point)
+		print("standardClockDegree : ", standardClockDegree)
 
-		print("con : ", self.con)
+		secondResult_one = list() #두번째 필터링 까지의 결과
+		secondResult_two = list()
 
-
-		for i in range(0,len(originpl)):
+		for i in range(0,len(originpl)):			
 			print("compare point : ",originpl[i])
 			#direction으로 1차 필터링
-			diff_count = 0
-			checkCdirection = calcDirection(self.con,originpl[i])
-			print("checkSdirection : ", checkSdirection)
-			print("checkCdirection : ",checkCdirection)
-			for j in range(0,4):
-				if(checkSdirection[j] != checkCdirection[j]):
-					diff_count += 1
+			diff_count_mode = self.firstFiltering(originpl[i],checkSdirection)
 
-			if diff_count > 1:
-				print("diff_count_out")
+			if diff_count_mode == -1:
 				continue
-			elif diff_count == 0:
-				diff_count_mode = 0
-			elif diff_count == 1:
-				diff_count_mode = 1
-
 
 			#회전율로 2차 필터링
 			compareClockDegree = getPointClockDegree(self.con,originpl[i])
 			print("compareClockDegree : ",compareClockDegree)
 			print("standardClockDegree - compareClockDegree: ", abs(standardClockDegree - compareClockDegree))
+			clock_diff = self.secondFiltering(standardClockDegree,compareClockDegree)
+			print("clock_diff: ", clock_diff)
 
-			#방향이 같은 것만 고려
-			if compareClockDegree > 0  and standardClockDegree < 0:
-				print("clock_out")
-				continue
-			elif compareClockDegree < 0  and standardClockDegree > 0:
-				print("clock_out")
-				continue
+			if clock_diff != None:
+				print("리스트에 들어감!")
+				if diff_count_mode == 0:
+					temp_insert = ClockPointPair(originpl[i],clock_diff,i)
+					print(temp_insert)
+					secondResult_one.append(temp_insert)
+				elif diff_count_mode == 1:
+					temp_insert = ClockPointPair(originpl[i],clock_diff,i)
+					print(temp_insert)
+					secondResult_two.append(temp_insert)
 
-			diff = abs(standardClockDegree - compareClockDegree)
 
-			if diff > 5000:
-				continue
+		print("one의 길이!!", len(secondResult_one))
+		print("two의 길이!!", len(secondResult_two))
+
+		#두번째 결과까지 해서 정렬
+		secondResultSorted_one = sorted(secondResult_one, key = lambda ClockPointPair: ClockPointPair.clockDegree)
+		secondResultSorted_two = sorted(secondResult_two, key = lambda ClockPointPair: ClockPointPair.clockDegree)
+
+		print("one의 길이!!", len(secondResultSorted_one))
+		print("two의 길이!!", len(secondResultSorted_two))
+
+		for i in range(0,len(secondResultSorted_one)):
+			print("3차 조사 점: ", secondResultSorted_one[i].point)
 
 			#거리로 3차 필터링
-			compare_dist_origin_x = originpl[i].x - compareCutLine[0][pointPart[0]]
-			compare_dist_origin_y = originpl[i].y - compareCutLine[1][pointPart[1]]
+			compare_dist_origin_x = secondResultSorted_one[i].point.x - compareCutLine[0][pointPart[0]]
+			compare_dist_origin_y = secondResultSorted_one[i].point.x - compareCutLine[1][pointPart[1]]
 
 			#거리의 크기 조정
 			compare_dist_x = compare_dist_origin_x * standard_term_x / compare_term_x
@@ -201,33 +265,48 @@ class groupPointMatchController:
 			compare_dist = math.sqrt(math.pow(compare_dist_x,2) + math.pow(compare_dist_y,2))
 
 			dist = abs(standard_dist - compare_dist)
-			#print("커트된 기준점!!!")
-			#print("x축 : ", compareCutLine[0][pointPart[0]])
-			#print("y축 : ", compareCutLine[1][pointPart[1]])
-			print("dist : ",dist)
 
-			#if(minDist > dist):
-				#indx = i
-				#minDist = dist
-			if dist > 25:
-				print("dist : ", dist)
+			if dist > 500:
+				print("dist cut : ", dist)
 				continue
-
-			if diff_count_mode == 0:
-				if(minDiff_dir_zero > diff):
-					minDiff_dir_zero = diff
-					dir_diff_zero_indx = i
-			elif diff_count_mode == 1:
-				if(minDiff_dir_one > diff):
-					minDiff_dir_one = diff
-					dir_diff_one_indx = i
-
+			else:
+				print("dist : ", dist)
+				dir_diff_zero_indx = secondResultSorted_one[i].index
+				break
 
 		if dir_diff_zero_indx != -1:
 			print("매칭이 된 점: ", originpl[dir_diff_zero_indx])
 			print("==========================================")
 			return originpl[dir_diff_zero_indx]
-		elif dir_diff_one_indx != -1:
+
+		#추가적으로 점을 조사
+		for i in range(0,len(secondResultSorted_two)):
+			print("3차 조사 점: ", secondResultSorted_two[i].point)
+
+			#거리로 3차 필터링
+			compare_dist_origin_x = secondResultSorted_two[i].point.x - compareCutLine[0][pointPart[0]]
+			compare_dist_origin_y = secondResultSorted_two[i].point.x - compareCutLine[1][pointPart[1]]
+
+			#거리의 크기 조정
+			compare_dist_x = compare_dist_origin_x * standard_term_x / compare_term_x
+			compare_dist_y = compare_dist_origin_y * standard_term_y / compare_term_y
+
+			#조정된 길이를 이용하여 거리를 구해줌
+			compare_dist = math.sqrt(math.pow(compare_dist_x,2) + math.pow(compare_dist_y,2))
+
+			dist = abs(standard_dist - compare_dist)
+
+			if dist > 500:
+				print("dist cut : ", dist)
+				continue
+			else:
+				print("dist : ", dist)
+				dir_diff_one_indx = secondResultSorted_two[i].index
+				break
+
+
+		if dir_diff_one_indx != -1:
+			print("매칭이 된 점: ", originpl[dir_diff_one_indx])
 			print("==========================================")
 			return originpl[dir_diff_one_indx]
 		else:

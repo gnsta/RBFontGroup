@@ -87,17 +87,18 @@ def StartProgram(testPath,testFile,CurrentFont):
         print("jsonFileName1 : ", jsonFileName1)
         if os.path.exists(jsonFileName1):
             raise FileExist('팔터링 파일은 이미 존재합니다')
-        for tg in testFile:
-            barProcess += 1
-            tempList = list()
-            for tc in tg.contours:
-                compare = getClockWiseList(tc)
-                tempList.append(compare)
-            insert[tg.name] = tempList
-            if barProcess % 10 == 0:
-                bar.tick(barProcess)     
-        with open(jsonFileName1,'w',encoding = 'utf-8') as make_file:
-            json.dump(insert,make_file,indent = '\t')
+        else:
+            for tg in testFile:
+                barProcess += 1
+                tempList = list()
+                for tc in tg.contours:
+                    compare = getClockWiseList(tc)
+                    tempList.append(compare)
+                insert[tg.name] = tempList
+                if barProcess % 10 == 0:
+                    bar.tick(barProcess)     
+            with open(jsonFileName1,'w',encoding = 'utf-8') as make_file:
+                json.dump(insert,make_file,indent = '\t')
     except FileExist as e:
         print(e)
 
