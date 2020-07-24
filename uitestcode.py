@@ -36,3 +36,4 @@ if KoreanCheck is True:
 	setExtensionDefault(DefaultKey + ".syllableJudgementController", syllableJudgementController)
 	
 menuWindow = ew.EditGroupMenu(groupDict,FileNameList[0],FileNameList[1])
+fontWindowObserver()

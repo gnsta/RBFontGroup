@@ -2,8 +2,9 @@
 from AppKit import NSColor
 from mojo.extensions import *
 from rbWindow.Controller.CircularQueue import *
-from fontParts.world import CurrentFont, OpenFont
+from fontParts.world import CurrentFont, OpenFont, AllFonts
 from mojo.UI import *
+from mojo.events import addObserver
 
 
 DefaultKey = "com.robofontTool.rbFontGroup"
@@ -26,6 +27,22 @@ def launchFontTool():
 
 	return testPath, currentFont
 
+class fontWindowObserver:
+
+	def __init__(self):
+		addObserver(self, 'windowCallback', 'fontDidOpen')
+
+	def windowCallback(self, info):
+		fontList = AllFonts()
+		if len(fontList) > 1:
+			Message("툴 사용 시 폰트 파일은 1개까지 열람할 수 있습니다!")
+			
+			i = 0
+			fontListLen = len(fontList)
+			while True:
+				if i == fontList:
+					break
+				fontList[-i].close()
 
 class ConfigExtensionSetting:
 
@@ -55,6 +72,7 @@ class ConfigExtensionSetting:
 
 		    self.registerKey + ".matrix_margin": 20,
 		    self.registerKey + ".matrix_size": 3,
+		    self.registerKey + ".raster_margin": 45,
 		    self.registerKey + ".topology_margin": 500,
 		    
 		    self.registerKey + ".groupDict": None,
@@ -88,8 +106,9 @@ class ConfigExtensionSetting:
 		setExtensionDefault(self.registerKey + ".width", 100)
 		setExtensionDefault(self.registerKey + ".height", 100)
 		setExtensionDefault(self.registerKey + ".k", 500)
+		setExtensionDefault(self.registerKey + ".raster_margin", 45)
 
-		setExtensionDefault(self.registerKey + ".matrix_margin", 30)
+		setExtensionDefault(self.registerKey + ".matrix_margin", 20)
 		setExtensionDefault(self.registerKey + ".matrix_size", 3)
 		setExtensionDefault(self.registerKey + ".topology_margin", 500)
 

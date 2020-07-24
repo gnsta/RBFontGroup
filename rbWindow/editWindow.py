@@ -168,7 +168,6 @@ class EditGroupMenu(object):
 
 		#self.w.excludeGlyphButton = Button((x,y,w,h), "Exclude Selected Glyph", callback=self.excludGlyph)
 		#y += h + space
-
 		addObserver(self, "drawBroadNibBackground", "drawBackground")
 
 	def popManualWindow(self,sender):
@@ -273,31 +272,37 @@ class EditGroupMenu(object):
 
 	def drawBroadNibBackground(self, info):
 		
+		# 칠할 필요가 없다면 종료
+		state = getExtensionDefault(DefaultKey+".state")
+		if bool(state) is not True:
+			return
+
 		# paint current group's contour
 		targetGlyph = info["glyph"].getLayer(self.layerName)
 		# picks current contours which should be painted from current group
 		contourList = []
 
-		state = getExtensionDefault(DefaultKey+".state")
-		# 칠할 필요가 없다면 해당 컨투어 번호만 세팅하고 종료
-		if bool(state) is not True:
-			return
 
 		try :
 			file = getExtensionDefault(DefaultKey + ".file")
 			targetIdxList = getExtensionDefault(DefaultKey+".groupDict")[targetGlyph]
 			setExtensionDefault(DefaultKey + ".contourNumber", targetIdxList[0])
-
-			r,g,b,a = self.color
+			
+			color = getExtensionDefault(DefaultKey+".color")
+			r,g,b,a = color
 			fill(r,g,b,a)
 
+			step = getExtensionDefault(DefaultKey+".step"); width = getExtensionDefault(DefaultKey+".width"); height = getExtensionDefault(DefaultKey+".height");
+
+
 			if info["glyph"].layerName == self.layerName or not self.currentPen:
-				self.currentPen = BroadNibPen(None, self.step, self.width, self.height, 0, oval)
+				self.currentPen = BroadNibPen(None, step, width, height, 0, oval)
 
 			for idx in targetIdxList:
 				targetGlyph.contours[idx].draw(self.currentPen)
 
 
 		except Exception as e:
+			print("drawBroadNibBackground 에러 발생", e)
 			setExtensionDefault(DefaultKey + ".contourNumber", None)
 			return

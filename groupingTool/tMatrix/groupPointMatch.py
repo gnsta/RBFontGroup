@@ -228,34 +228,35 @@ class groupPointMatchController:
 			clock_diff = self.secondFiltering(standardClockDegree,compareClockDegree)
 			print("clock_diff: ", clock_diff)
 
-			if clock_diff != None:
-				print("리스트에 들어감!")
-				if diff_count_mode == 0:
-					temp_insert = ClockPointPair(originpl[i],clock_diff,i)
-					print(temp_insert)
-					secondResult_one.append(temp_insert)
-				elif diff_count_mode == 1:
-					temp_insert = ClockPointPair(originpl[i],clock_diff,i)
-					print(temp_insert)
-					secondResult_two.append(temp_insert)
+			if diff_count_mode == 0:
+				temp_insert = ClockPointPair(originpl[i],clock_diff,i)
+				print(temp_insert)
+				secondResult_one.append(temp_insert)
+			elif diff_count_mode == 1:
+				temp_insert = ClockPointPair(originpl[i],clock_diff,i)
+				print(temp_insert)
+				secondResult_two.append(temp_insert)
 
 
 		print("one의 길이!!", len(secondResult_one))
 		print("two의 길이!!", len(secondResult_two))
 
 		#두번째 결과까지 해서 정렬
-		secondResultSorted_one = sorted(secondResult_one, key = lambda ClockPointPair: ClockPointPair.clockDegree)
-		secondResultSorted_two = sorted(secondResult_two, key = lambda ClockPointPair: ClockPointPair.clockDegree)
-
+		#secondResultSorted_one = sorted(secondResult_one, key = lambda ClockPointPair: ClockPointPair.clockDegree)
+		#secondResultSorted_two = sorted(secondResult_two, key = lambda ClockPointPair: ClockPointPair.clockDegree)
+		secondResultSorted_one = secondResult_one
+		secondResultSorted_two = secondResult_two
+		
 		print("one의 길이!!", len(secondResultSorted_one))
 		print("two의 길이!!", len(secondResultSorted_two))
 
+		min_dist = 500
 		for i in range(0,len(secondResultSorted_one)):
 			print("3차 조사 점: ", secondResultSorted_one[i].point)
 
 			#거리로 3차 필터링
 			compare_dist_origin_x = secondResultSorted_one[i].point.x - compareCutLine[0][pointPart[0]]
-			compare_dist_origin_y = secondResultSorted_one[i].point.x - compareCutLine[1][pointPart[1]]
+			compare_dist_origin_y = secondResultSorted_one[i].point.y - compareCutLine[1][pointPart[1]]
 
 			#거리의 크기 조정
 			compare_dist_x = compare_dist_origin_x * standard_term_x / compare_term_x
@@ -271,8 +272,10 @@ class groupPointMatchController:
 				continue
 			else:
 				print("dist : ", dist)
-				dir_diff_zero_indx = secondResultSorted_one[i].index
-				break
+				if min_dist > dist:
+					print("current_min_dist = ", dist)
+					dir_diff_zero_indx = secondResultSorted_one[i].index
+					min_dist = dist
 
 		if dir_diff_zero_indx != -1:
 			print("매칭이 된 점: ", originpl[dir_diff_zero_indx])
@@ -280,12 +283,13 @@ class groupPointMatchController:
 			return originpl[dir_diff_zero_indx]
 
 		#추가적으로 점을 조사
+		min_dist = 500
 		for i in range(0,len(secondResultSorted_two)):
 			print("3차 조사 점: ", secondResultSorted_two[i].point)
 
 			#거리로 3차 필터링
 			compare_dist_origin_x = secondResultSorted_two[i].point.x - compareCutLine[0][pointPart[0]]
-			compare_dist_origin_y = secondResultSorted_two[i].point.x - compareCutLine[1][pointPart[1]]
+			compare_dist_origin_y = secondResultSorted_two[i].point.y - compareCutLine[1][pointPart[1]]
 
 			#거리의 크기 조정
 			compare_dist_x = compare_dist_origin_x * standard_term_x / compare_term_x
@@ -300,9 +304,11 @@ class groupPointMatchController:
 				print("dist cut : ", dist)
 				continue
 			else:
-				print("dist : ", dist)
-				dir_diff_one_indx = secondResultSorted_two[i].index
-				break
+				print("dist2 : ", dist)
+				if min_dist > dist:
+					print("current_min_dist = ", dist)
+					dir_diff_one_indx = secondResultSorted_two[i].index
+					min_dist = dist
 
 
 		if dir_diff_one_indx != -1:
@@ -342,16 +348,3 @@ class groupPointMatchController:
 	def mdeleteAttr(self,attribute,matchPoint):
 		if matchPoint is not None:
 			at.del_attr(matchPoint,attribute)		
-
-
-
-
-
-
-
-
-
-
-
-
-

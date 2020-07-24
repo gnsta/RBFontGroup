@@ -100,14 +100,15 @@ def name2dict(name) -> dict:
     
     elements = name.split(",")
     
+    res = ""
     for i in range(len(elements)):
         if ":" in elements[i]:
-            name += elements[i]+", "
+            res += elements[i]+", "
 
-    name = name[:-2]
+    name = res[:-2]
     
     name = '{' + name.replace("'", '"') + '}'
-
+    print("name = ", name)
     name_dict = json.loads(name)
 
     return name_dict
