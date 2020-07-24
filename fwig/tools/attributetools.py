@@ -97,9 +97,15 @@ def name2dict(name) -> dict:
     '''
     inserted와 같이 key, value 형식이 아닌 값을 거르기 위한 과정
     '''
-    name = name.replace(' ','')
-    name = name.replace("inserted,","").replace(",inserted","").replace("inserted","").strip()
+    
+    elements = name.split(",")
+    
+    for i in range(len(elements)):
+        if ":" in elements[i]:
+            name += elements[i]+", "
 
+    name = name[:-2]
+    
     name = '{' + name.replace("'", '"') + '}'
 
     name_dict = json.loads(name)

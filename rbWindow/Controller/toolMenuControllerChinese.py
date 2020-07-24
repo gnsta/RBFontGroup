@@ -120,6 +120,7 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 
 
 	smartSet.glyphNames = smartSetGlyphs
+	print("그룹화를 진행한 글리프 셋", len(smartSetGlyphs))
 	addSmartSet(smartSet)
 	updateAllSmartSets()	
 

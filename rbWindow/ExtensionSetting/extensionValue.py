@@ -70,8 +70,6 @@ class ConfigExtensionSetting:
 		    
 		    self.registerKey + ".index": 0,
 		    self.registerKey + ".step": 30,
-		    self.registerKey + ".width": 30,
-		    self.registerKey + ".height": 10,
 		    self.registerKey + ".color": NSColor.colorWithCalibratedRed_green_blue_alpha_(1, 0, 0, .5)
 		}
 
