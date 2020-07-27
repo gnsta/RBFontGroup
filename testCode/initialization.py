@@ -74,19 +74,20 @@ def StartProgram(testPath,testFile,CurrentFont):
         barProcess = 0
     
     # 기존의 폰트 파일이 다른 폰트 파일로 바뀐 경우 기존의 파일을 삭제합니다.
-    if CurrentFont != getExtensionDefault(DefaultKey+".font"):
-        filePath = os.path.dirname(os.path.abspath(__file__))+'/jsonResource/'
+    #if CurrentFont != getExtensionDefault(DefaultKey+".font"):
+        #filePath = os.path.dirname(os.path.abspath(__file__))+'/jsonResource/'
 
-        if os.path.exists(filePath):
-            for file in os.scandir(filePath):
-                os.remove(file.path)
+        #if os.path.exists(filePath):
+            #for file in os.scandir(filePath):
+                #os.remove(file.path)
 
     #1차필터링
     try:
         jsonFileName1 = os.path.dirname(os.path.abspath(__file__)) + '/jsonResource/' + tempFileName.split('.')[0] + '.json'
         print("jsonFileName1 : ", jsonFileName1)
+        print("json1 존재 유무!", os.path.exists(jsonFileName1))
         if os.path.exists(jsonFileName1):
-            raise FileExist('팔터링 파일은 이미 존재합니다')
+            raise FileExist('필터링 파일은 이미 존재합니다')
         else:
             for tg in testFile:
                 barProcess += 1
@@ -110,6 +111,7 @@ def StartProgram(testPath,testFile,CurrentFont):
             tempFileName = testPath.split('/')[-1]
             jsonFileName2 = os.path.dirname(os.path.abspath(__file__)) + '/jsonResource/' + tempFileName.split('.')[0] + '_config.json'
             print("jsonFileName2 : ", jsonFileName2)
+            print("json2 존재 유무!", os.path.exists(jsonFileName2))
             if os.path.exists(jsonFileName2):
                 raise FileExist('음절 분리 파일은 이미 존재합니다')
             for tg in testFile:

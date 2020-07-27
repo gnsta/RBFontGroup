@@ -142,7 +142,10 @@ def get_attr(point, attribute):
             The value of attribute.
     """
     attributes = name2dict(point.name)
-    return attributes.get(attribute)
+    if attribute in attributes:
+        return attributes.get(attribute)
+    else:
+        return None
 
 def set_attr(point, attribute, value):
     """ Sets attribute to RPoint object.

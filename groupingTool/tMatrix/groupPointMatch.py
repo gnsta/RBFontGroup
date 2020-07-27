@@ -328,22 +328,38 @@ class groupPointMatchController:
 	def mgiveAttrPenPair(self,matchPoint):
 		if matchPoint is not None:
 			temp = at.get_attr(self.point,'penPair')
-			at.add_attr(matchPoint,'penPair',temp)
+			if temp is not None:
+				at.add_attr(matchPoint,'penPair',temp)
 
 	def mgiveDependX(self,matchPoint):
 		if matchPoint is not None:
 			temp = at.get_attr(self.point,'dependX')
-			at.add_attr(matchPoint,'dependX',temp)
+			if temp is not None:
+				at.add_attr(matchPoint,'dependX',temp)
 
 	def mgiveDependY(self,matchPoint):
 		if matchPoint is not None:
 			temp = at.get_attr(self.point,'dependY')
-			at.add_attr(matchPoint,'dependY',temp)
+			if temp is not None:
+				at.add_attr(matchPoint,'dependY',temp)
 
 	def mgiveInnerFill(self,matchPoint):
 		if matchPoint is not None:
 			temp = at.get_attr(self.point,'innerFill')
-			at.add_attr(matchPoint,'innerFill',temp)
+			if temp is not None:
+				at.add_attr(matchPoint,'innerFill',temp)
+
+	def mgiveHorizontal(self,matchPoint):
+		if matchPoint is not None:
+			temp = at.get_attr(self.point,"horizontal")
+			if temp is not None:
+				at.add_attr(matchPoint,'horizontal',temp)
+
+	def mgiveVerticle(self,matchPoint):
+		if matchPoint is not None:
+			temp = at.get_attr(self.point, "verticle")
+			if temp is not None:
+				at.add_attr(matchPoint,"verticle",temp)
 
 	def mdeleteAttr(self,attribute,matchPoint):
 		if matchPoint is not None:
