@@ -3,6 +3,7 @@ import math
 from groupingTool.tMatrix.PhaseTool import *
 from fwig.tools import attributetools as at
 from groupingTool.clockWise.clockWiseGroup import *
+from attributeTool.strokeAttribute import *
 """
 	2020/02/24
 	create by kim heesup
@@ -349,17 +350,11 @@ class groupPointMatchController:
 			if temp is not None:
 				at.add_attr(matchPoint,'innerFill',temp)
 
-	def mgiveHorizontal(self,matchPoint):
+	def mgiveStroke(self,matchPoint,value):
 		if matchPoint is not None:
-			temp = at.get_attr(self.point,"horizontal")
-			if temp is not None:
-				at.add_attr(matchPoint,'horizontal',temp)
-
-	def mgiveVertical(self,matchPoint):
-		if matchPoint is not None:
-			temp = at.get_attr(self.point, "vertical")
-			if temp is not None:
-				at.add_attr(matchPoint,"vertical",temp)
+			temp = get_stroke(matchPoint)
+			if value not in temp:
+				set_stroke(matchPoint,value)
 
 	def mdeleteAttr(self,attribute,matchPoint):
 		if matchPoint is not None:
