@@ -5,6 +5,7 @@ from rbWindow.ExtensionSetting import extensionValue
 from rbWindow.ExtensionSetting.extensionValue import *
 from mojo.extensions import *
 from mojo.roboFont import CurrentGlyph
+from attributeTool.strokeAttribute import *
 """
 2020/02/24
 Created by heesup Kim
@@ -38,7 +39,7 @@ def mselectAttribute(groupDict,standardMatrix):
     g = CurrentGlyph()
     for point in g.selectedPoints:
         tmp = list()
-        tmp.append(point); tmp.append(point.name)
+        tmp.append(point); tmp.append(point.name); tmp.append(get_stroke(point))
         prevPointList.append(tmp)
 
     restoreStack.push(prevPointList)
@@ -77,7 +78,7 @@ def mpenPairAttribute(groupDict,standardMatrix):
     g = CurrentGlyph()
     for point in g.selectedPoints:
         tmp = list()
-        tmp.append(point); tmp.append(point.name)
+        tmp.append(point); tmp.append(point.name); tmp.append(get_stroke(point))
         prevPointList.append(tmp)
 
 
@@ -109,7 +110,7 @@ def mdependXAttribute(groupDict,standardMatrix):
         if mPoint is not None:
             controllerList[i].mgiveDependX(mPoint)
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
+            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(point))
             prevPointList.append(tmp)
             
 
@@ -148,7 +149,7 @@ def mdependYAttribute(groupDict,standardMatrix):
         if mPoint is not None:
             controllerList[i].mgiveDependY(mPoint)
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
+            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(point))
             prevPointList.append(tmp)
             
 
@@ -265,7 +266,7 @@ def minnerFillAttribute(groupDict,standardMatrix):
         if mPoint is not None:
             controllerList[i].mgiveInnerFill(mPoint)
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
+            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(point))
             prevPointList.append(tmp)
             
 
@@ -304,7 +305,7 @@ def mdeleteAttribute(groupDict,standardMatrix,attribute):
         if mPoint is not None:
             controllerList[i].mdeleteAttr(attribute,mPoint)
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
+            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(point))
             prevPointList.append(tmp)
             
 

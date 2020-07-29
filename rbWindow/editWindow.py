@@ -15,6 +15,7 @@ from AppKit import *
 from rbWindow.ExtensionSetting.extensionValue import *
 from rbWindow.Controller import CircularQueue
 from fontParts.world import CurrentFont
+from attributeTool.strokeAttribute import *
 
 
 
@@ -228,6 +229,9 @@ class EditGroupMenu(object):
 
 		for element in top:
 			element[0].name = element[1]
+
+			for stroke_element in element[2]:
+				element[0].set_stroke(stroke_element)
 
 		restoreStack.print()
 		CurrentFont().update()
