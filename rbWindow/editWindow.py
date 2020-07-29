@@ -100,7 +100,6 @@ class EditGroupMenu(object):
 		self.groupDict = groupDict
 		
 		self.defaultKey = "com.asaumierdemers.BroadNibBackground"
-		self.selectedGlyphs = []                # Apply List Label을 통해 색칠된 글리프들을 다시 무채색으로 변환하기 위한 변수
 		self.markColor = 0.3, 0.4, 0.7, 0.7
 		self.layerName = self.font.layerOrder[0]
 		self.currentPen = None
@@ -152,7 +151,6 @@ class EditGroupMenu(object):
 			toolbarItems.append(self.newToolbarItems[i])
 
 
-		#toolbarItems.append(newItem7)
 		# get the vanilla window object
 		vanillaWindow = self.window.window()
 		# set the new toolbaritems in the window
@@ -160,14 +158,6 @@ class EditGroupMenu(object):
 		# done
 		x = 10; y = 10; w = 280; h = 22; space = 5; size = (800, 600)
 
-		"""		
-		self.w.addGroupListButton = Button((x,y,w,h), "Add Group", callback=self.addGroupListCallback)
-		y += h + space
-		"""
-
-
-		#self.w.excludeGlyphButton = Button((x,y,w,h), "Exclude Selected Glyph", callback=self.excludGlyph)
-		#y += h + space
 		addObserver(self, "drawBroadNibBackground", "drawBackground")
 
 	def popManualWindow(self,sender):
@@ -202,16 +192,10 @@ class EditGroupMenu(object):
 	def windowCloseCallback(self, sender):
 	    
 	    try:
-	        for glyph in self.w[2].selectedGlyphs:
-	            glyph.markColor = None
-	    except AttributeError:
-	    	pass
-
-	    try:
 	    	removeObserver(self, "drawBackground")
 	    	super(BroadNibBackground, self).windowCloseCallback(sender)
-	    except NameError:
-	    	pass
+	    except Exception as e:
+	    	print(e)
 
 	    currentToolbarItems = self.window.getToolbarItems()
 
@@ -230,13 +214,15 @@ class EditGroupMenu(object):
 
 		restoreStack = getExtensionDefault(DefaultKey + ".restoreStack")
 
+		
 		if restoreStack is None or restoreStack.isEmpty() is True:
+			restoreStack.print()
 			Message("더 이상 되돌릴 수 없습니다.")
 			return
 
-		restoreStack.print()
 		top = restoreStack.pop()
 		if top is None:
+			restoreStack.print()
 			Message("더 이상 되돌릴 수 없습니다.")
 			return
 
@@ -250,12 +236,12 @@ class EditGroupMenu(object):
 	def rollbackAttribute(self, sender):
 
 		restoreStack = getExtensionDefault(DefaultKey + ".restoreStack")
-
+		
 		if restoreStack is None or restoreStack.front == restoreStack.rear:
+			restoreStack.print()
 			Message("복원할 수 없습니다.")
 			return
 
-		restoreStack.print()
 		target = restoreStack.rollback()
 	
 		if target is None:

@@ -228,11 +228,11 @@ class groupPointMatchController:
 			clock_diff = self.secondFiltering(standardClockDegree,compareClockDegree)
 			print("clock_diff: ", clock_diff)
 
-			if diff_count_mode == 0:
+			if diff_count_mode == 0 and clock_diff is not None:
 				temp_insert = ClockPointPair(originpl[i],clock_diff,i)
 				print(temp_insert)
 				secondResult_one.append(temp_insert)
-			elif diff_count_mode == 1:
+			elif diff_count_mode == 1 and clock_diff is not None:
 				temp_insert = ClockPointPair(originpl[i],clock_diff,i)
 				print(temp_insert)
 				secondResult_two.append(temp_insert)
@@ -355,11 +355,11 @@ class groupPointMatchController:
 			if temp is not None:
 				at.add_attr(matchPoint,'horizontal',temp)
 
-	def mgiveVerticle(self,matchPoint):
+	def mgiveVertical(self,matchPoint):
 		if matchPoint is not None:
-			temp = at.get_attr(self.point, "verticle")
+			temp = at.get_attr(self.point, "vertical")
 			if temp is not None:
-				at.add_attr(matchPoint,"verticle",temp)
+				at.add_attr(matchPoint,"vertical",temp)
 
 	def mdeleteAttr(self,attribute,matchPoint):
 		if matchPoint is not None:

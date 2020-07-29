@@ -8,5 +8,5 @@ ufoPath = "/Users/font/Desktop/groupTest2350.ufo"
 ImagePath = fontToolBundle.resourcesPath()+"/"
 resourcePath = ImagePath
 
-attrImgList = ["innerFill", "penPair", "dependX", "dependY",  "rubbish", "select"]
+attrImgList = ["innerFill", "penPair", "dependX", "dependY", "horizontal", "vertical", "rubbish", "select"]
 

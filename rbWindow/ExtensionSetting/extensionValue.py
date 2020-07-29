@@ -49,7 +49,7 @@ class ConfigExtensionSetting:
 	def __init__(self, registerKey):
 
 		bufferStack = CircularQueue(rewindBufferSize)
-
+		setExtensionDefault(DefaultKey+".restoreStack", bufferStack)
 		self.registerKey = registerKey
 		self.defaults = {
 			self.registerKey + ".registered": True,

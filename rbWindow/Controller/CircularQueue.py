@@ -13,7 +13,7 @@ undo/redo manager circular queue
 
 class CircularQueue:
 
-	def __init__(self, bufSize=50):
+	def __init__(self, bufSize=5):
 		self.bufSize = bufSize
 		self.queue = [None]*self.bufSize
 		self.front = self.rear = 0

@@ -23,7 +23,7 @@ class attributeWindow:
 		self.testPath = getExtensionDefault(DefaultKey+".testPath")
 	
 	def createUI(self):
-		x = 10; y = 10; w = 100; h = 30; space = 5; self.size = (200,250); pos = (1200,300); self.minSize = (50,250);
+		x = 10; y = 10; w = 100; h = 30; space = 5; self.size = (200,450); pos = (1200,300); self.minSize = (50,250);
 
 		self.w = HUDFloatingWindow((pos[0],pos[1],self.minSize[0],self.minSize[1]), "ToolsWindow", minSize=(self.minSize[0], self.minSize[1]))
 		
@@ -45,11 +45,21 @@ class attributeWindow:
 		self.w.dependYText = TextBox((x+40,y,w,h), "depndY")
 		y += h + space
 
-		self.w.deleteButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[4]+".png", callback=self.handleDelete)
+		self.w.horizonStartButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[4]+".png", callback=self.handleHorizon)
+		self.w.horizonStartText = TextBox((x+40,y,w,h), "horizontal")
+		y += h + space
+
+
+		self.w.verticalStartButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[5]+".png", callback=self.handleVertical)
+		self.w.verticalStartText = TextBox((x+40,y,w,h), "vertical")
+		y += h + space
+
+
+		self.w.deleteButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[6]+".png", callback=self.handleDelete)
 		self.w.deleteText = TextBox((x+40,y,w,h), "delete")
 		y += h + space
 
-		self.w.selectButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[5]+".png", callback=self.handleSelect)
+		self.w.selectButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[7]+".png", callback=self.handleSelect)
 		self.w.selectText = TextBox((x+40,y,w,h), "select")
 		y += h + space
 
@@ -288,7 +298,6 @@ class attributeWindow:
 			Message("모드 에러")
 			return
 
-		self.markAppendedGlyph()
 
 		CurrentFont().update()	#로보폰트 업데이트
 		CurrentFont().save(self.testPath) 	#XML 업데이트
@@ -313,7 +322,6 @@ class attributeWindow:
 			Message("모드 에러")
 			return
 
-		self.markAppendedGlyph()
 
 		CurrentFont().update()	#로보폰트 업데이트
 		CurrentFont().save(self.testPath) 	#XML 업데이트
@@ -339,7 +347,6 @@ class attributeWindow:
 			Message("모드 에러")
 			return
 
-		self.markAppendedGlyph()
 
 		CurrentFont().update()	#로보폰트 업데이트
 		CurrentFont().save(self.testPath) 	#XML 업데이트
@@ -365,10 +372,61 @@ class attributeWindow:
 			Message("모드 에러")
 			return
 
-		self.markAppendedGlyph()
 
 		CurrentFont().update()	#로보폰트 업데이트
 		CurrentFont().save(self.testPath) 	#XML 업데이트
+
+	def handleHorizon(self, sender):
+		
+		if updateAttributeComponent() is False:
+			return
+		
+		mode = getExtensionDefault(DefaultKey+".mode")
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+
+		if mode is matrixMode:
+			matrix = getExtensionDefault(DefaultKey+".matrix")
+			mbt.mgiveHorizontal(groupDict, matrix)
+
+		elif mode is topologyMode:
+			standardContour = getExtensionDefault(DefaultKey+".standardContour")
+			k = getExtensionDefault(DefaultKey+".k")
+			tbt.mgiveHorizontal(groupDict, standardContour, k)
+				
+		else:
+			Message("모드 에러")
+			return
+
+
+		CurrentFont().update()	#로보폰트 업데이트
+		CurrentFont().save(self.testPath) 	#XML 업데이트
+
+
+
+	def handleVertical(self, sender):
+		if updateAttributeComponent() is False:
+			return
+		
+		mode = getExtensionDefault(DefaultKey+".mode")
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+
+		if mode is matrixMode:
+			matrix = getExtensionDefault(DefaultKey+".matrix")
+			mbt.mgiveVerticle(groupDict, matrix)
+
+		elif mode is topologyMode:
+			standardContour = getExtensionDefault(DefaultKey+".standardContour")
+			k = getExtensionDefault(DefaultKey+".k")
+			tbt.mgiveVerticle(groupDict, standardContour, k)
+				
+		else:
+			Message("모드 에러")
+			return
+
+
+		CurrentFont().update()	#로보폰트 업데이트
+		CurrentFont().save(self.testPath) 	#XML 업데이트
+
 
 	def handleSelect(self, sender):
 		if updateAttributeComponent() is False:
@@ -413,24 +471,6 @@ class attributeWindow:
 		CurrentFont().update()	#로보폰트 업데이트
 		CurrentFont().save(self.testPath) 	#XML 업데이트
 
-	def markAppendedGlyph():
-
-		font = getExtensionDefault(DefaultKey+".font")
-		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-
-		check = False
-		for key in groupDict.keys():
-			for contour in key.contours:
-				for point in contour.points:
-					if point.name is not None and point.name is not "inserted":
-						font[key.name].markColor = (0.5,0.5,1,1)
-						check = True
-						break
-				if check is True:
-					check = False
-					break
-				else:
-					font[key.name].markColor = None
 			
 	def minimizeCallback(self, sender):
 		if sender.get() == True:

@@ -66,7 +66,7 @@ class settingWindow(BaseWindowController):
 
         ###########################################
         y += 30
-        self.w.colorContourCheckBox= CheckBox((x,y,w,h), "Apply Contour Color", callback=self.colorContourCallback)
+        self.w.colorContourCheckBox= CheckBox((x,y,w,h), "Apply Contour Color", callback=self.colorContourCallback, value=getExtensionDefault(DefaultKey + ".state"))
         y += h + 20
 
         self.w.methodRadioGroup = RadioGroup((x,y,w,h), ["Matrix", "Topology"], sizeStyle="small", callback=self.methodChangedCallback)
