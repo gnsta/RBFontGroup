@@ -231,7 +231,7 @@ class EditGroupMenu(object):
 			element[0].name = element[1]
 
 			for stroke_element in element[2]:
-				element[0].set_stroke(stroke_element)
+				set_stroke(element[0],stroke_element)
 
 		restoreStack.print()
 		CurrentFont().update()
