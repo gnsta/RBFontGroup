@@ -39,16 +39,16 @@ def set_stroke(point,value) -> bool:
     
     for contour_info in contours_info:
         for point_info in contour_info.getchildren():
-            if (int(point_info.get('x')) != point.x) or (int(point_info.get('y')) != point.y):
+            if (float(point_info.get('x')) != point.x) or (float(point_info.get('y')) != point.y):
                 continue
             else:
                 information = point_info.get("stroke")
-                if value in information:
+                if information is not None and value in information:
                     return True
                 if information is not None:
                     value = information  + "," + value
-                print(point_info)
-                print(value)
+                else:
+                    vlaue = information
                 point_info.set("stroke",value)
                 tree.write(path + "/" + search_file, encoding="UTF-8", xml_declaration=True)
                 return True
@@ -88,11 +88,14 @@ def get_stroke(point) -> list:
     
     for contour_info in contours_info:
         for point_info in contour_info.getchildren():
-            if (int(point_info.get('x')) != point.x) or (int(point_info.get('y')) != point.y):
+            if (float(point_info.get('x')) != point.x) or (float(point_info.get('y')) != point.y):
                 continue
             else:
                 stroke_info = point_info.get("stroke")
-                return stroke_info.split(',')
+                if stroke_info is not None:
+                    return stroke_info.split(',')
+                else:
+                    return list()
             
     return list()
 
@@ -132,7 +135,7 @@ def delete_stroke(point,value) -> bool:
     for contour_info in contours_info:
         for point_info in contour_info.getchildren():
 
-            if (int(point_info.get('x')) != point.x) or (int(point_info.get('y')) != point.y):
+            if (float(point_info.get('x')) != point.x) or (float(point_info.get('y')) != point.y):
                 continue
             else:
                 stroke_info = point_info.get("stroke")

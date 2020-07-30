@@ -32,7 +32,7 @@ def mselectAttribute(groupDict,standardMatrix):
         mPoint = controllerList[i].matchPoint()
         if mPoint is not None:
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
+            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(mPoint))
             prevPointList.append(tmp)
             controllerList[i].mgiveSelected(mPoint)
 
@@ -71,7 +71,7 @@ def mpenPairAttribute(groupDict,standardMatrix):
         if mPoint is not None:
             controllerList[i].mgiveAttrPenPair(mPoint)
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
+            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(mPoint))
             prevPointList.append(tmp)
             
 
@@ -110,14 +110,14 @@ def mdependXAttribute(groupDict,standardMatrix):
         if mPoint is not None:
             controllerList[i].mgiveDependX(mPoint)
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(point))
+            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(mPoint))
             prevPointList.append(tmp)
             
 
     g = CurrentGlyph()
     for point in g.selectedPoints:
         tmp = list()
-        tmp.append(point); tmp.append(point.name)
+        tmp.append(point); tmp.append(point.name); tmp.append(get_stroke(point))
         prevPointList.append(tmp)
 
 
@@ -149,21 +149,21 @@ def mdependYAttribute(groupDict,standardMatrix):
         if mPoint is not None:
             controllerList[i].mgiveDependY(mPoint)
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(point))
+            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(mPoint))
             prevPointList.append(tmp)
             
 
     g = CurrentGlyph()
     for point in g.selectedPoints:
         tmp = list()
-        tmp.append(point); tmp.append(point.name)
+        tmp.append(point); tmp.append(point.name); tmp.append(get_stroke(point))
         prevPointList.append(tmp)
 
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
 
-def mhorizontalAttribute(groupDict,standardMatrix):
+def mgiveStrokeAttribute(groupDict,standardMatrix,value):
     controllerList = []
     contoursList = []
     prevPointList = list()
@@ -186,55 +186,16 @@ def mhorizontalAttribute(groupDict,standardMatrix):
     for i in range(0,len(controllerList)):
         mPoint = controllerList[i].matchPoint()
         if mPoint is not None:
-            controllerList[i].mgiveHorizontal(mPoint)
+            controllerList[i].mgiveStroke(mPoint,value)
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
+            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(mPoint))
             prevPointList.append(tmp)
             
 
     g = CurrentGlyph()
     for point in g.selectedPoints:
         tmp = list()
-        tmp.append(point); tmp.append(point.name)
-        prevPointList.append(tmp)
-
-
-    restoreStack.push(prevPointList)
-    setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
-
-def mverticalAttribute(groupDict,standardMatrix):
-    controllerList = []
-    contoursList = []
-    prevPointList = list()
-    restoreStack = getExtensionDefault(DefaultKey+".restoreStack")
-
-
-
-    for k in groupDict.keys():
-        for i in range(0,len(groupDict[k])):
-            contoursList.append(k.contours[groupDict[k][i]])
-
-    for i in range(0,len(contoursList)):
-        if(standardMatrix.con != contoursList[i]):
-            for sp in standardMatrix.con.points:
-                if(sp.selected == True):
-                    controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
-
-
-
-    for i in range(0,len(controllerList)):
-        mPoint = controllerList[i].matchPoint()
-        if mPoint is not None:
-            controllerList[i].mgiveVertical(mPoint)
-            tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
-            prevPointList.append(tmp)
-            
-
-    g = CurrentGlyph()
-    for point in g.selectedPoints:
-        tmp = list()
-        tmp.append(point); tmp.append(point.name)
+        tmp.append(point); tmp.append(point.name); tmp.append(get_stroke(point))
         prevPointList.append(tmp)
 
 
@@ -266,14 +227,14 @@ def minnerFillAttribute(groupDict,standardMatrix):
         if mPoint is not None:
             controllerList[i].mgiveInnerFill(mPoint)
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(point))
+            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(mPoint))
             prevPointList.append(tmp)
             
 
     g = CurrentGlyph()
     for point in g.selectedPoints:
         tmp = list()
-        tmp.append(point); tmp.append(point.name)
+        tmp.append(point); tmp.append(point.name); tmp.append(get_stroke(point))
         prevPointList.append(tmp)
 
 
@@ -305,14 +266,14 @@ def mdeleteAttribute(groupDict,standardMatrix,attribute):
         if mPoint is not None:
             controllerList[i].mdeleteAttr(attribute,mPoint)
             tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(point))
+            tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(mPoint))
             prevPointList.append(tmp)
             
 
     g = CurrentGlyph()
     for point in g.selectedPoints:
         tmp = list()
-        tmp.append(point); tmp.append(point.name)
+        tmp.append(point); tmp.append(point.name); tmp.append(get_stroke(point))
         prevPointList.append(tmp)
 
 

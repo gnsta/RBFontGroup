@@ -23,9 +23,9 @@ class attributeWindow:
 		self.testPath = getExtensionDefault(DefaultKey+".testPath")
 	
 	def createUI(self):
-		x = 10; y = 10; w = 100; h = 30; space = 5; self.size = (200,450); pos = (1200,300); self.minSize = (50,250);
+		x = 10; y = 10; w = 100; h = 30; space = 5; self.size = (200,450); pos = (1200,300); self.minSize = (50,400);
 
-		self.w = HUDFloatingWindow((pos[0],pos[1],self.minSize[0],self.minSize[1]), "ToolsWindow", minSize=(self.minSize[0], self.minSize[1]))
+		self.w = HUDFloatingWindow((pos[0],pos[1],self.size[0],self.size[1]), "ToolsWindow", minSize=(self.minSize[0], self.minSize[1]))
 		
 		h = 30
 
@@ -42,18 +42,13 @@ class attributeWindow:
 		y += h + space
 
 		self.w.dependYButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[3]+".png", callback=self.handleDependY)
-		self.w.dependYText = TextBox((x+40,y,w,h), "depndY")
+		self.w.dependYText = TextBox((x+40,y,w,h), "dependY")
 		y += h + space
 
-		self.w.horizonStartButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[4]+".png", callback=self.handleHorizon)
-		self.w.horizonStartText = TextBox((x+40,y,w,h), "horizontal")
+		self.w.stokeButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[4]+".png", callback=self.handleStroke)
+		self.w.strokeText = TextBox((x+40,y,w,h), "stroke")
+		self.w.strokeEditText = EditText((x+80,y,w,h))
 		y += h + space
-
-
-		self.w.verticalStartButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[5]+".png", callback=self.handleVertical)
-		self.w.verticalStartText = TextBox((x+40,y,w,h), "vertical")
-		y += h + space
-
 
 		self.w.deleteButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[6]+".png", callback=self.handleDelete)
 		self.w.deleteText = TextBox((x+40,y,w,h), "delete")
@@ -63,7 +58,7 @@ class attributeWindow:
 		self.w.selectText = TextBox((x+40,y,w,h), "select")
 		y += h + space
 
-		self.w.minimizeBox = CheckBox((x,y,80,20), "", callback=self.minimizeCallback, value=True)
+		self.w.minimizeBox = CheckBox((x,y,80,20), "", callback=self.minimizeCallback, value=False)
 		y += h +space
 
 		mode = getExtensionDefault(DefaultKey+".mode")
@@ -376,7 +371,7 @@ class attributeWindow:
 		CurrentFont().update()	#로보폰트 업데이트
 		CurrentFont().save(self.testPath) 	#XML 업데이트
 
-	def handleHorizon(self, sender):
+	def handleStroke(self, sender):
 		
 		if updateAttributeComponent() is False:
 			return
@@ -386,38 +381,12 @@ class attributeWindow:
 
 		if mode is matrixMode:
 			matrix = getExtensionDefault(DefaultKey+".matrix")
-			mbt.mgiveHorizontal(groupDict, matrix)
+			mbt.mgiveStrokeAttribute(groupDict, matrix, self.w.strokeEditText.get())
 
 		elif mode is topologyMode:
 			standardContour = getExtensionDefault(DefaultKey+".standardContour")
 			k = getExtensionDefault(DefaultKey+".k")
-			tbt.mgiveHorizontal(groupDict, standardContour, k)
-				
-		else:
-			Message("모드 에러")
-			return
-
-
-		CurrentFont().update()	#로보폰트 업데이트
-		CurrentFont().save(self.testPath) 	#XML 업데이트
-
-
-
-	def handleVertical(self, sender):
-		if updateAttributeComponent() is False:
-			return
-		
-		mode = getExtensionDefault(DefaultKey+".mode")
-		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-
-		if mode is matrixMode:
-			matrix = getExtensionDefault(DefaultKey+".matrix")
-			mbt.mgiveVerticle(groupDict, matrix)
-
-		elif mode is topologyMode:
-			standardContour = getExtensionDefault(DefaultKey+".standardContour")
-			k = getExtensionDefault(DefaultKey+".k")
-			tbt.mgiveVerticle(groupDict, standardContour, k)
+			tbt.mgiveStrokeAttribute(groupDict, standardContour, k)
 				
 		else:
 			Message("모드 에러")
