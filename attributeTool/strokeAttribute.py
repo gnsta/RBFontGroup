@@ -20,6 +20,8 @@ def set_stroke(point,value) -> bool:
     
     path = font.path
     path += "/glyphs"
+
+    value = str(value)
     
     #파일들을 받아오고 해당 point가 들어있는 파일을 가져옴
     files = os.listdir(path)

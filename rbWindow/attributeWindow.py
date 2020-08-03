@@ -287,7 +287,9 @@ class attributeWindow:
 		elif mode is topologyMode:
 			standardContour = getExtensionDefault(DefaultKey+".standardContour")
 			k = getExtensionDefault(DefaultKey+".k")
-			tbt.dependXAttribute(groupDict, standardContour, k)
+			#!!!
+			#추가해야함
+			#tbt.dependXAttribute(groupDict, standardContour, k)
 				
 		else:
 			Message("모드 에러")

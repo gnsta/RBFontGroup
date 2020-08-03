@@ -350,11 +350,11 @@ class groupPointMatchController:
 			if temp is not None:
 				at.add_attr(matchPoint,'innerFill',temp)
 
-	def mgiveStroke(self,matchPoint,value):
+	def mgiveStroke(self,matchPoint):
 		if matchPoint is not None:
-			temp = get_stroke(matchPoint)
-			if value not in temp:
-				set_stroke(matchPoint,value)
+			temp = at.get_attr(self.point,'stroke')
+			if temp is not None:
+				at.add_attr(matchPoint,'stroke',temp)
 
 	def mdeleteAttr(self,attribute,matchPoint):
 		if matchPoint is not None:

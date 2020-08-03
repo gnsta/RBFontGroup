@@ -186,7 +186,7 @@ def mgiveStrokeAttribute(groupDict,standardMatrix,value):
     for i in range(0,len(controllerList)):
         mPoint = controllerList[i].matchPoint()
         if mPoint is not None:
-            controllerList[i].mgiveStroke(mPoint,value)
+            controllerList[i].mgiveStroke(mPoint)
             tmp = list()
             tmp.append(mPoint); tmp.append(mPoint.name); tmp.append(get_stroke(mPoint))
             prevPointList.append(tmp)
