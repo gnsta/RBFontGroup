@@ -2,9 +2,9 @@ from PIL import Image
 import os
 
 size = (30,30)
-originPath = "/Users/font/Desktop/image/"
-destPath = "/Users/font/Desktop/image/resized/"
-srcImageList = ["dependX.png", "dependY.png", "innerFill.png", "penPair.png", "rubbish.png", "select.png"]
+originPath = "/Users/sslab/Desktop/image/"
+destPath = "/Users/sslab/Desktop/image/resized/"
+srcImageList = ["stroke.png"]
 
 if __name__ == "__main__":
     

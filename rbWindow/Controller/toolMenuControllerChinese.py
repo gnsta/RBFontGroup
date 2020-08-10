@@ -58,7 +58,7 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 	jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
 	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
 	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
-
+	raster_margin = getExtensionDefault(DefaultKey+".raster_margin")
 	contour = standardGlyph.contours[contourIndex]
 
 	standardMatrix = Matrix(contour,matrix_size)
@@ -97,14 +97,11 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 
 				#rasterize 3차 필터링
 				if result is not None:
-					result2 = re.compareBitMap(standardGlyph[contourIndex], compareContour,45)
+					result2 = re.compareBitMap(standardGlyph[contourIndex], compareContour,raster_margin)
 				else:
 					continue
 
 				if result2 is True:
-					print("컨투어 : " , compareContour)
-					print("standard : " , standard['reverse'], standard['forword'])
-					print("compare : " , compare['reverse'], compare['forword'])
 					smartContourList.append(i)
 					smartCheck = 1
 
@@ -120,7 +117,6 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 
 
 	smartSet.glyphNames = smartSetGlyphs
-	print("그룹화를 진행한 글리프 셋", len(smartSetGlyphs))
 	addSmartSet(smartSet)
 	updateAllSmartSets()	
 
@@ -155,6 +151,7 @@ def cGetMatchGroupByTopology(standardGlyph, contourIndex,checkSetData):
 	jsonFileName1 = getExtensionDefault(DefaultKey+".jsonFileName1")
 	jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
 	topology_margin = getExtensionDefault(DefaultKey+".topology_margin")
+	raster_margin = getExtensionDefault(DefaultKey+".raster_margin")
 
 	#추가부분
 	with open(jsonFileName1, 'r') as jsonFile1:
@@ -189,7 +186,7 @@ def cGetMatchGroupByTopology(standardGlyph, contourIndex,checkSetData):
 
 				#rasterize 3차 필터링
 				if result == None:
-					result2 = re.compareBitMap(standardGlyph[contourIndex], compareContour,45)
+					result2 = re.compareBitMap(standardGlyph[contourIndex], compareContour,raster_margin)
 				else:
 					continue
 
@@ -239,12 +236,9 @@ def cHandleSearchGlyphList(standardGlyph, contourIndex, groupDict):
 
 	checkSetData = cSearchGroup(standardGlyph,contourIndex,mode,True)
 
-	print("checkSetData : ", checkSetData)
-
 	if checkSetData[2] == 0:
 		groupDict = cFindContoursGroup(checkSetData,mode)
 		setExtensionDefault(DefaultKey + ".groupDict", groupDict)
-		print("이미 그룹화가 진행된 컨투어입니다.")
 
 	else:
 		if mode is matrixMode:
