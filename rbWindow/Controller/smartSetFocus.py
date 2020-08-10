@@ -300,3 +300,66 @@ def updateSmartSetIndex(index):
 		smartSetIndexList = list()
 		smartSetIndexList.append(index+1)
 		selectSmartSets(smartSetIndexList)
+
+def smartSetRefresh():
+	KoreanCheck = getExtensionDefault(DefaultKey+".korean")
+	font = getExtensionDefault(DefaultKey + ".font")
+
+	smartSets = getSmartSets()
+
+	for smartSet in smartSets:
+		for glyphName in smartSet.glyphNames:
+
+			refreshSmartSetGlyphs = list()
+
+			if KoreanCheck == True and glyphName[0:3] == 'cid':
+				continue
+			elif KoreanCheck == False and glyphName[0:3] == 'uni':
+				continue
+
+			checkGlyph = font[glyphName]
+
+			if checkGlyph.selected == False:
+				refreshSmartSetGlyphs.append(glyphName)
+
+		smartSet.glyphNames = refreshSmartSetGlyph
+
+	updateAllSmartSets()
+
+def smartSetRefresh():
+	KoreanCheck = False
+
+	for smartSet in smartSets:
+		newSmartSet = SmartSet()
+		refreshSmartSetGlyphs = list()
+		for glyphName in smartSet.glyphNames:
+			if KoreanCheck == True and glyphName[0:3] == 'cid':
+				continue
+			elif KoreanCheck == False and glyphName[0:3] == 'uni':
+				continue
+
+			checkGlyph = font[glyphName]
+			print(checkGlyph)
+
+			if checkGlyph.selected == False:
+				refreshSmartSetGlyphs.append(glyphName)
+
+		if (len(refreshSmartSetGlyphs) != len(smartSet.glyphNames)) and (len(refreshSmartSetGlyphs) != 0):
+			smartSet.glyphNames = refreshSmartSetGlyphs
+			newSmartSet.name = smartSet.name
+			newSmartSet.glyphNames = refreshSmartSetGlyphs
+			removeSmartSet(smartSet.name)
+			addSmartSet(newSmartSet)
+			updateAllSmartSets()
+		elif len(refreshSmartSetGlyphs) == 0:
+			removeSmartSet(smartSet.name)
+			updateAllSmartSets()
+
+
+
+
+
+
+
+
+

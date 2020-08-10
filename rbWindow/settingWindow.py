@@ -57,10 +57,7 @@ class settingWindow(BaseWindowController):
         self.w.matrixSize = SliderGroup((x, y, w, h), "Matrix Size:", 1, 50, matrixSize, callback=self.matrixSizeChanged)
         y+=h
         
-        if getExtensionDefault(DefaultKey + ".korean") is True:
-            matrixMargin = 20
-        else:
-            matrixMargin = 25
+        matrixMargin = getExtensionDefault(DefaultKey + ".matrix_margin")
         self.w.matrixMargin = SliderGroup((x, y, w, h), "Matrix Margin:", 0, 100, matrixMargin, callback=self.matrixMarginChanged)
         y+=h
 

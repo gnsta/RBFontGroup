@@ -58,6 +58,7 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 	jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
 	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
 	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
+	raster_margin = getExtensionDefault(DefaultKey+".raster_margin")
 
 	contour = standardGlyph.contours[contourIndex]
 
@@ -97,7 +98,8 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 
 				#rasterize 3차 필터링
 				if result is not None:
-					result2 = re.compareBitMap(standardGlyph[contourIndex], compareContour,45)
+					print("2차 필터링 통과")
+					result2 = re.compareBitMap(standardGlyph[contourIndex], compareContour,raster_margin)
 				else:
 					continue
 
@@ -107,6 +109,11 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 					print("compare : " , compare['reverse'], compare['forword'])
 					smartContourList.append(i)
 					smartCheck = 1
+				#if result is not None:
+					#smartContourList.append(i)
+					#smartCheck = 1
+				#else:
+					#continue
 
 		if smartCheck == 1:
 			glyphUniName = font[key].name
@@ -155,6 +162,7 @@ def cGetMatchGroupByTopology(standardGlyph, contourIndex,checkSetData):
 	jsonFileName1 = getExtensionDefault(DefaultKey+".jsonFileName1")
 	jsonFileName2 = getExtensionDefault(DefaultKey+".jsonFileName2")
 	topology_margin = getExtensionDefault(DefaultKey+".topology_margin")
+	raster_margin = getExtensionDefault(DefaultKey+".raster_margin")
 
 	#추가부분
 	with open(jsonFileName1, 'r') as jsonFile1:
@@ -189,7 +197,7 @@ def cGetMatchGroupByTopology(standardGlyph, contourIndex,checkSetData):
 
 				#rasterize 3차 필터링
 				if result == None:
-					result2 = re.compareBitMap(standardGlyph[contourIndex], compareContour,45)
+					result2 = re.compareBitMap(standardGlyph[contourIndex], compareContour,raster_margin)
 				else:
 					continue
 

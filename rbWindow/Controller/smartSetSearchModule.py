@@ -35,7 +35,7 @@ def cSearchGroup(glyph,contourNumber,mode,message = False):
 	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
 	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
 	topology_margin = getExtensionDefault(DefaultKey+".topology_margin")
-
+	raster_margin = getExtensionDefault(DefaultKey+".raster_margin")
 	font = getExtensionDefault(DefaultKey+".font")
 
 	check = 0
@@ -81,7 +81,7 @@ def cSearchGroup(glyph,contourNumber,mode,message = False):
 
 				#rasterize 필터링
 				if result is not None:
-					result2 = re.compareBitMap(standardGlyph[standardIdx], glyph[contourNumber],45)
+					result2 = re.compareBitMap(standardGlyph[standardIdx], glyph[contourNumber],raster_margin)
 				else:
 					continue
 
@@ -99,7 +99,7 @@ def cSearchGroup(glyph,contourNumber,mode,message = False):
 
 				#rasterize 필터링
 				if result == None:
-					result2 = re.compareBitMap(standardGlyph[standardIdx], glyph[contourNumber],45)
+					result2 = re.compareBitMap(standardGlyph[standardIdx], glyph[contourNumber],raster_margin)
 				else:
 					continue
 
@@ -148,6 +148,7 @@ def searchGroup(glyph,contourNumber,mode,message = False):
 	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
 	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
 	topology_margin = getExtensionDefault(DefaultKey+".topology_margin")
+	raster_margin = getExtensionDefault(DefaultKey+".raster_margin")
 
 
 	check = 0
