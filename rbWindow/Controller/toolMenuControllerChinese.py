@@ -59,10 +59,8 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
 	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
 	raster_margin = getExtensionDefault(DefaultKey+".raster_margin")
-<<<<<<< HEAD
 
-=======
->>>>>>> master
+
 	contour = standardGlyph.contours[contourIndex]
 
 	standardMatrix = Matrix(contour,matrix_size)

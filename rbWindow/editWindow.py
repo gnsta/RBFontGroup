@@ -16,6 +16,7 @@ from rbWindow.ExtensionSetting.extensionValue import *
 from rbWindow.Controller import CircularQueue
 from fontParts.world import CurrentFont
 from attributeTool.strokeAttribute import *
+from rbWindow.Controller import smartSetFocus
 
 
 
@@ -186,39 +187,20 @@ class EditGroupMenu(object):
 			self.w[4] = toolsWindow()
 
 	def handleRemoveGlyph(self, sender):
-		"""
-			스마트 셋을 사용해야 하는 경우
-		"""
-		'''
-		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-		KoreanCheck = getExtensionDefault(DefaultKey+".korean")
-		mode = getExtensionDefault(DefaultKey+".mode")
-
-		glyph = next(iter(groupDict))
-		contourNumber = groupDict[key]
-
-		if KoreanCheck is True:
-			checkSetData = searchGroup(glyph, contourNumber, mode)
-			smartSetIndex = getMatchingSmartSet(checkSetData, glyph, contourNumber)
-		else:
-			checkSetData = cSearchGroup(glyph, contourNumber, mode)
-			smartSetIndex = cGetMatchingSmartSet(checkSetData, glyph, contourNumber)
-
-		removeSelectedGlyphFromSmartSet(smartSetIndex, groupDict)
-		'''
 
 		"""
 			스마트 셋 없이 처리하는 경우
 		"""
-		'''
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		keyList = list(groupDict.keys())
 		for glyph in keyList:
 			if glyph.selected is True:
 				del groupDict[glyph]
 
+		smartSetRefresh()
+
 		setExtensionDefault(DefaultKey+".groupDict", groupDict)
-		'''
+
 
 	    
 

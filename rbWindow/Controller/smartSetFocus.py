@@ -327,6 +327,9 @@ def smartSetRefresh():
 	updateAllSmartSets()
 
 def smartSetRefresh():
+	"""
+	스마트 셋의 글리프를 삭제했을 시 갱신해주는 함수
+	"""
 	KoreanCheck = False
 
 	for smartSet in smartSets:
