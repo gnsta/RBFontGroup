@@ -59,7 +59,11 @@ def cSearchGroup(glyph,contourNumber,mode,message = False):
 		checkSetNameList = checkSetName.split('_')
 		if len(checkSetNameList) != 3:
 			continue
-
+		'''
+		marginList = checkSetNameList[3].split('-')
+		if marginList[0] != raster_margin or marginList[1] != matrix_margin:
+			continue 
+		'''
 		#검사를 진행을 해야함(기준 컨투어는 알고 있고 비교 글리프에 있는 컨투어는 순회를 하면서 조사하는 방식)
 		#matrix 체크에서는 같은 그룹이 아니면 None이고 topology 에서는 같은 그룹이 아니면 flase반환
 		standardNameList = checkSetNameList[2].split('-')
@@ -72,7 +76,6 @@ def cSearchGroup(glyph,contourNumber,mode,message = False):
 			if mode == 0:
 				#해당 그룹을 조사
 				standardGlyph = font["cid" + str(standardNameList[0][4:]).upper()]
-				print("matrix_margin : ", matrix_margin)
 				standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
 				compareController = groupTestController(standardMatrix,matrix_margin)
 

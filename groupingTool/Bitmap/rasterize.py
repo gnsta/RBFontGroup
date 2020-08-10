@@ -148,7 +148,6 @@ def compareBitMap(con1, con2,k):
     glyph.removeContour(glyph.contours[len(glyph.contours) -1])
 
 
-
     _diff = abs(s_count - c_count)
 
     if _diff <= k:

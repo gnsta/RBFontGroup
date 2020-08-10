@@ -59,7 +59,10 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 	matrix_margin = getExtensionDefault(DefaultKey+".matrix_margin")
 	matrix_size = getExtensionDefault(DefaultKey+".matrix_size")
 	raster_margin = getExtensionDefault(DefaultKey+".raster_margin")
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 	contour = standardGlyph.contours[contourIndex]
 
 	standardMatrix = Matrix(contour,matrix_size)
@@ -98,15 +101,11 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 
 				#rasterize 3차 필터링
 				if result is not None:
-					print("2차 필터링 통과")
 					result2 = re.compareBitMap(standardGlyph[contourIndex], compareContour,raster_margin)
 				else:
 					continue
 
 				if result2 is True:
-					print("컨투어 : " , compareContour)
-					print("standard : " , standard['reverse'], standard['forword'])
-					print("compare : " , compare['reverse'], compare['forword'])
 					smartContourList.append(i)
 					smartCheck = 1
 				#if result is not None:
@@ -127,7 +126,6 @@ def cGetMatchGroupByMatrix(standardGlyph, contourIndex, checkSetData):
 
 
 	smartSet.glyphNames = smartSetGlyphs
-	print("그룹화를 진행한 글리프 셋", len(smartSetGlyphs))
 	addSmartSet(smartSet)
 	updateAllSmartSets()	
 
@@ -247,12 +245,9 @@ def cHandleSearchGlyphList(standardGlyph, contourIndex, groupDict):
 
 	checkSetData = cSearchGroup(standardGlyph,contourIndex,mode,True)
 
-	print("checkSetData : ", checkSetData)
-
 	if checkSetData[2] == 0:
 		groupDict = cFindContoursGroup(checkSetData,mode)
 		setExtensionDefault(DefaultKey + ".groupDict", groupDict)
-		print("이미 그룹화가 진행된 컨투어입니다.")
 
 	else:
 		if mode is matrixMode:

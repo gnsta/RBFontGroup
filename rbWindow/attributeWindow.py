@@ -47,14 +47,13 @@ class attributeWindow:
 
 		self.w.stokeButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[4]+".png", callback=self.handleStroke)
 		self.w.strokeText = TextBox((x+40,y,w,h), "stroke")
-		self.w.strokeEditText = EditText((x+80,y,w,h))
 		y += h + space
 
-		self.w.deleteButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[6]+".png", callback=self.handleDelete)
+		self.w.deleteButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[5]+".png", callback=self.handleDelete)
 		self.w.deleteText = TextBox((x+40,y,w,h), "delete")
 		y += h + space
 
-		self.w.selectButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[7]+".png", callback=self.handleSelect)
+		self.w.selectButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[6]+".png", callback=self.handleSelect)
 		self.w.selectText = TextBox((x+40,y,w,h), "select")
 		y += h + space
 
@@ -383,7 +382,7 @@ class attributeWindow:
 
 		if mode is matrixMode:
 			matrix = getExtensionDefault(DefaultKey+".matrix")
-			mbt.mgiveStrokeAttribute(groupDict, matrix, self.w.strokeEditText.get())
+			mbt.mgiveStrokeAttribute(groupDict, matrix)
 
 		elif mode is topologyMode:
 			standardContour = getExtensionDefault(DefaultKey+".standardContour")

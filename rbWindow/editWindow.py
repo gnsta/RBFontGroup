@@ -106,9 +106,6 @@ class EditGroupMenu(object):
 		self.currentPen = None
 		self.window = None		# 현재 띄워져 있는 ufo 윈도우
 		
-		self.w = list()
-		for i in range(6):
-			self.w.append(None)
 		
 		self.mode = None  		# 연산 방법(matrix, topology)
 
@@ -145,6 +142,7 @@ class EditGroupMenu(object):
 		newItem5 = dict(itemIdentifier="Settings", label="Settings", imageNamed=NSImageNameAdvanced, callback=self.popSettingWindow); self.newToolbarItems.append(newItem5);
 		newItem6 = dict(itemIdentifier="Attribute", label="Attribute", imageNamed=NSImageNameFontPanel, callback=self.popAttributeWindow); self.newToolbarItems.append(newItem6);
 		newItem7 = dict(itemIdentifier="Help", label="Help", imageNamed=NSImageNameInfo, callback=self.popManualWindow); self.newToolbarItems.append(newItem7);
+		newItem8 = dict(itemIdentifier="Except", label="Except", imageNamed=NSImageNameTrashFull, callback=self.handleRemoveGlyph); self.newToolbarItems.append(newItem8);
 		#newItem7 = dict(itemIdentifier="Other", label="Other", imageNamed=NSImageNameIconViewTemplate, callback=self.popSettingWindow)       
 		# add the new item to the existing toolbar
 
@@ -166,12 +164,8 @@ class EditGroupMenu(object):
 		HelpWindow(htmlPath=manual)
 
 	def popSettingWindow(self, sender):
-		self.w[5] = settingWindow(self)
-
-	def popPreviewWindow(self, sender):
-
-		self.w[4] = previewWindow(self)
-		self.w[4].createUI(sender)
+		if self.w[5] is None:
+			self.w[5] = settingWindow(self)
 		
 	def popAttributeWindow(self, sender):
 
@@ -181,13 +175,51 @@ class EditGroupMenu(object):
 		if mode is None or contourNumber is None:
 			Message("먼저 속성을 부여할 그룹을 찾아야 합니다.")
 			return
-		self.w[3] = attributeWindow()
+		if self.w[3] is None:
+			self.w[3] = attributeWindow()
 
 
 	def popSearchWindow(self, sender):
 
 		# Window for Matrix & Topology Process
-		self.w[3] = toolsWindow()
+		if self.w[4] is None:
+			self.w[4] = toolsWindow()
+
+	def handleRemoveGlyph(self, sender):
+		"""
+			스마트 셋을 사용해야 하는 경우
+		"""
+		'''
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		KoreanCheck = getExtensionDefault(DefaultKey+".korean")
+		mode = getExtensionDefault(DefaultKey+".mode")
+
+		glyph = next(iter(groupDict))
+		contourNumber = groupDict[key]
+
+		if KoreanCheck is True:
+			checkSetData = searchGroup(glyph, contourNumber, mode)
+			smartSetIndex = getMatchingSmartSet(checkSetData, glyph, contourNumber)
+		else:
+			checkSetData = cSearchGroup(glyph, contourNumber, mode)
+			smartSetIndex = cGetMatchingSmartSet(checkSetData, glyph, contourNumber)
+
+		removeSelectedGlyphFromSmartSet(smartSetIndex, groupDict)
+		'''
+
+		"""
+			스마트 셋 없이 처리하는 경우
+		"""
+		'''
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+		keyList = list(groupDict.keys())
+		for glyph in keyList:
+			if glyph.selected is True:
+				del groupDict[glyph]
+
+		setExtensionDefault(DefaultKey+".groupDict", groupDict)
+		'''
+
 	    
 
 	def windowCloseCallback(self, sender):
@@ -274,7 +306,6 @@ class EditGroupMenu(object):
 
 
 		try :
-			file = getExtensionDefault(DefaultKey + ".file")
 			targetIdxList = getExtensionDefault(DefaultKey+".groupDict")[targetGlyph]
 			setExtensionDefault(DefaultKey + ".contourNumber", targetIdxList[0])
 			
@@ -293,6 +324,14 @@ class EditGroupMenu(object):
 
 
 		except Exception as e:
-			print("drawBroadNibBackground 에러 발생", e)
 			setExtensionDefault(DefaultKey + ".contourNumber", None)
 			return
+
+def removeSelectedGlyphFromSmartSet(smartSetIndex, groupDict):
+
+	keyList = list(groupDict.keys())
+	for glyph in keyList:
+		if glyph.selected is True and glyph.name in getSmartSets()[smartSetIndex]:
+			del groupDict[glyph]
+
+	setExtensionDefault(DefaultKey+".groupDict", groupDict)
