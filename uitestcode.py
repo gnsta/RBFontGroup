@@ -7,7 +7,6 @@ from parseSyllable.configVersionFinal import *
 from fontParts.world import CurrentFont, OpenFont
 from mojo.UI import *
 
-print("uiTEST started")
 
 testPath, testFile = launchFontTool()
 if testPath is None:
