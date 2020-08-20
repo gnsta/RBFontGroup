@@ -16,7 +16,7 @@ from rbWindow.ExtensionSetting.extensionValue import *
 from rbWindow.Controller import CircularQueue
 from fontParts.world import CurrentFont
 from attributeTool.strokeAttribute import *
-from rbWindow.Controller import smartSetFocus
+from rbWindow.Controller.smartSetFocus import *
 
 
 
@@ -106,7 +106,10 @@ class EditGroupMenu(object):
 		self.layerName = self.font.layerOrder[0]
 		self.currentPen = None
 		self.window = None		# 현재 띄워져 있는 ufo 윈도우
-		
+
+		self.w = list()
+		for i in range(7):
+			self.w.append(None)
 		
 		self.mode = None  		# 연산 방법(matrix, topology)
 
@@ -144,19 +147,15 @@ class EditGroupMenu(object):
 		newItem6 = dict(itemIdentifier="Attribute", label="Attribute", imageNamed=NSImageNameFontPanel, callback=self.popAttributeWindow); self.newToolbarItems.append(newItem6);
 		newItem7 = dict(itemIdentifier="Help", label="Help", imageNamed=NSImageNameInfo, callback=self.popManualWindow); self.newToolbarItems.append(newItem7);
 		newItem8 = dict(itemIdentifier="Except", label="Except", imageNamed=NSImageNameTrashFull, callback=self.handleRemoveGlyph); self.newToolbarItems.append(newItem8);
-		#newItem7 = dict(itemIdentifier="Other", label="Other", imageNamed=NSImageNameIconViewTemplate, callback=self.popSettingWindow)       
-		# add the new item to the existing toolbar
 
+		#기존 툴바에 새로운 툴바 아이템 추가
 		for i in range(len(self.newToolbarItems)):
 			toolbarItems.append(self.newToolbarItems[i])
 
 
-		# get the vanilla window object
+		# 현재 폰트 창에 toolbarItems를 추가
 		vanillaWindow = self.window.window()
-		# set the new toolbaritems in the window
 		self.window.toolbar = vanillaWindow.addToolbar(toolbarIdentifier="myCustomToolbar", toolbarItems=toolbarItems, addStandardItems=False)
-		# done
-		x = 10; y = 10; w = 280; h = 22; space = 5; size = (800, 600)
 
 		addObserver(self, "drawBroadNibBackground", "drawBackground")
 
@@ -165,8 +164,9 @@ class EditGroupMenu(object):
 		HelpWindow(htmlPath=manual)
 
 	def popSettingWindow(self, sender):
-		if self.w[5] is None:
-			self.w[5] = settingWindow(self)
+		if self.w[5] is not None and self.w[5].w is not None:
+			self.w[5].w.close()
+		self.w[5] = settingWindow(self)
 		
 	def popAttributeWindow(self, sender):
 
@@ -176,16 +176,20 @@ class EditGroupMenu(object):
 		if mode is None or contourNumber is None:
 			Message("먼저 속성을 부여할 그룹을 찾아야 합니다.")
 			return
-		if self.w[3] is None:
-			self.w[3] = attributeWindow()
+		if self.w[3] is not None and self.w[3].w is not None:
+			self.w[3].w.close()
+			print("self.w[3].w = ", self.w[3].w)
+		self.w[3] = attributeWindow()
 
 
 	def popSearchWindow(self, sender):
 
 		# Window for Matrix & Topology Process
-		if self.w[4] is None:
-			self.w[4] = toolsWindow()
-
+		if self.w[4] is not None and self.w[4].w is not None:
+			self.w[4].w.close()
+		self.w[4] = toolsWindow()
+		print("created")
+		
 	def handleRemoveGlyph(self, sender):
 
 		"""
@@ -243,9 +247,6 @@ class EditGroupMenu(object):
 
 		for element in top:
 			element[0].name = element[1]
-
-			for stroke_element in element[2]:
-				set_stroke(element[0],stroke_element)
 
 		restoreStack.print()
 		CurrentFont().update()

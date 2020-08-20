@@ -75,9 +75,11 @@ class toolsWindow:
 		self.w.searchGlyphListButton = Button((x,y,w,h), "Search", callback=self.searchGlyphListCallback)
 		y += h + space
 
+		self.w.bind("close", self.close)
 		self.w.open()
 
-	
+	def close(self, sender):
+		self.w = None
 
 	def indexChanged(self, sender):
 
@@ -119,3 +121,6 @@ class toolsWindow:
 			print("chinese")
 			ctMC.cHandleSearchGlyphList(standardGlyph, contourIndex, groupDict)
 		return
+
+	def close(self, sender):
+		self.w = None

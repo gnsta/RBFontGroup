@@ -69,8 +69,12 @@ class settingWindow(BaseWindowController):
         self.w.methodRadioGroup = RadioGroup((x,y,w,h), ["Matrix", "Topology"], sizeStyle="small", callback=self.methodChangedCallback)
         y += h + space
 
+        self.w.bind("close", self.close)
         self.w.open()
 
+    def close(self, sender):
+        self.w = None
+        
     def colorChanged(self, sender):
         color = self.getColor()
         setExtensionDefault(DefaultKey+".color",color)
@@ -122,4 +126,3 @@ class settingWindow(BaseWindowController):
 
     def updateView(self, sender=None):
         UpdateCurrentGlyphView()
-

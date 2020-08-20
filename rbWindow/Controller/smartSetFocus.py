@@ -301,7 +301,7 @@ def updateSmartSetIndex(index):
 		smartSetIndexList.append(index+1)
 		selectSmartSets(smartSetIndexList)
 
-def smartSetRefresh():
+"""def smartSetRefresh():
 	KoreanCheck = getExtensionDefault(DefaultKey+".korean")
 	font = getExtensionDefault(DefaultKey + ".font")
 
@@ -324,14 +324,16 @@ def smartSetRefresh():
 
 		smartSet.glyphNames = refreshSmartSetGlyph
 
-	updateAllSmartSets()
+	updateAllSmartSets()"""
 
 def smartSetRefresh():
 	"""
 	스마트 셋의 글리프를 삭제했을 시 갱신해주는 함수
 	"""
-	KoreanCheck = False
-
+	KoreanCheck = getExtensionDefault(DefaultKey+".korean")
+	smartSets = getSmartSets()
+	font = getExtensionDefault(DefaultKey + ".font")
+	
 	for smartSet in smartSets:
 		newSmartSet = SmartSet()
 		refreshSmartSetGlyphs = list()
@@ -357,7 +359,6 @@ def smartSetRefresh():
 		elif len(refreshSmartSetGlyphs) == 0:
 			removeSmartSet(smartSet.name)
 			updateAllSmartSets()
-
 
 
 

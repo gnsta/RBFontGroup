@@ -62,9 +62,11 @@ class attributeWindow:
 
 		mode = getExtensionDefault(DefaultKey+".mode")
 
+		self.w.bind("close", self.close)
 		self.w.open()
 
-
+	def close(self, sender):
+		self.w = None
 
 	def updateAttributeComponent(self):
 		"""
@@ -449,3 +451,6 @@ class attributeWindow:
 		else:
 			self.w.resize(self.size[0], self.size[1])
 			self.w.minimizeBox.setTitle("최소화")
+
+	def close(self, sender):
+		self.w = None
