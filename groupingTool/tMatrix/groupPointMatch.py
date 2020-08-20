@@ -13,26 +13,6 @@ from rbWindow.ExtensionSetting.extensionValue import *
 	create by kim heesup
 """
 
-def getCurveDerivation(n, p0, pointType, clockWise):
-
-	if p0.type == pointType:
-		currentContour = p0.getParent()
-		print("currentContour = ", currentContour)
-		pointCount = len(currentContour.points)
-		print("pointCount = ", pointCount)
-		currentIndex = p0.index
-		print("currentIndex = ", currentIndex)
-		if currentContour.points[currentIndex-1].type == 'offcurve' and clockWise is True:
-			return getPointOnCurveDerivation(n, currentContour.points[currentIndex-3], currentContour.points[currentIndex-2], currentContour.points[currentIndex-1], p0, False)
-		elif currentContour.points[(currentIndex+1)%pointCount].type == 'offcurve' and clockWise is not True:
-			return getPointOnCurveDerivation(n, currentContour.points[(currentIndex+3)%pointCount], currentContour.points[(currentIndex+2)%pointCount], currentContour.points[(currentIndex+1)%pointCount], p0, False)
-		elif currentContour.points[(currentIndex+1)%pointCount].type == 'offcurve' and clockWise is True:
-			return getPointOnCurveDerivation(n, p0, currentContour.points[(currentIndex+1)%pointCount], currentContour.points[(currentIndex+2)%pointCount], currentContour.points[(currentIndex+3)%pointCount], True)
-		elif currentContour.points[currentIndex-1].type == 'offcurve' and clockWise is not True:
-			return getPointOnCurveDerivation(n, p0, currentContour.points[currentIndex-1], currentContour.points[currentIndex-2], currentContour.points[currentIndex-3], True)
-	else:
-		return None
-
 def getPointOnCurveDerivation(n, p0, p1, p2, p3, front):
     x0 = p0.x
     y0 = p0.y
@@ -68,6 +48,26 @@ def getPointOnCurveDerivation(n, p0, p1, p2, p3, front):
     derivation = (second_point[1] - first_point[1])/(second_point[0] - first_point[0])
 
     return derivation
+
+def getCurveDerivation(n, p0, pointType, clockWise):
+
+	if p0.type == pointType:
+		currentContour = p0.getParent()
+		print("currentContour = ", currentContour)
+		pointCount = len(currentContour.points)
+		print("pointCount = ", pointCount)
+		currentIndex = p0.index
+		print("currentIndex = ", currentIndex)
+		if currentContour.points[currentIndex-1].type == 'offcurve' and clockWise is True:
+			return getPointOnCurveDerivation(n, currentContour.points[currentIndex-3], currentContour.points[currentIndex-2], currentContour.points[currentIndex-1], p0, False)
+		elif currentContour.points[(currentIndex+1)%pointCount].type == 'offcurve' and clockWise is not True:
+			return getPointOnCurveDerivation(n, currentContour.points[(currentIndex+3)%pointCount], currentContour.points[(currentIndex+2)%pointCount], currentContour.points[(currentIndex+1)%pointCount], p0, False)
+		elif currentContour.points[(currentIndex+1)%pointCount].type == 'offcurve' and clockWise is True:
+			return getPointOnCurveDerivation(n, p0, currentContour.points[(currentIndex+1)%pointCount], currentContour.points[(currentIndex+2)%pointCount], currentContour.points[(currentIndex+3)%pointCount], True)
+		elif currentContour.points[currentIndex-1].type == 'offcurve' and clockWise is not True:
+			return getPointOnCurveDerivation(n, p0, currentContour.points[currentIndex-1], currentContour.points[currentIndex-2], currentContour.points[currentIndex-3], True)
+	else:
+		return None
 
 
 class ClockPointPair:
