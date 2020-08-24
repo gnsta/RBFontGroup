@@ -34,23 +34,11 @@ def getPointClockDegree(con,point1):
         if pointList[i].type != 'offcurve':
             originpl.append(pointList[i])
 
-    #print("point1 : ", point1)
-
-    #print("totalOriginalpl")
-    #for i in range(0,len(pointList)):
-        #print(pointList[i])
-
-    #print("originalpl!!!!")
     #컨투어의 어느 위치에 점이 있는지 파악
     for i in range(0,len(originpl)):
-        #print(originpl[i])
         if (originpl[i].x == point1.x) and (originpl[i].y == point1.y):
             currentLocation = i
-            #print("true")
             break
-        #print("flase")
-
-    #print("======================================")
 
     if currentLocation == (len(originpl)-1):
         point2 = originpl[currentLocation -1]
@@ -170,6 +158,11 @@ def getClockWiseList(con):
 
     Returns: 
         방향횟수에 대한 정보를 가지고 있는 딕셔너리 :: Dict
+        (reverse : 시계 반대방향으로 진행을 하는 횟수, forword : 시계 방향으로 진행을 하는 횟수, 
+        check: 현재 점이 시계방향으로 진행을 하고 있는지 반시계 방향으로 진행을 하고 있는지 체크를 하는 변수)
+
+    (check의 끝은 거의 대부분 -1일 것입니다. 그 이유는 컨투어의 점 탐색 방향을 시계 방향으로 설정을 해 놓았기 때문에 모양이 와선이 되려면
+    대부분 시계방향으로 끝이 돼야 모양이 완성이 되기 때문입니다.)
     """
     
     res = {'reverse' : 0 , 'forword' : 0, 'check' : 0}
@@ -184,7 +177,6 @@ def getClockWiseList(con):
                 initCheck = 1
             else:
                 initCheck = -1
-        
         renewDict(value,res)
     
     value = getClockDirection(sortPointList[len(sortPointList) - 2], sortPointList[len(sortPointList) - 1], sortPointList[0])

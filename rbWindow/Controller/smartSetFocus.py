@@ -301,7 +301,7 @@ def updateSmartSetIndex(index):
 		smartSetIndexList.append(index+1)
 		selectSmartSets(smartSetIndexList)
 
-"""def smartSetRefresh():
+'''def smartSetRefresh():
 	KoreanCheck = getExtensionDefault(DefaultKey+".korean")
 	font = getExtensionDefault(DefaultKey + ".font")
 
@@ -324,7 +324,7 @@ def updateSmartSetIndex(index):
 
 		smartSet.glyphNames = refreshSmartSetGlyph
 
-	updateAllSmartSets()"""
+	updateAllSmartSets()'''
 
 def smartSetRefresh():
 	"""
