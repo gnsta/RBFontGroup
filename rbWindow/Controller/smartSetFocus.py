@@ -102,7 +102,7 @@ def updateAttributeComponent():
 			return True
 
 def updateSmartSetChanged(selectedContour):
-	print("selectedContour = ",selectedContour)
+	#print("selectedContour = ",selectedContour)
 	"""
 		이전 standardContour와 현재 선택된 standardContour의 smartSet이 다른 경우,
 		이미 찾아놓은 smartSet이 존재하는 경우에 한하여 속성 부여에 필요한 인자들을 갱신합니다.
@@ -275,16 +275,12 @@ def getMatchingSmartSet(checkSetData, glyph, contourNumber):
 
 			if mode == 0:
 				standardGlyph = font["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
-
 				standardMatrix=Matrix(standardGlyph.contours[standardIdx],matrix_size)
 				compareController = groupTestController(standardMatrix,matrix_margin)
 				result = compareController.conCheckGroup(glyph[contourNumber])
 
-
 				if result is not None: 
 					return index
-
-
 			elif mode == 1:
 				standardGlyph = font["uni" + str(hex(standardGlyphUnicode)[2:]).upper()]
 				result = topologyJudgementController(standardGlyph.contours[standardIdx],glyph[contourNumber],topology_margin).topologyJudgement()
@@ -301,30 +297,6 @@ def updateSmartSetIndex(index):
 		smartSetIndexList.append(index+1)
 		selectSmartSets(smartSetIndexList)
 
-'''def smartSetRefresh():
-	KoreanCheck = getExtensionDefault(DefaultKey+".korean")
-	font = getExtensionDefault(DefaultKey + ".font")
-
-	smartSets = getSmartSets()
-
-	for smartSet in smartSets:
-		for glyphName in smartSet.glyphNames:
-
-			refreshSmartSetGlyphs = list()
-
-			if KoreanCheck == True and glyphName[0:3] == 'cid':
-				continue
-			elif KoreanCheck == False and glyphName[0:3] == 'uni':
-				continue
-
-			checkGlyph = font[glyphName]
-
-			if checkGlyph.selected == False:
-				refreshSmartSetGlyphs.append(glyphName)
-
-		smartSet.glyphNames = refreshSmartSetGlyph
-
-	updateAllSmartSets()'''
 
 def smartSetRefresh():
 	"""
@@ -333,25 +305,62 @@ def smartSetRefresh():
 	KoreanCheck = getExtensionDefault(DefaultKey+".korean")
 	smartSets = getSmartSets()
 	font = getExtensionDefault(DefaultKey + ".font")
-	
+	groupDict = getExtensionDefault(DefaultKey+".groupDict")
+
 	for smartSet in smartSets:
+		check = False	
+		if KoreanCheck is True:
+			tmp = smartSet.name.split('_')[3][1:-1]
+			rawUnicode = tmp.split('-')[0]
+			contourNum = tmp.split('-')[1]
+			targetGlyph = font["uni"+str(hex(int(rawUnicode)))[2:].upper()]
+			for g in groupDict:
+				if targetGlyph.name == g.name:
+					for groupContourNum in groupDict[targetGlyph]:
+						if int(contourNum) == int(groupContourNum):
+							check = True
+		
+		elif KoreanCheck is False:
+			tmp = smartSet.name.split('_')[2][1:-1]
+			rawCidCode = tmp.split('-')[0]
+			contourNum = tmp.split('-')[1]
+
+			print("tmp = ",tmp)
+			print("rawUnicode = ", rawCidCode)
+			print("contourNum = ", contourNum)
+
+			targetGlyph = font[rawCidCode]
+			print("targetGlyph = ",targetGlyph)
+			
+			for g in groupDict:
+				if targetGlyph.name == g.name:
+					for groupContourNum in groupDict[targetGlyph]:
+						if int(contourNum) == int(groupContourNum):
+							check = True
+
+		if check == False:
+			continue
+
 		newSmartSet = SmartSet()
 		refreshSmartSetGlyphs = list()
-		for glyphName in smartSet.glyphNames:
-			if KoreanCheck == True and glyphName[0:3] == 'cid':
-				continue
-			elif KoreanCheck == False and glyphName[0:3] == 'uni':
-				continue
 
-			checkGlyph = font[glyphName]
-			print(checkGlyph)
+		print("smart glyphName: ",smartSet.glyphNames)
 
-			if checkGlyph.selected == False:
-				refreshSmartSetGlyphs.append(glyphName)
+		for detectGlyph in smartSet.glyphNames:
+			print(font[detectGlyph])
+			if font[detectGlyph].selected is False:
+				refreshSmartSetGlyphs.append(font[detectGlyph].name)
+
+		print("groupDict: ", groupDict)
 
 		if (len(refreshSmartSetGlyphs) != len(smartSet.glyphNames)) and (len(refreshSmartSetGlyphs) != 0):
-			smartSet.glyphNames = refreshSmartSetGlyphs
-			newSmartSet.name = smartSet.name
+			#print("조건문 안")
+			#smartSet.glyphNames = refreshSmartSetGlyphs
+			contourNumber = groupDict[font[refreshSmartSetGlyphs[0]]][0]
+			if KoreanCheck is True:
+				newSmartSet.name = smartSet.name.split('_')[0] + '_' + smartSet.name.split('_')[1] + '_' + smartSet.name.split('_')[2] + '_('+str(font[refreshSmartSetGlyphs[0]].unicode)+'-'+str(contourNumber)+')'
+			elif KoreanCheck is False:
+				newSmartSet.name = smartSet.name.split('_')[0] + '_' + smartSet.name.split('_')[1] + '_'  + '('+str(font[refreshSmartSetGlyphs[0]].name)+'-'+str(contourNumber)+')'
 			newSmartSet.glyphNames = refreshSmartSetGlyphs
 			removeSmartSet(smartSet.name)
 			addSmartSet(newSmartSet)

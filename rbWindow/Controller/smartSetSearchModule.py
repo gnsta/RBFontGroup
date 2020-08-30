@@ -8,13 +8,15 @@ from groupingTool.tTopology.topologyJudgement import *
 from groupingTool.tTopology.topologyAssignment import *
 from rbWindow.ExtensionSetting.extensionValue import *
 from groupingTool.Bitmap import rasterize as re
-
+from rbWindow import temp as t
 """
 create By Heesup Kim
 """
 
 baseDir = "/Users/font/Desktop/GroupDict/"
 
+#율려테이블
+yelloTable = t.getYelloTable()
 
 def cSearchGroup(glyph,contourNumber,mode,message = False):
 	"""
@@ -59,15 +61,10 @@ def cSearchGroup(glyph,contourNumber,mode,message = False):
 		checkSetNameList = checkSetName.split('_')
 		if len(checkSetNameList) != 3:
 			continue
-		'''
-		marginList = checkSetNameList[3].split('-')
-		if marginList[0] != raster_margin or marginList[1] != matrix_margin:
-			continue 
-		'''
+			
 		#검사를 진행을 해야함(기준 컨투어는 알고 있고 비교 글리프에 있는 컨투어는 순회를 하면서 조사하는 방식)
 		#matrix 체크에서는 같은 그룹이 아니면 None이고 topology 에서는 같은 그룹이 아니면 flase반환
 		standardNameList = checkSetNameList[2].split('-')
-		print(standardNameList)
 		standardGlyphUnicode = int(standardNameList[0][4:])
 		standardIdx = int(standardNameList[1][:len(standardNameList[1]) -1]) 
 		for item in sSet.glyphNames:
@@ -118,7 +115,7 @@ def cSearchGroup(glyph,contourNumber,mode,message = False):
 	if searchSmartSet is not None:
 		if message == True:
 			appendNumber = str(searchSmartSet.name).split('_')[0]
-			print(Message("이미 그룹 연산이 진행이 되어 있으므로 그룹화 작업을 생략합니다."))
+			#print(Message("이미 그룹 연산이 진행이 되어 있으므로 그룹화 작업을 생략합니다."))
 		return [int(checkSetNameList[0]),positionNumber,0]
 	else:
 		return [int(setStat[0]),positionNumber,1]
@@ -236,12 +233,11 @@ def searchGroup(glyph,contourNumber,mode,message = False):
 	if searchSmartSet is not None:
 		if message == True:
 			appendNumber = str(searchSmartSet.name).split('_')[0]
-			print(Message("이미 그룹 연산이 진행이 되어 있으므로 그룹화 작업을 생략합니다."))
+			#print(Message("이미 그룹 연산이 진행이 되어 있으므로 그룹화 작업을 생략합니다."))
 		return [int(appendNumber),positionNumber,0]
 	else:
 		return [appendNumber,positionNumber,1]
 
-	print("return None")
 
 def setGroup(glyph,contourNumber,mode,jsonFileName,appendNumber):
 	"""
@@ -312,7 +308,6 @@ def getSmartSetStatMatrix():
 			continue
 
 		if modeName ==  "Matrix":
-			#matrixSetStat[setSyllable] += 1
 			if setSyllable == "first":
 				firstl.append(setNumber)
 			elif setSyllable == "middle":
@@ -325,34 +320,73 @@ def getSmartSetStatMatrix():
 	finall.sort()
 
 
-	check = 0 
-	for i in range(0,len(firstl)):
-		if (i +1) != firstl[i]:
-			matrixSetStat["first"] = i
-			check = 1
-	if check == 0:
-		matrixSetStat["first"] = len(firstl) + 1
+	#초성 인덱스
+	if len(firstl) == 0:
+		matrixSetStat["first"] = 1
+	elif len(firstl) == 1:
+		if firstl[0] != 1:
+			matrixSetStat["first"] = 1
+		else:
+			matrixSetStat["first"] = 2
+	elif firstl[0] != 1:
+		matrixSetStat["first"] = 1
+	else:
+		check = 0
+		for i in range(0,len(firstl)-1):
+			if firstl[i]+1 != firstl[i+1]:
+				matrixSetStat["first"] = firstl[i]+1
+				check = 1
+				break
+		if check == 0:
+			matrixSetStat["first"] = firstl[len(firstl)-1] + 1
 
-	check = 0 
-	for i in range(0,len(middlel)):
-		if (i +1) != middlel[i]:
-			matrixSetStat["middle"] = i
-			check = 1
-	if check == 0:
-		matrixSetStat["middle"] = len(middlel) + 1
+	#중성 인덱스
+	if len(middlel) == 0:
+		matrixSetStat["middle"] = 1
+	elif len(middlel) == 1:
+		if middlel[0] != 1:
+			matrixSetStat["middle"] = 1
+		else:
+			matrixSetStat["middle"] = 2
+	elif middlel[0] != 1:
+		matrixSetStat["middle"] = 1
+	else:
+		check = 0
+		for i in range(0,len(middlel)-1):
+			if middlel[i]+1 != middlel[i+1]:
+				matrixSetStat["middle"] = middlel[i]+1
+				check = 1
+				break
+		if check == 0:
+			matrixSetStat["middle"] = middlel[len(middlel)-1] + 1
 
-	check = 0 
-	for i in range(0,len(finall)):
-		if (i +1) != finall[i]:
-			matrixSetStat["final"] = i
-			check = 1
-	if check == 0:
-		matrixSetStat["final"] = len(finall) + 1
+	#종성 인덱스
+	if len(finall) == 0:
+		matrixSetStat["final"] = 1
+	elif len(finall) == 1:
+		if finall[0] != 1:
+			matrixSetStat["final"] = 1
+		else:
+			matrixSetStat["final"] = 2
+	elif finall[0] != 1:
+		matrixSetStat["final"] = 1
+	else:
+		check = 0
+		for i in range(0,len(finall)-1):
+			if finall[i]+1 != finall[i+1]:
+				matrixSetStat["final"] = finall[i]+1
+				check = 1
+				break
+		if check == 0:
+			matrixSetStat["final"] = finall[len(finall)-1] + 1
 
 	return matrixSetStat
 
 
 
+"""
+Legacy
+"""
 def getSmartSetStatTopology():
 	"""
 	현재 스마트 셋을 조사하여 다음 그룹화 진행시 어느 번호에 저장해야 하는지 반환(Topology)
@@ -396,35 +430,72 @@ def getSmartSetStatTopology():
 	middlel.sort()
 	finall.sort()
 
-	check = 0 
-	for i in range(0,len(firstl)):
-		if (i +1) != firstl[i]:
-			topologySetStat["first"] = i
-			check = 1
-	if check == 0:
-		topologySetStat["first"] = len(firstl) + 1
+	#초성 인덱스
+	if len(firstl) == 0:
+		matrixSetStat["first"] = 1
+	elif len(firstl) == 1:
+		if firstl[0] != 1:
+			matrixSetStat["first"] = 1
+		else:
+			matrixSetStat["first"] = 2
+	elif firstl[0] != 1:
+		matrixSetStat["first"] = 1
+	else:
+		check = 0
+		for i in range(0,len(firstl)-1):
+			if firstl[i]+1 != firstl[i+1]:
+				matrixSetStat["first"] = firstl[i]+1
+				check = 1
+				break
+		if check == 0:
+			matrixSetStat["first"] = firstl[len(firstl)-1] + 1
 
-	check = 0 
-	for i in range(0,len(middlel)):
-		if (i +1) != middlel[i]:
-			topologySetStat["middle"] = i
-			check = 1
-	if check == 0:
-		topologySetStat["middle"] = len(middlel) + 1
+	#중성 인덱스
+	if len(middlel) == 0:
+		matrixSetStat["middle"] = 1
+	elif len(middlel) == 1:
+		if middlel[0] != 1:
+			matrixSetStat["middle"] = 1
+		else:
+			matrixSetStat["middle"] = 2
+	elif middlel[0] != 1:
+		matrixSetStat["middle"] = 1
+	else:
+		check = 0
+		for i in range(0,len(middlel)-1):
+			if middlel[i]+1 != middlel[i+1]:
+				matrixSetStat["middle"] = middlel[i]+1
+				check = 1
+				break
+		if check == 0:
+			matrixSetStat["middle"] = middlel[len(middlel)-1] + 1
 
-	check = 0 
-	for i in range(0,len(finall)):
-		if (i +1) != finall[i]:
-			topologySetStat["final"] = i
-			check = 1
-	if check == 0:
-		topologySetStat["final"] = len(finall) + 1
+	#종성 인덱스
+	if len(finall) == 0:
+		matrixSetStat["final"] = 1
+	elif len(finall) == 1:
+		if finall[0] != 1:
+			matrixSetStat["final"] = 1
+		else:
+			matrixSetStat["final"] = 2
+	elif finall[0] != 1:
+		matrixSetStat["final"] = 1
+	else:
+		check = 0
+		for i in range(0,len(finall)-1):
+			if finall[i]+1 != finall[i+1]:
+				matrixSetStat["final"] = finall[i]+1
+				check = 1
+				break
+		if check == 0:
+			matrixSetStat["final"] = finall[len(finall)-1] + 1
 
 	return topologySetStat
 
+
 def cGetSmartSetStatMatrix():
 	"""
-	현재 스마트 셋을 조사하여 다음 그룹화 진행시 어느 번호에 저장해야 하는지 반환(Matrix)
+	현재 스마트 셋을 조사하여 다음 그룹화 진행시 어느 번호에 저장해야 하는지 반환(Matrix, 한자버전)
 	set name format example
 		:##(number)_Matrix
 
@@ -448,7 +519,7 @@ def cGetSmartSetStatMatrix():
 		if modeName ==  "Matrix":
 			numberl.append(setNumber)
 
-	#print("######numberl : ", numberl)
+
 	numberl.sort()
 
 
@@ -456,36 +527,28 @@ def cGetSmartSetStatMatrix():
 	if len(numberl) == 0:
 		return [1,"Matrix"]
 	elif len(numberl) == 1:
-		if numberl[0] == 1:
-			return [2,"Matrix"]
-		elif numberl[0] != 1:
+		if numberl[0] != 1:
 			return [1,"Matrix"]
+		else:
+			return [2,"Matrix"]
 	elif numberl[0] != 1:
 		return [1,"Matrix"]
+	else:
+		check = 0
+		for i in range(0,len(numberl)-1):
+			if numberl[i]+1 != numberl[i+1]:
+				return [numberl[i]+1,"Matrix"]
+				check = 1
+				break
+		if check == 0:
+			return [numberl[len(numberl)-1] + 1,"Matrix"]
 
-	check = 0
-	res = 0
-	resList = list()
-
-	for i in range(0,len(numberl)-2):
-		if numberl[i] != numberl[i+1] -1:
-			res = numberl[i] + 1
-			check = 1
-			break
-
-	#print("numberl len ", len(numberl) )
-
-	if check == 0:
-		res = numberl[len(numberl)-1] +1
-
-	resList.append(res)
-	resList.append("Matrix")
-
-	return resList
-
+"""
+Legacy
+"""
 def cGetSmartSetStatTopology():
 	"""
-	현재 스마트 셋을 조사하여 다음 그룹화 진행시 어느 번호에 저장해야 하는지 반환(Matrix)
+	현재 스마트 셋을 조사하여 다음 그룹화 진행시 어느 번호에 저장해야 하는지 반환(Topology,한자버전)
 	set name format example
 		:##(number)_Matrix
 
@@ -509,7 +572,6 @@ def cGetSmartSetStatTopology():
 		if modeName ==  "Topology":
 			numberl.append(setNumber)
 
-
 	numberl.sort()
 
 
@@ -517,29 +579,20 @@ def cGetSmartSetStatTopology():
 	if len(numberl) == 0:
 		return [1,"Topology"]
 	elif len(numberl) == 1:
-		if numberl[0] == 1:
-			return [2,"Topology"]
-		elif numberl[0] != 1:
+		if numberl[0] != 1:
 			return [1,"Topology"]
+		else:
+			return [2,"Topology"]
 	elif numberl[0] != 1:
 		return [1,"Topology"]
-
-	check = 0
-	res = 0
-	resList = list()
-
-	for i in range(0,len(numberl)-2):
-		if numberl[i] != numberl[i] -1:
-			res = numberl[i] + 1
-			check = 1
-			break
-
-	if check == 0:
-		res = numberl[len(numberl)-1] +1
-
-	resList.append(res)
-	resList.append("Topology")
-
-	return resList
+	else:
+		check = 0
+		for i in range(0,len(numberl)-1):
+			if numberl[i]+1 != numberl[i+1]:
+				return [numberl[i]+1,"Topology"]
+				check = 1
+				break
+		if check == 0:
+			return [numberl[len(numberl)-1] + 1,"Topology"]
 
 

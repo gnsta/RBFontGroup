@@ -59,6 +59,7 @@ def append_point_rate(contour, rpoints, rate):
     """
     points = _r2t(rpoints)
     new_curve = splitCubicAtT(points[0], points[1], points[2], points[3], rate)
+    print("new_curve")
     assert(len(new_curve) > 1)
     _append_point_curve(contour, rpoints, new_curve)
 

@@ -78,6 +78,26 @@ class groupTestController:
 
         compareStat = (self.standardMatrix == compareMatrix)
 
+        ##########################윤려를 위한 임시 코드#############################
+        compMatrix = Matrix(con, self.matrix.getdivk())
+        standardCon = self.matrix.con
+        compareCon = con
+        if len(standardCon.points) == 4:
+            if len(compareCon.points) != 4:
+                return None
+            isStandardHorizontal = None
+            isCompareHorizontal = None
+            if self.matrix.getTermX() - self.matrix.getTermY() > 50:
+                isStandardHorizontal = True
+            elif self.matrix.getTermY() - self.matrix.getTermX() > 50:
+                isStandardHorizontal = False
+            if compMatrix.getTermX() - compMatrix.getTermY() > 50:
+                isCompareHorizontal = True
+            elif compMatrix.getTermY() - compMatrix.getTermX() > 50:
+                isCompareHorizontal = False
+            if isStandardHorizontal != isCompareHorizontal and isStandardHorizontal != None:
+                return None
+        ########################################################################
         countDiff = compareStat[np.where(compareStat == False)]
 
         if len(countDiff) <= diffMatrixCount:

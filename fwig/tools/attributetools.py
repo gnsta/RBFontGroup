@@ -190,13 +190,22 @@ def del_attr(point, attribute):
         attribute:: str
             The key of attribute that you want to delete.
     """
+    print("point = ", point)
+    print("point.name = ", point.name)
+    print("attribute = ", attribute)
     attributes = name2dict(point.name)
     try:
         del(attributes[attribute])
+        print("attributes = ", attributes)
         point.glyph.setChanged()
     except KeyError:
+        print("KeyError")
         return None
     else:
+        print("attributes = ", attributes)
+        if len(attributes) == 0:
+            point.name = 'None'
+            return
         point.name = dict2name(attributes)
 
 def get_all_points(obj, offcurve=False):

@@ -30,9 +30,6 @@ setExtensionDefault(DefaultKey + ".jsonFileName2", FileNameList[1])
 setExtensionDefault(DefaultKey + ".testPath", testPath)
 KoreanCheck = getExtensionDefault(DefaultKey+".korean")
 
-if KoreanCheck is True:
-	syllableJudgementController = SyllableJudgement(testFile,testPath)
-	setExtensionDefault(DefaultKey + ".syllableJudgementController", syllableJudgementController)
 	
 menuWindow = ew.EditGroupMenu(groupDict,FileNameList[0],FileNameList[1])
 fontWindowObserver()

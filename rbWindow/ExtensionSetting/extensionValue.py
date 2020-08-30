@@ -153,3 +153,6 @@ class NotRegisteredException(Exception):
     def __init__(self):
         super().__init__('First Started Program, Register Operated...')
 
+
+
+

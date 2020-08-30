@@ -56,9 +56,9 @@ class FileExist(Exception):
         return self.msg
     
 
-class SyllableJudgement:
+class YullyeoSyllableJudgement:
     """
-    한글파일(.ufo) 폰트 파일에 대하여 각각의 컨투어의 초성, 중성, 종성을 구분하는 클래스
+    율려 한글파일(.ufo) 폰트 파일에 대하여 각각의 컨투어의 초성, 중성, 종성을 구분하는 클래스
 
     Args:
         fontFile :: RFont
@@ -70,8 +70,6 @@ class SyllableJudgement:
         파일이 존재하지 않을 시 에러를 반환 :: FileExist
     """
     def __init__(self, fontFile, fontPath):
-
-        print("음절 분리 시작")
         """
         한글의 경우를 12가지 케이스로 나눔
         1 group : 'ㅏ','ㅑ','ㅓ','ㅕ','ㅣ','ㅐ'
@@ -83,12 +81,11 @@ class SyllableJudgement:
         (종성의 유무에 따라 각각 2가치 케이스로 더 나뉘고 총 12가지 케이스로 나뉨)
         """
 
-        self.middle_one = ['ㅏ','ㅑ','ㅓ','ㅕ','ㅣ','ㅐ']
-        self.middle_two = ['ㅔ','ㅖ','ㅒ']
+        self.middle_one = ['ㅏ','ㅑ','ㅓ','ㅕ','ㅣ','ㅐ', "ㅒ"]
+        self.middle_two = ['ㅔ','ㅖ']
         self.middle_three = ['ㅗ','ㅛ','ㅜ','ㅠ','ㅡ']
-        self.middle_four = ['ㅘ','ㅚ','ㅟ', 'ㅢ','ㅙ']
-        self.middle_five = ['ㅝ']
-        self.middle_six = ['ㅞ']
+        self.middle_four = ['ㅘ','ㅚ','ㅟ', 'ㅢ','ㅙ','ㅝ']
+        self.middle_five = ['ㅞ']
 
         tempFileName = fontPath.split('/')[-1]
 
@@ -107,26 +104,22 @@ class SyllableJudgement:
                 axis_x2 = list()
                 axis_x4 = list()
                 axis_x5 = list()
-                axis_x6 = list()
 
                 axis_y1 = list()
                 axis_y2 = list()
                 axis_y4 = list()
                 axis_y5 = list()
-                axis_y6 = list()
 
                 point_list1 = list()
                 point_list2 = list()
                 point_list4 = list()
                 point_list5 = list()
-                point_list6 = list()
 
 
                 check_glyph1 = list()
                 check_glyph2 = list()
                 check_glyph4 = list()
                 check_glyph5 = list()
-                check_glyph6 = list()
                 bar = ProgressBar('Analysis Progress',len(fontFile),'analysis...')
                 barProcess = 0
 
@@ -167,14 +160,6 @@ class SyllableJudgement:
                             axis_x5.append(temp[0])
                             axis_y5.append(temp[1])
                             check_glyph5.append([gly,i])
-                    # 종성O, 케이스6의 경우
-                    elif chars[1] in self.middle_six and (chars[2] is not None):
-                        for i,con in enumerate(gly.contours):
-                            temp = getContourPosition(gly,con,10000,10000)
-                            point_list6.append(PointInfo(temp[0],temp[1]))
-                            axis_x6.append(temp[0])
-                            axis_y6.append(temp[1])
-                            check_glyph6.append([gly,i])
 
                     if barProcess % 10 == 0:
                         bar.tick(barProcess)
@@ -196,23 +181,18 @@ class SyllableJudgement:
                 np_axis_y5 = np.array(axis_y5)
                 self.samples5 = np.array(list(zip(np_axis_x5, np_axis_y5)))
 
-                np_axis_x6 = np.array(axis_x6)
-                np_axis_y6 = np.array(axis_y6)
-                self.samples6 = np.array(list(zip(np_axis_x6, np_axis_y6)))
 
                 #각 데이터 포인트를 그룹화 할 labels을 생성
                 self.labels1 = np.zeros(len(np_axis_x1))
                 self.labels2 = np.zeros(len(np_axis_x2))
                 self.labels4 = np.zeros(len(np_axis_x4))
                 self.labels5 = np.zeros(len(np_axis_x5))
-                self.labels6 = np.zeros(len(np_axis_x6))
 
                 #model들의 생성
                 self.labels1 = self.MakeLabel(1,self.samples1)
                 self.labels2 = self.MakeLabel(2,self.samples2)
                 self.labels4 = self.MakeLabel(4,self.samples4)
                 self.labels5 = self.MakeLabel(5,self.samples5)
-                self.labels6 = self.MakeLabel(6,self.samples6)
                 bar.close()
 
                 #종성의 라벨을 구함
@@ -228,8 +208,6 @@ class SyllableJudgement:
                 num = self.samples5[:,1].argmin()
                 self.final_label5 = self.labels5[num]
 
-                num = self.samples6[:,1].argmin()
-                self.final_label6 = self.labels6[num]
 
                 #각 라벨에 대한 정보를 json파일에 저장
                 insert = dict()
@@ -237,7 +215,6 @@ class SyllableJudgement:
                 insert["final label2"] = int(self.final_label2)
                 insert["final label4"] = int(self.final_label4)
                 insert["final label5"] = int(self.final_label5)
-                insert["final label6"] = int(self.final_label6)
 
                 for i,content in enumerate(check_glyph1):
                     insert[content[0].name +'/' +str(content[1])] = int(self.labels1[i])
@@ -247,8 +224,6 @@ class SyllableJudgement:
                     insert[content[0].name +'/' + str(content[1])] = int(self.labels4[i])
                 for i,content in enumerate(check_glyph5):
                     insert[content[0].name +'/' + str(content[1])] = int(self.labels5[i])
-                for i,content in enumerate(check_glyph6):
-                    insert[content[0].name +'/' + str(content[1])] = int(self.labels6[i])
                         
                 with open(self.jsonFileName,'w',encoding = 'utf-8') as make_file:
                     self.infoDict = insert
@@ -294,17 +269,6 @@ class SyllableJudgement:
 
         #case4
         if case == 4:
-            model = KMeans(n_clusters = 3)
-            model.fit(samples)
-            labels = model.predict(samples)
-            centers = model.cluster_centers_
-
-            model = KMeans(n_clusters = 3, init = centers)
-            model.fit(samples)
-            labels = model.predict(samples)
-
-        #case5
-        if case == 5:
             model = KMeans(n_clusters = 4)
             model.fit(samples)
             labels = model.predict(samples)
@@ -314,8 +278,8 @@ class SyllableJudgement:
             model.fit(samples)
             labels = model.predict(samples)
 
-        #case6
-        if case == 6:
+        #case5
+        if case == 5:
             model = KMeans(n_clusters = 4)
             model.fit(samples)
             labels = model.predict(samples)
@@ -358,8 +322,6 @@ class SyllableJudgement:
                 resultList = self.case7(glyph)
             elif chars[1] in self.middle_five:
                 resultList = self.case9(glyph)
-            elif chars[1] in self.middle_six:
-                resultList = self.case11(glyph)
         else:
             if chars[1] in self.middle_one:
                 resultList = self.case2(glyph)
@@ -371,8 +333,6 @@ class SyllableJudgement:
                 resultList = self.case8(glyph)
             elif chars[1] in self.middle_five:
                 resultList = self.case10(glyph)
-            elif chars[1] in self.middle_six:
-                resultList = self.case12(glyph)
                 
         resultDict[str(glyph.unicode)] = resultList
         
@@ -554,68 +514,8 @@ class SyllableJudgement:
     
         return output
 
+
     def case7(self,glyph):
-        """
-        종성X , 중성 그룹4
-        """   
-        point_list = list()
-    
-        first = list()
-        middle = list()
-        final = list()
-        output = list()
-    
-    
-        for i in range(0,len(glyph.contours)):
-            temp_object = PositionState(glyph.contours[i],i)
-            point_list.append(temp_object)
-    
-        result = sorted(point_list, key = lambda PositionState: PositionState.con.bounds[2])
-    
-        middle.append(result[-1].conNumber)
-    
-        for i in range(0,len(result)-1):
-            first.append(result[i].conNumber)
-    
-        output.append(first)
-        output.append(middle)
-        output.append(final)
-    
-        return output
-
-    def case8(self,glyph):
-        """
-        종성O , 중성 그룹4
-        """
-    
-        point_list = list()
-    
-        first = list()
-        middle = list()
-        final = list()
-        output = list()
-    
-        for i in range(0,len(glyph.contours)):
-            if self.infoDict["final label4"] ==  self.infoDict[glyph.name + '/' + str(i)]:
-                final.append(i)
-            else:
-                temp_object = PositionState(glyph.contours[i],i)
-                point_list.append(temp_object)
-                
-        result = sorted(point_list, key = lambda PositionState: PositionState.con.bounds[2])
-    
-        middle.append(result[-1].conNumber)
-    
-        for i in range(0, len(result) - 1):
-            first.append(result[i].conNumber)
-    
-        output.append(first)
-        output.append(middle)
-        output.append(final)
-    
-        return output
-
-    def case9(self,glyph):
         """
         종성X , 중성 그룹5
         """
@@ -650,7 +550,7 @@ class SyllableJudgement:
     
         return output
 
-    def case10(self,glyph):
+    def case8(self,glyph):
         """
         종성O , 중성 그룹5
         """
@@ -663,7 +563,7 @@ class SyllableJudgement:
         output = list()
     
         for i in range(0,len(glyph.contours)):
-            if self.infoDict["final label5"] ==  self.infoDict[glyph.name + '/' + str(i)]:
+            if self.infoDict["final label4"] ==  self.infoDict[glyph.name + '/' + str(i)]:
                 final.append(i)
             else:
                 temp_object = PositionState(glyph.contours[i],i)
@@ -687,7 +587,7 @@ class SyllableJudgement:
     
         return output
 
-    def case11(self,glyph):
+    def case9(self,glyph):
         """
         종성X , 중성 그룹6
         """
@@ -723,7 +623,7 @@ class SyllableJudgement:
     
         return output
 
-    def case12(self,glyph):
+    def case10(self,glyph):
         """
         종성O , 중성 그룹1
         """
@@ -737,7 +637,7 @@ class SyllableJudgement:
     
     
         for i in range(0,len(glyph.contours)):
-            if self.infoDict["final label6"] ==  self.infoDict[glyph.name + '/' + str(i)]:
+            if self.infoDict["final label5"] ==  self.infoDict[glyph.name + '/' + str(i)]:
                 final.append(i)
             else:
                 temp_object = PositionState(glyph.contours[i],i)
@@ -762,6 +662,7 @@ class SyllableJudgement:
         output.append(final)
     
         return output
+
 
 
 

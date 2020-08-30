@@ -112,11 +112,8 @@ def getCurveDerivation(n, p0,clockWise):
 		return None
 
 	currentContour = p0.getParent()
-	print("currentContour = ", currentContour)
 	pointCount = len(currentContour.points)
-	print("pointCount = ", pointCount)
 	currentIndex = p0.index
-	print("currentIndex = ", currentIndex)
 	if currentContour.points[currentIndex-1].type == 'offcurve' and clockWise is True:
 		return getPointOnCurveDerivation(n, currentContour.points[currentIndex-3], currentContour.points[currentIndex-2], currentContour.points[currentIndex-1], p0, False)
 	elif currentContour.points[(currentIndex+1)%pointCount].type == 'offcurve' and clockWise is not True:
@@ -243,14 +240,15 @@ class groupPointMatchController:
 	def matchPoint(self):
 		"""
 		포인트를 매칭 시켜줌
-		"""
-		print("self.con: ",self.con)	 
+		"""	 
 		pointPart = self.matrix.getPointPart(self.point)
-
+		print("기준 컨투어 = ",self.con)
 		if self.matrix.con.clockwise == True:
 			standard_derivation = getLineDerivation(40,self.point,True)
 		else:
 			standard_derivation = getLineDerivation(40,self.point,False)
+
+		print("기준 미분값 = ",standard_derivation)
 
 		getStandardMaxMin = GetMaxMinPointValue(self.matrix.con)
 
@@ -315,10 +313,12 @@ class groupPointMatchController:
 		secondResult_two = list()
 
 		#originpl : 같은 그룹 내 컨투어 내 조사할 후보군 점
-		for i in range(0,len(originpl)):			
+		for i in range(0,len(originpl)):
+			print("originpl: ", originpl[i])			
 			#direction으로 1차 필터링
 			diff_count_mode = self.firstFiltering(originpl[i],checkSdirection)
 			if diff_count_mode == -1:
+				print("1차 필터링")
 				continue
 
 			#회전율로 2차 필터링
@@ -331,19 +331,22 @@ class groupPointMatchController:
 			elif diff_count_mode == 1 and clock_diff is not None:
 				temp_insert = ClockPointPair(originpl[i],clock_diff,i)
 				secondResult_two.append(temp_insert)
+			else:
+				print("2차 필터링")
 
 
 
 		if (self.point.type == 'curve') or (self.point.type == 'qcurve'):
-			min_derivation = 150
+			min_derivation = 1000
 		elif self.point.type == 'line':
-			min_derivation = 150
+			min_derivation = 1000
 			
 		for i in range(0,len(secondResult_one)):
 
+			print("조사점: ", secondResult_one[i].point)
+
 			if secondResult_one[i].point.type == 'offcurve':
 				continue
-			print("point : ", secondResult_one[i].point)
 
 			#미분 로직
 			if self.con.clockwise == True:
@@ -362,13 +365,10 @@ class groupPointMatchController:
 				_diff_right = abs(compare_derivation[1] - standard_derivation[1])
 
 			_diff = _diff_left + _diff_right
-
-			print("standard_derivation: ",standard_derivation)
-			print("compare_derivation: ", compare_derivation)
-			print("diff_right: ",_diff_right)
-			print("diff_left: ",_diff_left)
-			print("_diff: ", _diff)
-
+			print("diff left = ", _diff_left)
+			print("diff right = ", _diff_right)
+			print("diff = ",_diff)
+			print("compare_derivation = ", compare_derivation)
 			if min_derivation > _diff:
 				dir_diff_zero_indx = secondResult_one[i].index
 				min_derivation = _diff
@@ -380,11 +380,13 @@ class groupPointMatchController:
 
 		#추가적으로 점을 조사
 		if (self.point.type == 'curve') or (self.point.type == 'qcurve'):
-			min_derivation = 150
+			min_derivation = 1000
 		elif self.point.type == 'line':
-			min_derivation = 150
+			min_derivation = 1000
 
 		for i in range(0,len(secondResult_two)):
+
+			print("조사점: ", secondResult_two[i].point)
 
 			if secondResult_two[i].point.type != 'offcurve':
 				continue
@@ -407,7 +409,10 @@ class groupPointMatchController:
 
 			_diff = _diff_left + _diff_right
 
-
+			print("diff left = ", _diff_left)
+			print("diff right = ", _diff_right)
+			print("diff = ",_diff)
+			print("compare_derivation = ", compare_derivation)
 			if min_derivation > _diff:
 				dir_diff_one_indx = secondResult_two[i].index
 				min_derivation = _diff
@@ -449,9 +454,9 @@ class groupPointMatchController:
 
 	def mgiveInnerFill(self,matchPoint):
 		if matchPoint is not None:
-			temp = at.get_attr(self.point,'innerFill')
+			temp = at.get_attr(self.point,'innerType')
 			if temp is not None:
-				at.add_attr(matchPoint,'innerFill',temp)
+				at.add_attr(matchPoint,'innerType',temp)
 
 	def mgiveStroke(self,matchPoint):
 		if matchPoint is not None:

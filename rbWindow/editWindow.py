@@ -195,13 +195,14 @@ class EditGroupMenu(object):
 		"""
 			스마트 셋 없이 처리하는 경우
 		"""
+		smartSetRefresh()
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
 		keyList = list(groupDict.keys())
 		for glyph in keyList:
 			if glyph.selected is True:
 				del groupDict[glyph]
 
-		smartSetRefresh()
+		
 
 		setExtensionDefault(DefaultKey+".groupDict", groupDict)
 

@@ -13,6 +13,54 @@ from fontParts.fontshell.contour import *
 
 matrixMode = 0
 topologyMode = 1
+optionList = ["penPair", "stroke", "innerType", "dependX", "dependY"]
+
+class subAttributeWindow:
+
+	def __init__(self, attributeWindow):
+		self.attributeWindow = attributeWindow
+		self.createUI()
+
+	def createUI(self):
+		x=10;y=10;w=80;h=30;space=5;self.size=(150,300);pos=(1200,300);
+		self.w = HUDFloatingWindow((pos[0],pos[1], self.size[0],self.size[1]), "DeleteWindow")
+		self.w.deleteRadio = RadioGroup((x, y, w, 190),["penPair", "stroke", "innerFill", "dependX", "dependY"],callback=self.radioGroupCallback)
+		y += space + h + 190
+		self.w.applyButton = Button((x,y,w,35), "Apply", callback=self.buttonCallback)
+		self.deleteOption = None
+		self.w.open()
+
+
+	def radioGroupCallback(self, sender):
+		self.deleteOption = optionList[int(sender.get())]
+
+	def buttonCallback(self, sender):
+		if self.deleteOption is None:
+			return
+
+		if self.attributeWindow.updateAttributeComponent() is False:
+			return
+
+		mode = getExtensionDefault(DefaultKey+".mode")
+		groupDict = getExtensionDefault(DefaultKey+".groupDict")
+
+		if mode is matrixMode:
+			matrix = getExtensionDefault(DefaultKey+".matrix")
+			print("matrix = ", matrix)
+			attribute = self.deleteOption
+			print("optionList = ",optionList)
+			print("self.option = ", self.deleteOption)
+			mbt.mdeleteAttribute(groupDict, matrix, attribute)
+
+		elif mode is topologyMode:
+			standardContour = getExtensionDefault(DefaultKey+".standardContour")
+			k = getExtensionDefault(DefaultKey+".k")
+			pass
+				
+		else:
+			Message("모드 에러")
+
+		self.w.close()
 
 
 class attributeWindow:
@@ -49,7 +97,7 @@ class attributeWindow:
 		self.w.strokeText = TextBox((x+40,y,w,h), "stroke")
 		y += h + space
 
-		self.w.deleteButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[5]+".png", callback=self.handleDelete)
+		self.w.deleteButton = ImageButton((x,y,h,h), imagePath=extPath.ImagePath+extPath.attrImgList[5]+".png", callback=self.popDelete)
 		self.w.deleteText = TextBox((x+40,y,w,h), "delete")
 		y += h + space
 
@@ -67,6 +115,10 @@ class attributeWindow:
 
 	def close(self, sender):
 		self.w = None
+
+	def radioGroupCallback(self,sender):
+
+		self.option = int(sender.get())
 
 	def updateAttributeComponent(self):
 		"""
@@ -86,6 +138,9 @@ class attributeWindow:
 		prevGroupDict = getExtensionDefault(DefaultKey+".groupDict")
 		mode = getExtensionDefault(DefaultKey+".mode")
 		font = getExtensionDefault(DefaultKey+".font")
+		matrix = getExtensionDefault(DefaultKey+".matrix")
+
+		print("시작됨")
 
 		#현재 선택된 컨투어 알아내기
 		for contour in currentGlyph:
@@ -100,17 +155,24 @@ class attributeWindow:
 
 
 		else: 
+			print("selectedContour = ",selectedContour)
+			print("prevContour = ", prevContour)
 
 			# 현재 선택된 컨투어가 그룹딕셔너리에 있나 확인하기
-			if selectedContour != prevContour:
+			if selectedContour != prevContour or matrix is None:
+				print("이전 컨투어와 현재 컨투어가 다릅니다. try 진행")
+				print("현재 선택된 컨투어 인덱스 = ",selectedContour.index)
 				
 				try:
 					contourList = prevGroupDict[currentGlyph] 
+					print("contourList = ", prevGroupDict[currentGlyph])
+					print("currentGlyph = ", currentGlyph)
 					
 					for contourIdx in contourList:
-
+						print("<<<<<<<<<< contourIdx = ",contourIdx)
 						#현재 선택된 컨투어를 이전 그룹 딕셔너리에서 찾았다면 standard Contour, Glyph, contourNumber 갱신
 						if selectedContour.index == contourIdx:
+							print("selectedContour.index == contourIdx")
 							res = True
 							setExtensionDefault(DefaultKey+".standardContour", selectedContour)
 							setExtensionDefault(DefaultKey+".standardGlyph", currentGlyph)
@@ -118,7 +180,8 @@ class attributeWindow:
 
 							#매트릭스 관련 설정값 갱신
 							if mode is matrixMode:
-								matrix = Matrix(selectedContour, matrix_size); 
+								matrix = Matrix(selectedContour, matrix_size)
+								print("생성된 매트릭스 = ",matrix) 
 								setExtensionDefault(DefaultKey+".matrix", matrix)
 
 							#현재 스마트셋 포커싱
@@ -145,6 +208,7 @@ class attributeWindow:
 					return result
 
 			else:
+				print("True 반환")
 				return True
 
 	def updateSmartSetChanged(self, selectedContour):
@@ -275,7 +339,7 @@ class attributeWindow:
 		콜백 메소드에 연결할 메소드
 	"""
 	def handleDependX(self, sender):
-		if updateAttributeComponent() is False:
+		if self.updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
@@ -301,7 +365,7 @@ class attributeWindow:
 		CurrentFont().save(self.testPath) 	#XML 업데이트
 
 	def handleDependY(self, sender):
-		if updateAttributeComponent() is False:
+		if self.updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
@@ -326,7 +390,7 @@ class attributeWindow:
 
 
 	def handlePenPair(self, sender):
-		if updateAttributeComponent() is False:
+		if self.updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
@@ -351,7 +415,7 @@ class attributeWindow:
 
 	def handleInnerFill(self, sender):
 
-		if updateAttributeComponent() is False:
+		if self.updateAttributeComponent() is False:
 			return
 
 		groupDict = getExtensionDefault(DefaultKey+".groupDict")
@@ -376,7 +440,7 @@ class attributeWindow:
 
 	def handleStroke(self, sender):
 		
-		if updateAttributeComponent() is False:
+		if self.updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
@@ -401,7 +465,8 @@ class attributeWindow:
 
 
 	def handleSelect(self, sender):
-		if updateAttributeComponent() is False:
+		print("!!")
+		if self.updateAttributeComponent() is False:
 			return
 		
 		mode = getExtensionDefault(DefaultKey+".mode")
@@ -409,6 +474,7 @@ class attributeWindow:
 
 		if mode is matrixMode:
 			matrix = getExtensionDefault(DefaultKey+".matrix")
+			print("matrix = ", matrix)
 			mbt.mselectAttribute(groupDict, matrix)
 
 		elif mode is topologyMode:
@@ -421,28 +487,8 @@ class attributeWindow:
 			return
 
 
-	def handleDelete(self, sender):
-		if updateAttributeComponent() is False:
-			return
-
-		mode = getExtensionDefault(DefaultKey+".mode")
-		groupDict = getExtensionDefault(DefaultKey+".groupDict")
-
-		if mode is matrixMode:
-			matrix = getExtensionDefault(DefaultKey+".matrix")
-			pass
-
-		elif mode is topologyMode:
-			standardContour = getExtensionDefault(DefaultKey+".standardContour")
-			k = getExtensionDefault(DefaultKey+".k")
-			pass
-				
-		else:
-			Message("모드 에러")
-		
-		CurrentFont().update()	#로보폰트 업데이트
-		CurrentFont().save(self.testPath) 	#XML 업데이트
-
+	def popDelete(self, sender):
+		self.subWindow = subAttributeWindow(self)
 			
 	def minimizeCallback(self, sender):
 		if sender.get() == True:

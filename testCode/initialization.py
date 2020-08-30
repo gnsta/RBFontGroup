@@ -1,12 +1,15 @@
 from jsonConverter.makeJsonFile import *
 from groupingTool.clockWise.clockWiseGroup import *
 import rbWindow.editWindow as ew
-from parseSyllable.configSyllable import *
+from parseSyllable.configVersionFinal import *
+from parseSyllable.YullyeoSyllable import *
 from mojo.UI import *
 import os
 import math
-from mojo.extensions import getExtensionDefault, setExtensionDefault
+from mojo.extensions import *
 from rbWindow.ExtensionSetting.extensionValue import DefaultKey
+
+
 
 
 
@@ -27,7 +30,7 @@ def checkLanguage(CurrentFont):
 
         수행 도중 알 수 없는 이유로 에러가 나면 None으로 세팅
     """
-    font = CurrentFont
+    font = CurrentFont()
 
     idx = 0
         
@@ -54,7 +57,8 @@ def StartProgram(testPath,testFile,CurrentFont):
     프로그램 시작시 해당 폰트 파일이 처음일 경우 1차 필터링 세팅과 한글의 경우 음절분리 과정을 수행하여 .json파일로 저장하여 관리 
     """
 
-    KoreanCheck = checkLanguage(CurrentFont)
+    #KoreanCheck = checkLanguage(CurrentFont)
+    KoreanCheck = getExtensionDefault(DefaultKey+".korean")
 
     #한글일 떄만 해당 사항 적용
     #if KoreanCheck == True:
@@ -69,29 +73,17 @@ def StartProgram(testPath,testFile,CurrentFont):
 
     
     tempFileName = testPath.split('/')[-1]
-    if tempFileName.split('.')[1] == 'ufo':
-        bar = ProgressBar('start',len(testFile) * 2,'initial setting...')
-        barProcess = 0
-    else:
-        bar = ProgressBar('start',len(testFile),'initial setting...')
-        barProcess = 0
+   
     
-    # 기존의 폰트 파일이 다른 폰트 파일로 바뀐 경우 기존의 파일을 삭제합니다.
-    #if CurrentFont != getExtensionDefault(DefaultKey+".font"):
-        #filePath = os.path.dirname(os.path.abspath(__file__))+'/jsonResource/'
-
-        #if os.path.exists(filePath):
-            #for file in os.scandir(filePath):
-                #os.remove(file.path)
-
+    barProcess = 0
+    
     #1차필터링
     try:
         jsonFileName1 = os.path.dirname(os.path.abspath(__file__)) + '/jsonResource/' + tempFileName.split('.')[0] + '.json'
-        print("jsonFileName1 : ", jsonFileName1)
-        print("json1 존재 유무!", os.path.exists(jsonFileName1))
         if os.path.exists(jsonFileName1):
             raise FileExist('필터링 파일은 이미 존재합니다')
         else:
+            bar = ProgressBar('start',len(testFile),'initial setting...')
             for tg in testFile:
                 barProcess += 1
                 tempList = list()
@@ -103,31 +95,58 @@ def StartProgram(testPath,testFile,CurrentFont):
                     bar.tick(barProcess)     
             with open(jsonFileName1,'w',encoding = 'utf-8') as make_file:
                 json.dump(insert,make_file,indent = '\t')
+            bar.close()
     except FileExist as e:
         print(e)
 
 
+    
+    barProcess = 0
+
+    """
+    명조체와 율려체 파일 인식 부분 보충이 필요(지금은 파일 이름으로 구별함)
+    """
+    tempFileName = testPath.split('/')[-1]
+
+    '''MungjoCheck = tempFileName.find("KoreanMungjo")
+    YellyeoCheck = tempFileName.find("KoreanYellyeo")
+    print("tempFileName: ",tempFileName)
+    print("YellyeoCheck: ",YellyeoCheck)
+    if MungjoCheck != -1 or YellyeoCheck != -1:
+        setExtensionDefault(DefaultKey+".korean", True)
+        KoreanCheck = True'''
+
+    YellyeoCheck = -1
+    MungjoCheck = 1
+
+    
     insert = dict()
     #한글의 음절 분리 경우에만!
     if KoreanCheck == True:
-       try:
-            tempFileName = testPath.split('/')[-1]
+        #명조체인 경우
+        if MungjoCheck != -1:
+            syllableJudgementController = SyllableJudgement(testFile,testPath)
+            setExtensionDefault(DefaultKey + ".syllableJudgementController", syllableJudgementController)
+        #율려체인 경우
+        elif YellyeoCheck != -1:
+            syllableJudgementController = YullyeoSyllableJudgement(testFile,testPath)
+            setExtensionDefault(DefaultKey + ".syllableJudgementController", syllableJudgementController)
+
+        try:
             jsonFileName2 = os.path.dirname(os.path.abspath(__file__)) + '/jsonResource/' + tempFileName.split('.')[0] + '_config.json'
-            print("jsonFileName2 : ", jsonFileName2)
-            print("json2 존재 유무!", os.path.exists(jsonFileName2))
             if os.path.exists(jsonFileName2):
                 raise FileExist('음절 분리 파일은 이미 존재합니다')
+            bar = ProgressBar('start',len(testFile),'initial setting...')
             for tg in testFile:
                 barProcess += 1
-                tempDict = getConfigure(tg)
+                tempDict = syllableJudgementController.GetSyllable(tg)
                 insert[tg.name] = tempDict[str(tg.unicode)]
                 if barProcess % 10 == 0:
                     bar.tick(barProcess)     
             with open(jsonFileName2,'w',encoding = 'utf-8') as make_file:
                 json.dump(insert,make_file,indent = '\t')
-       except FileExist as e:
+            bar.close()
+        except FileExist as e:
             print(e) 
-    
-    bar.close()
 
     return [jsonFileName1,jsonFileName2]

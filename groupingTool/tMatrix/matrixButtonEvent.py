@@ -29,10 +29,11 @@ def mselectAttribute(groupDict,standardMatrix):
     for i in range(0,len(controllerList)):
         mPoint = controllerList[i].matchPoint()
         if mPoint is not None:
+            controllerList[i].mgiveSelected(mPoint)
             tmp = list()
             tmp.append(mPoint); tmp.append(mPoint.name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveSelected(mPoint)
+        
 
     g = CurrentGlyph()
     for point in g.selectedPoints:
@@ -44,7 +45,8 @@ def mselectAttribute(groupDict,standardMatrix):
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
-    
+    CurrentFont().update()
+    CurrentFont().save(CurrentFont().path)
 
 def mpenPairAttribute(groupDict,standardMatrix):
     controllerList = []
@@ -67,11 +69,14 @@ def mpenPairAttribute(groupDict,standardMatrix):
 
     for i in range(0,len(controllerList)):
         mPoint = controllerList[i].matchPoint()
+        controllerList[i].mgiveAttrPenPair(mPoint)
+
         if mPoint is not None:
+            
             tmp = list()
             tmp.append(mPoint); tmp.append(mPoint.name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveAttrPenPair(mPoint)
+        
 
     g = CurrentGlyph()
     for point in g.selectedPoints:
@@ -81,6 +86,9 @@ def mpenPairAttribute(groupDict,standardMatrix):
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
+    
+    CurrentFont().update()
+    CurrentFont().save(CurrentFont().path)
 
 def mdependXAttribute(groupDict,standardMatrix):
     controllerList = []
@@ -102,11 +110,14 @@ def mdependXAttribute(groupDict,standardMatrix):
 
     for i in range(0,len(controllerList)):
         mPoint = controllerList[i].matchPoint()
+        controllerList[i].mgiveDependX(mPoint)
+
         if mPoint is not None:
+            
             tmp = list()
             tmp.append(mPoint); tmp.append(mPoint.name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveDependX(mPoint)
+        
 
 
     g = CurrentGlyph()
@@ -117,6 +128,8 @@ def mdependXAttribute(groupDict,standardMatrix):
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
+    CurrentFont().update()
+    CurrentFont().save(CurrentFont().path)
 
 def mdependYAttribute(groupDict,standardMatrix):
     controllerList = []
@@ -138,10 +151,11 @@ def mdependYAttribute(groupDict,standardMatrix):
     for i in range(0,len(controllerList)):
         mPoint = controllerList[i].matchPoint()
         if mPoint is not None:
+            controllerList[i].mgiveDependY(mPoint)
             tmp = list()
             tmp.append(mPoint); tmp.append(mPoint.name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveDependY(mPoint)
+        
 
 
     g = CurrentGlyph()
@@ -152,6 +166,9 @@ def mdependYAttribute(groupDict,standardMatrix):
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
+
+    CurrentFont().update()
+    CurrentFont().save(CurrentFont().path)
 
 def minnerFillAttribute(groupDict,standardMatrix):
     controllerList = []
@@ -172,12 +189,12 @@ def minnerFillAttribute(groupDict,standardMatrix):
                     controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
     for i in range(0,len(controllerList)):
-        mPoint = controllerList[i].matchPoint()
-        if mPoint is not None:
-            tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
-            prevPointList.append(tmp)
-        controllerList[i].mgiveInnerFill(mPoint)
+        mPoint = controllerList[i].con.points[0]
+        controllerList[i].mgiveInnerFill(mPoint)    
+        tmp = list()
+        tmp.append(mPoint); tmp.append(mPoint.name)
+        prevPointList.append(tmp)
+    
 
     g = CurrentGlyph()
     for point in g.selectedPoints:
@@ -187,6 +204,9 @@ def minnerFillAttribute(groupDict,standardMatrix):
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
+
+    CurrentFont().update()
+    CurrentFont().save(CurrentFont().path)
         
 def mdeleteAttribute(groupDict,standardMatrix,attribute):
     controllerList = []
@@ -203,13 +223,23 @@ def mdeleteAttribute(groupDict,standardMatrix,attribute):
             if(sp.selected == True):
                 controllerList.append(groupPointMatchController(standardMatrix,sp,contoursList[i]))
 
-    for i in range(0,len(controllerList)):
-        mPoint = controllerList[i].matchPoint()
-        if mPoint is not None:
-            tmp = list()
-            tmp.append(mPoint); tmp.append(mPoint.name)
-            prevPointList.append(tmp)
-        controllerList[i].mdeleteAttr(attribute,mPoint)
+    if attribute == "innerType" or attribute == "sound" or attribute == "char" or attribute == "formType":
+        for i in range(0,len(controllerList)):
+            mPoint = controllerList[i].con.points[0]
+            controllerList[i].mdeleteAttr(attribute,mPoint)
+            if mPoint is not None:
+                tmp = list()
+                tmp.append(mPoint); tmp.append(mPoint.name)
+                prevPointList.append(tmp)
+    else:
+        for i in range(0,len(controllerList)):
+            mPoint = controllerList[i].matchPoint()
+            controllerList[i].mdeleteAttr(attribute,mPoint)
+            if mPoint is not None:
+                tmp = list()
+                tmp.append(mPoint); tmp.append(mPoint.name)
+                prevPointList.append(tmp)
+        
 
     g = CurrentGlyph()
     for point in g.selectedPoints:
@@ -219,6 +249,9 @@ def mdeleteAttribute(groupDict,standardMatrix,attribute):
 
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
+
+    CurrentFont().update()
+    CurrentFont().save(CurrentFont().path)
 
 def mgiveStrokeAttribute(groupDict,standardMatrix):
 
@@ -238,11 +271,14 @@ def mgiveStrokeAttribute(groupDict,standardMatrix):
 
     for i in range(0,len(controllerList)):
         mPoint = controllerList[i].matchPoint()
+        controllerList[i].mgiveStroke(mPoint)
+        
         if mPoint is not None:
+            
             tmp = list()
             tmp.append(mPoint); tmp.append(mPoint.name)
             prevPointList.append(tmp)
-        controllerList[i].mgiveStroke(mPoint)
+        
 
     g = CurrentGlyph()
     for point in g.selectedPoints:
@@ -251,3 +287,6 @@ def mgiveStrokeAttribute(groupDict,standardMatrix):
         prevPointList.append(tmp)
     restoreStack.push(prevPointList)
     setExtensionDefault(DefaultKey+".restoreStack", restoreStack)
+
+    CurrentFont().update()
+    CurrentFont().save(CurrentFont().path)
