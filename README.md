@@ -1,7 +1,9 @@
 # RBFontGroup
 Fonts are designed by designers, and robotic fonts are one of the design tools.
 
-This is a tool that preprocesses fonts to make STEMFONT
+It was created to work in Myeongjo Hangul and Chinese characters.
+
+This is a tool that preprocesses fonts to make STEMFONT.
 
 After analyzing the font using libraries such as Numpy, Pandas, sklearn, mojoui, vanilla and using the Bezier curve concept, contours with the same shape were classified.
 
