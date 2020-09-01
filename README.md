@@ -3,7 +3,7 @@ Fonts are designed by designers, and robotic fonts are one of the design tools.
 
 This is a tool that preprocesses fonts to make STEMFONT
 
-After analyzing the font using libraries such as Numpy Pandas sklearn mojoui vanilla and using the Bezier curve concept, contours with the same shape were classified.
+After analyzing the font using libraries such as Numpy, Pandas, sklearn, mojoui, vanilla and using the Bezier curve concept, contours with the same shape were classified.
 
 After classifying the shape, it was possible to add properties for METAFONT conversion to the constituent points of the font.
 
