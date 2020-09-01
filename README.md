@@ -34,9 +34,8 @@ You can exit the tool.
 #### 7, Help
 You can inquire how to use the tool.
 
-
 ### 2. SearchMenu
-<img width="189" alt="Search" src="https://user-images.githubusercontent.com/51118441/91861815-366d1200-eca8-11ea-8dd5-577ce6b3b228.png">
+<img width="252" alt="Setting" src="https://user-images.githubusercontent.com/51118441/91865228-21927d80-ecac-11ea-892a-af07ace6bfad.png">
 
 ### 3. SettingMenu
 <img width="252" alt="Setting" src="https://user-images.githubusercontent.com/51118441/91861832-3a009900-eca8-11ea-83d6-75f5e6bd38d6.png">
