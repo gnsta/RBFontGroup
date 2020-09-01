@@ -5,7 +5,8 @@ This is a tool that preprocesses fonts to make STEMFONT
 
 ### 1. ToolBar
 ![ToolBar](https://user-images.githubusercontent.com/51118441/91861371-b2b32580-eca7-11ea-8e66-5772ec8ca859.PNG)
-
+>search
+>>You can automatically find contour groups after searching for letters in Unicode.
 ### 2. SearchMenu
 <img width="189" alt="Search" src="https://user-images.githubusercontent.com/51118441/91861815-366d1200-eca8-11ea-8dd5-577ce6b3b228.png">
 
